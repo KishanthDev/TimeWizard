@@ -44,6 +44,9 @@ userCnrtl.login = async(req,res)=>{
       if(!hashedpassword){
         return res.status(404).json({error:"Invalid password"})
       }
+      if(!user.isVerified){
+        return res.status(403).json({error:"Contact the admin"})
+      }
       const token = jwt.sign({id:user._id,role:user.role},process.env.SECRET_KEY,{expiresIn:"7d"})
       res.status(201).json({token,user})
     } catch (err) {
@@ -60,5 +63,26 @@ userCnrtl.profile = async (req,res) => {
         
     }
 }
+
+userCnrtl.verifyUser = async (req, res) => {
+    try {
+      const { userId } = req.params;
+    if(req.currentUser.role !="admin"){
+        return res.status(403).json({error:"Only admin has the permission to approve tasks"})
+    }
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      user.isVerified = !user.isVerified;
+  
+      await user.save();
+  
+      res.status(200).json({ message: 'User verified successfully', user });
+    } catch (error) {
+      console.error('Error verifying user:', error);
+      res.status(500).json({ message: 'Error verifying user', error: error.message });
+    }
+  };
 
 export default userCnrtl

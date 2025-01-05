@@ -8,6 +8,6 @@ import auth from "../middleware/auth.js"
 router.post("/register",checkSchema(registerUserValidation),userCnrtl.create)
 router.post("/login",checkSchema(loginUserValidation),userCnrtl.login)
 router.get("/profile",auth,userCnrtl.profile)
-
+router.put("/approve/:userId",auth,userCnrtl.verifyUser)
 
 export default router
