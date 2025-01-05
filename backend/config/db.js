@@ -5,6 +5,7 @@ const configdb = ()=>{
         console.log("db is connected")
     } catch (er) {
         console.log(er,"Error in db connection")
+        process.exit(1);
     }
 }
 export default configdb
