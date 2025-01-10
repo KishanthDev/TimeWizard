@@ -1,35 +1,97 @@
 import User from "../models/user-model.js"
-import bcryptjs from "bcryptjs"
 import jwt from "jsonwebtoken"
 import { validationResult } from "express-validator"
+import TempUser from "../models/tempUser-model.js"
+import sendEmail from "../utils/emailUtils.js"
+import { comparePassword, hashPassword } from "../utils/hashUtils.js"
 
-const userCnrtl = {}
-userCnrtl.create = async(req,res)=>{
-    const errors = validationResult(req)
+const userCntrl = {}
+
+userCntrl.signup = async (req, res) => {
+  const errors = validationResult(req)
     if(!errors.isEmpty()){
         return res.status(400).json({errors:errors.array()})
     }
-    const {name,username,email,password,role} = req.body
-    try {
-        const user = new User({name,username,email,password,role})
-        const countDocuments = await User.countDocuments()
-        if (countDocuments === 0) {
-            user.role = "admin";
-        } else if (user.role === "admin") {
-            return res.status(401).json({ error: "Admin role can only be assigned to the first user." });
-        }       
-        const salt = await bcryptjs.genSalt()
-        const hash = await bcryptjs.hash(password,salt)
-        user.password = hash
-        await user.save()
-        return res.status(201).json(user)
-    } catch (err) {
-        res.status(500).json({error:"Something went wrong",message:err})
+  const { name, username, email, password,role } = req.body;
+
+  try {
+    const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+    if (existingUser) {
+      return res.status(400).json({ error: "Email or username is already taken." });
     }
-}
 
+    const existingTempUser = await TempUser.findOne({ $or: [{ email }, { username }] });
+    if (existingTempUser) {
+      return res.status(400).json({ error: "Email or username is already being used in an ongoing signup process." });
+    }
 
-userCnrtl.login = async(req,res)=>{
+    const otp = Math.floor(100000 + Math.random() * 900000); 
+    const otpExpiry = Date.now() + 10 * 60 * 1000; 
+
+    const hashedPassword = await hashPassword(password);
+
+    const tempUser = new TempUser({
+      name,
+      username,
+      email,
+      password: hashedPassword,
+      role,
+      otp,
+      otpExpiry,
+    });
+    const countDocuments = await User.countDocuments()
+    if (countDocuments === 0) {
+        tempUser.role = "admin";
+    } else if (tempUser.role === "admin") {
+        return res.status(401).json({ error: "Admin role can only be assigned to the first user." });
+    }  
+    await tempUser.save();
+
+    await sendEmail({
+      to: email,
+      subject: "Email Verification OTP",
+      text: `Your OTP is ${otp}. It is valid for 10 minutes.`,
+    })
+
+    res.status(200).json({ message: "OTP sent to email. Verify to complete signup." });
+  } catch (err) {
+    res.status(500).json({ error: "Signup failed. Try again.", message: err.message });
+  }
+};
+
+userCntrl.verifyOtp = async (req, res) => {
+  const { email, otp } = req.body;
+
+  try {
+    const tempUser = await TempUser.findOne({ email });
+
+    if (!tempUser) {
+      return res.status(404).json({ error: "No signup process found for this email." });
+    }
+
+    if (tempUser.otp !== parseInt(otp) || Date.now() > tempUser.otpExpiry) {
+      return res.status(400).json({ error: "Invalid or expired OTP." });
+    }
+
+    const user = new User({
+      name: tempUser.name,
+      username: tempUser.username,
+      email: tempUser.email,
+      password: tempUser.password,
+      role:tempUser.role
+    });
+
+    await user.save();
+
+    await TempUser.deleteOne({ email });
+
+    res.status(201).json({ message: "Account created successfully. You can now log in." });
+  } catch (err) {
+    res.status(500).json({ error: "Verification failed. Try again.", message: err.message });
+  }
+};
+
+userCntrl.login = async(req,res)=>{
     const errors = validationResult(req)
     if(!errors.isEmpty()){
         return res.status(400).json({errors:errors.array()})
@@ -40,7 +102,7 @@ userCnrtl.login = async(req,res)=>{
       if(!user){
         return res.status(404).json({error:"Invalid username or email"})
       }
-      const hashedpassword = await bcryptjs.compare(password,user.password)
+      const hashedpassword = await comparePassword(password,user.password)
       if(!hashedpassword){
         return res.status(404).json({error:"Invalid password"})
       }
@@ -54,7 +116,7 @@ userCnrtl.login = async(req,res)=>{
     }
 }
 
-userCnrtl.get = async (req, res) => {
+userCntrl.get = async (req, res) => {
   try {
 
     if (req.currentUser.role !== "admin") {
@@ -103,7 +165,7 @@ userCnrtl.get = async (req, res) => {
   }
 };
 
-userCnrtl.profile = async (req,res) => {
+userCntrl.profile = async (req,res) => {
     try {
         const user = await User.findOne({_id:req.currentUser.id})
         res.json(user)
@@ -112,12 +174,9 @@ userCnrtl.profile = async (req,res) => {
     }
 }
 
-userCnrtl.verifyUser = async (req, res) => {
+userCntrl.verifyUser = async (req, res) => {
     try {
       const { userId } = req.params;
-    if(req.currentUser.role !="admin"){
-        return res.status(403).json({error:"Only admin has the permission to approve tasks"})
-    }
       const user = await User.findById(userId);
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
@@ -133,4 +192,4 @@ userCnrtl.verifyUser = async (req, res) => {
     }
   };
 
-export default userCnrtl
+export default userCntrl

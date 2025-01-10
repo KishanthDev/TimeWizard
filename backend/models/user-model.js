@@ -13,6 +13,8 @@ const userSchema = new Schema({
         type:Boolean,
         default:false
     },
+    otp: String,
+    otpExpiry: Date,
     subscription: {
         plan: { type: String, enum: ['free', 'premium'], default: 'free' },
         startDate: { type: Date },

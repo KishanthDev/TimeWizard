@@ -5,9 +5,6 @@ const projectCntrl = {};
 
 projectCntrl.createProject = async (req, res) => {
   try {
-    if(req.currentUser.role!=="admin"){
-      return res.status(403).json({error:"Only admin can assign project"})
-    }
     const files = req.files;
 
     if (!files || files.length === 0) {
@@ -43,9 +40,6 @@ projectCntrl.createProject = async (req, res) => {
 
 projectCntrl.get = async (req,res) => {
   try {
-    if(req.currentUser.role!=="admin"){
-      return res.status(403).json({error:"Only admin can get project"})
-    }
     const project = await Project.find({})
     return res.status(200).json({project})
   } catch (err) {

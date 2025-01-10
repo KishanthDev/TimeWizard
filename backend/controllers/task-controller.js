@@ -7,10 +7,6 @@ const taskController = {};
 taskController.createTask = async (req, res) => {
   const userId = req.params.userId
   try {
-    if(req.currentUser.role!=="admin"){
-      return res.status(403).json({error:"Only admin can assign tasks"})
-    }
-    
     const { projectId, name, description, dueDate } = req.body;
 
     const project = await Project.findById(projectId);

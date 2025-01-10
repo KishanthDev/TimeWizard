@@ -70,16 +70,7 @@ export const registerUserValidation = {
             },
             errorMessage:"Password is weak"
             }
-        },
-    role:{
-        in:["body"],
-        exists:{
-            errorMessage:"Role field is required"
-        },
-        notEmpty:{
-            errorMessage:"Role should not be empty"
         }
-    }
 }
 
 export const loginUserValidation = {
