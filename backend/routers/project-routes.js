@@ -6,6 +6,6 @@ import auth from "../middleware/auth.js"
 const router = express.Router()
 
 router.post("/create",auth,uploadFile,projectCntrl.createProject)
-
+router.get("/get",auth,projectCntrl.get)
 
 export default router

@@ -8,5 +8,6 @@ router.post("/create/:userId",auth,taskController.createTask)
 router.post("/clockIn/:taskId",taskController.clockIn)
 router.post("/clockOut/:taskId",taskController.clockOut)
 router.get("/totalTime/:taskId",taskController.getTotalTimeSpent)
+router.put("/completeTask/:taskId",taskController.completeTask)
 
 export default router

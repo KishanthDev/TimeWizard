@@ -7,6 +7,7 @@ const TaskSchema = new Schema(
     name: { type: String, required: true },
     description: { type: String },
     dueDate: { type: Date },
+    estimatedTime:Number,
     status: {
       type: String,
       enum: ["pending", "ongoing", "completed"],

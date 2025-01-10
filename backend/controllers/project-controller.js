@@ -15,7 +15,7 @@ projectCntrl.createProject = async (req, res) => {
     }
 
     const { name, description, teams, budget } = req.body;
-    // Convert team strings to ObjectIds
+    
     const teamIds = JSON.parse(teams).map(team => new mongoose.Types.ObjectId(team));
 
     const attachments = req.files.map(file => ({
@@ -40,5 +40,17 @@ projectCntrl.createProject = async (req, res) => {
     res.status(500).json({ message: 'Error creating project', error: error.message });
   }
 };
+
+projectCntrl.get = async (req,res) => {
+  try {
+    if(req.currentUser.role!=="admin"){
+      return res.status(403).json({error:"Only admin can get project"})
+    }
+    const project = await Project.find({})
+    return res.status(200).json({project})
+  } catch (err) {
+    return res.status(500).json({message:"Error while getting alll project",error:err.message})
+  }
+}
 
 export default projectCntrl;

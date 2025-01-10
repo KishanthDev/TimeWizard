@@ -54,13 +54,61 @@ userCnrtl.login = async(req,res)=>{
     }
 }
 
+userCnrtl.get = async (req, res) => {
+  try {
+
+    if (req.currentUser.role !== "admin") {
+      return res.status(403).json({ error: "Access denied. Admins only." });
+    }
+
+    const search = req.query.search || "";
+    const sortBy = req.query.sortBy || "name"; 
+    const order = req.query.order === "desc" ? -1 : 1; 
+    const page = parseInt(req.query.page) || 1; 
+    const limit = parseInt(req.query.limit) || 10; 
+
+    const sortQuery = { [sortBy]: order };
+
+    const regex = new RegExp(search, "i");
+
+    const searchQuery = {
+      $or: [
+        { name: regex },
+        { username: regex },
+        { email: regex },
+      ],
+    };
+
+    const skip = (page - 1) * limit;
+
+    const users = await User.find(searchQuery)
+      .sort(sortQuery)
+      .skip(skip)
+      .limit(limit);
+
+    const totalUsers = await User.countDocuments(searchQuery);
+
+    if (users.length === 0) {
+      return res.status(404).json({ message: "No users found." });
+    }
+
+    res.status(200).json({
+      currentPage: page,
+      totalPages: Math.ceil(totalUsers / limit),
+      totalUsers,
+      users,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server error. Please try again later." });
+  }
+};
+
 userCnrtl.profile = async (req,res) => {
     try {
         const user = await User.findOne({_id:req.currentUser.id})
         res.json(user)
     } catch (err) {
-        console.log(err);
-        
+        res.status(500).json({error:err})
     }
 }
 
