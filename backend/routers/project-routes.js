@@ -5,8 +5,9 @@ import auth from "../middleware/auth.js"
 import authorizeUser from "../middleware/authorizeUser.js"
 
 const router = express.Router()
+const uploadProjectDocuments = uploadFile('files', 'projectDocuments', true,['image/jpeg', 'image/png','image/jpg'] )
 
-router.post("/create",auth,authorizeUser(["admin"]),uploadFile,projectCntrl.createProject)
+router.post("/create",auth,authorizeUser(["admin"]),uploadProjectDocuments,projectCntrl.createProject)
 router.get("/get",authorizeUser(["admin"]),projectCntrl.get)
 
 export default router

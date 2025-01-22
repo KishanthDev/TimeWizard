@@ -13,6 +13,16 @@ const userSchema = new Schema({
         type:Boolean,
         default:false
     },
+    contact: {
+        type: String,
+        trim: true,
+        default: null,
+    },
+    profileImage: [{
+        fileName: { type: String },
+        fileType: { type: String },
+        filePath: { type: String },
+      }],
     otp: String,
     otpExpiry: Date,
     subscription: {

@@ -192,4 +192,35 @@ userCntrl.verifyUser = async (req, res) => {
     }
   };
 
+  userCntrl.edit = async (req, res) => {
+    try {
+      const userId = req.currentUser.id; 
+      const { username, email, contact, jobTitle } = req.body;
+  
+      if (req.file) {
+        const userProfile = {
+          fileName: req.file.originalname,
+          fileType: req.file.mimetype,
+          filePath: req.file.path,
+        };
+  
+        const updateFields = { username, email, contact, jobTitle, profileImage: userProfile };
+  
+        const updatedUser = await User.findByIdAndUpdate(userId, updateFields, { new: true });
+  
+        if (!updatedUser) {
+          return res.status(404).json({ message: "User not found" });
+        }
+  
+        res.status(200).json({ message: "Profile updated successfully", user: updatedUser });
+      } else {
+        res.status(400).json({ message: "No file uploaded" });
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      res.status(500).json({ message: "Error updating profile", error: error.message });
+    }
+  };
+  
+  
 export default userCntrl

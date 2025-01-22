@@ -1,33 +1,36 @@
 import mongoose from 'mongoose';
 import Project from "../models/project-model.js";
-
 const projectCntrl = {};
+
 
 projectCntrl.createProject = async (req, res) => {
   try {
-    const files = req.files;
+      const files = req.files
 
-    if (!files || files.length === 0) {
-      return res.status(400).json({ message: 'No files uploaded for the project' });
-    }
+      if (!files || files.length === 0) {
+        return res.status(400).json({ message: 'No files uploaded for the project' });
+      }
+    
+
+    const projectDocuments = req.files.map((file) => ({
+      fileName: file.originalname,
+      fileType: file.mimetype,
+      filePath: file.path,
+    }));
 
     const { name, description, teams, budget } = req.body;
     
     const teamIds = JSON.parse(teams).map(team => new mongoose.Types.ObjectId(team));
-
-    const attachments = req.files.map(file => ({
-      filename: file.filename,
-      fileType: file.mimetype,
-      filePath: file.path, 
-    }));
-
+     
     const project = new Project({
       name,
       description,
       teams: teamIds,  
       budget,
-      attachments
+      attachments:projectDocuments
     });
+
+    io.emit("projectCreated", { projectId: project._id, teams });
 
     await project.save();
 
