@@ -1,11 +1,31 @@
 import Chat from "../models/chat-model.js";
+import Project from "../models/project-model.js";
 import { ObjectId } from "mongodb";
 
 const chatHandler = (io, socket) => {
-  // Join a project room
-  socket.on("joinRoom", ({ projectId, userId }) => {
-    socket.join(projectId);
-    console.log(`User ${userId} joined room ${projectId}`);
+  socket.on("joinRoom", async ({ projectId, userId }) => {
+    try {
+      const projectObjectId = new ObjectId(projectId);
+      const userObjectId = new ObjectId(userId);
+
+      const project = await Project.findOne({
+        _id: projectObjectId,
+        teams: userObjectId, 
+      });
+
+      if (!project) {
+        console.log(`Unauthorized access: User ${userId} tried to join room ${projectId}`);
+        socket.emit("unauthorized", "You are not authorized to join this project.");
+        return;
+      }
+
+      // User is authorized; join the room
+      socket.join(projectId);
+      console.log(`User ${userId} joined room ${projectId}`);
+    } catch (error) {
+      console.error("Error during room join validation:", error);
+      socket.emit("error", "An error occurred while trying to join the room.");
+    }
   });
 
   // Handle messages
@@ -41,6 +61,7 @@ const chatHandler = (io, socket) => {
     }
   });
 
+  // Handle disconnect
   socket.on("disconnect", () => {
     console.log("A user disconnected:", socket.id);
   });

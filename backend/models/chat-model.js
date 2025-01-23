@@ -14,12 +14,8 @@ const ChatSchema = new Schema({
   text: {
     type: String,
     required: true,
-  },
-  timestamp: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  }
+},{timestamps:true});
 
 const Chat = model('Chat', ChatSchema);
 export default Chat;

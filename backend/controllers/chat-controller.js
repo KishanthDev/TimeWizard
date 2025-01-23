@@ -9,8 +9,25 @@ chatController.get = async (req,res) => {
     }
     const  id  = req.params.id;
     try {
-        const messages = await Chat.find({projectId:id}).sort({ timestamp: 1 });//asc
-        res.json(messages);
+        const messages = await Chat.find({projectId:id})
+        .populate({
+            path: "projectId", 
+            select: "name", 
+          })
+          .populate({
+            path: "userId",
+            select: "name",
+          })
+          .sort({ timestamp: 1 });
+    
+        const transformedMessages = messages.map((message) => ({
+          text: message.text,
+          timestamp: message.timestamp,
+          user: message.userId.name,
+          project: message.projectId.name,
+        }));
+    
+        res.json(transformedMessages);
       } catch (err) {
         res.status(500).json({ error: "Error fetching messages" });
       }
