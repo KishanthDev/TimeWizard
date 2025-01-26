@@ -5,8 +5,7 @@ const ProjectSchema = new Schema({
   description: { type: String },
   teams: [{ type:Schema.Types.ObjectId, ref: 'User' }],
   attachments: [{
-    filename: { type: String },
-    fileType: { type: String },
+    publicId: { type: String },
     filePath: {type:String}
   }],
   budget:Number,

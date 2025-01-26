@@ -17,11 +17,12 @@ export const profile = createAsyncThunk("/api/profile",async()=>{
     return response.data
 })
 
-export const updateProfile = createAsyncThunk("/api/updateProfile", async (userData, { rejectWithValue }) => {
+export const updateProfile = createAsyncThunk("/api/updateProfile", async (form, {dispatch, rejectWithValue }) => {
     try {
-      const response = await axios.post("/api/users/edit", userData, {
+      const response = await axios.put("/api/users/edit", form, {
         headers: { Authorization: localStorage.getItem("token") },
       });
+      dispatch(profile())
       return response.data;
     } catch (error) {
       console.log(error.response.data);
@@ -60,6 +61,7 @@ const userSlice = createSlice({
         })
         .addCase(updateProfile.fulfilled, (state, action) => {
             state.user = action.payload;
+            state.error = null;
             state.isLoggedIn = true;
             state.isLoading = false;
         })

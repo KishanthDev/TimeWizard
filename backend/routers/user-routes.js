@@ -6,10 +6,8 @@ import { checkSchema } from "express-validator"
 import auth from "../middleware/auth.js"
 import userPassCntrl from "../controllers/user-pass-controller.js"
 import authorizeUser from "../middleware/authorizeUser.js"
-import uploadFile from "../middleware/attachment-upload.js"
+import upload from "../middleware/multer.js"
 
-
-const uploadUserProfile = uploadFile('file', 'userProfile',false,['image/jpeg', 'image/png'])
 
 router.post("/signup",checkSchema(registerUserValidation),userCnrtl.signup)
 router.post("/verifyOtp",userCnrtl.verifyOtp)
@@ -20,6 +18,6 @@ router.get("/get",auth,userCnrtl.get)
 router.post("/forgotPassword",userPassCntrl.forgotPassword)
 router.post("/verifyOtpAndResetPassword",userPassCntrl.verifyOtpAndResetPassword)
 router.post("/resetPassword",userPassCntrl.resetPassword)
-router.post("/edit",auth,uploadUserProfile,userCnrtl.edit) 
+router.put("/edit",auth,upload.single("profileImage"),userCnrtl.edit) 
 
 export default router

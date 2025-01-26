@@ -18,11 +18,15 @@ const userSchema = new Schema({
         trim: true,
         default: null,
     },
-    profileImage: [{
-        fileName: { type: String },
-        fileType: { type: String },
+    profileImage: {
         filePath: { type: String },
-      }],
+        publicId: { type:String }
+      },
+    jobTitle:{
+        type: String,
+        trim: true,
+        default: null,
+    },
     otp: String,
     otpExpiry: Date,
     subscription: {

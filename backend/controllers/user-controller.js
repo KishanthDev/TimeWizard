@@ -4,6 +4,7 @@ import { validationResult } from "express-validator"
 import TempUser from "../models/tempUser-model.js"
 import sendEmail from "../utils/emailUtils.js"
 import { comparePassword, hashPassword } from "../utils/hashUtils.js"
+import cloudinary from "../config/cloudinary.js"
 
 const userCntrl = {}
 
@@ -195,27 +196,48 @@ userCntrl.verifyUser = async (req, res) => {
   userCntrl.edit = async (req, res) => {
     try {
       const userId = req.currentUser.id; 
-      const { username, email, contact, jobTitle } = req.body;
+      const {name, username, contact, jobTitle } = req.body;
+  
+      const currentUser = await User.findById(userId);
+  
+      if (!currentUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const existingUser = await User.findOne({username})
+      if(existingUser){
+        return res.status(400).json({error:"Username already exists try pick other name"})
+      }
+  
+      let profileImage = currentUser.profileImage || null;
   
       if (req.file) {
-        const userProfile = {
-          fileName: req.file.originalname,
-          fileType: req.file.mimetype,
-          filePath: req.file.path,
-        };
-  
-        const updateFields = { username, email, contact, jobTitle, profileImage: userProfile };
-  
-        const updatedUser = await User.findByIdAndUpdate(userId, updateFields, { new: true });
-  
-        if (!updatedUser) {
-          return res.status(404).json({ message: "User not found" });
+        if (profileImage && profileImage.publicId) {
+          await cloudinary.uploader.destroy(profileImage.publicId);
         }
   
-        res.status(200).json({ message: "Profile updated successfully", user: updatedUser });
-      } else {
-        res.status(400).json({ message: "No file uploaded" });
+        const result = await cloudinary.uploader.upload(req.file.path, {
+          folder: "user_profiles",
+          resource_type: "auto",
+        });
+  
+        profileImage = {
+          filePath: result.secure_url, 
+          publicId: result.public_id,  
+        };
       }
+  
+      const updateFields = {
+        name,
+        username,
+        contact,
+        jobTitle,
+        ...(profileImage && { profileImage }),
+      };
+  
+      const updatedUser = await User.findByIdAndUpdate(userId, updateFields, { new: true });
+  
+      res.status(200).json({ message: "Profile updated successfully", user: updatedUser });
     } catch (error) {
       console.error("Error updating profile:", error);
       res.status(500).json({ message: "Error updating profile", error: error.message });
