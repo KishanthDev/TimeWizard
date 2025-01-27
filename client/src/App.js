@@ -1,4 +1,4 @@
-import {Link,Routes,Route, useNavigate} from "react-router-dom"
+import {Routes,Route, useNavigate} from "react-router-dom"
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import Calendar from "./pages/Calendar";
@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout, profile } from "./slices/userSlice";
 import { useEffect } from "react";
 import Profile from "./pages/Profile";
+import Navbar from "./components/NavBar";
 
 function App() {
   const dispatch = useDispatch()
@@ -27,15 +28,7 @@ function App() {
 
   return (
     <div>
-      {isLoggedIn && (
-        <ul>
-          <Link to="/dashboard">Dashboard</Link>
-          <Link to="/reports">Reports</Link>
-          <Link to="/calendar">Calendar</Link>
-          <Link to="/profile">Profile</Link>
-          <button onClick={handleLogout}>logout</button>
-        </ul>
-      )}
+      {isLoggedIn && <Navbar handleLogout={handleLogout} />}
 
       <Routes>
         {!isLoggedIn ? (

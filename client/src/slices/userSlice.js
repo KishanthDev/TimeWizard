@@ -17,9 +17,9 @@ export const profile = createAsyncThunk("/api/profile",async()=>{
     return response.data
 })
 
-export const updateProfile = createAsyncThunk("/api/updateProfile", async (form, {dispatch, rejectWithValue }) => {
+export const updateProfile = createAsyncThunk("/api/updateProfile", async (formData, {dispatch, rejectWithValue }) => {
     try {
-      const response = await axios.put("/api/users/edit", form, {
+      const response = await axios.put("/api/users/edit", formData, {
         headers: { Authorization: localStorage.getItem("token") },
       });
       dispatch(profile())
