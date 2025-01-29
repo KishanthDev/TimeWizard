@@ -8,6 +8,7 @@ import { logout, profile } from "./slices/userSlice";
 import { useEffect } from "react";
 import Profile from "./pages/Profile";
 import Navbar from "./components/NavBar";
+import ForgotPassword from "./pages/ForgotPassword";
 
 function App() {
   const dispatch = useDispatch()
@@ -32,7 +33,10 @@ function App() {
 
       <Routes>
         {!isLoggedIn ? (
+          <>
           <Route path="/" element={<Home />} />
+          <Route path="/forgot-password" element={<ForgotPassword/>}/>
+          </>
         ) : (
           <>
           <Route path="/profile" element={<Profile/>}/>

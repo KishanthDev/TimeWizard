@@ -3,11 +3,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { login } from "../slices/userSlice";
 import validator from "validator";
+import { ToastContainer,toast } from "react-toastify";
 
 export default function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { isLoading, error } = useSelector((state) => state.user);
+  const { isLoading } = useSelector((state) => state.user);
 
   const [form, setForm] = useState({
     usernameorEmail: "",
@@ -34,6 +35,10 @@ export default function Login() {
     setForm((prev) => ({ ...prev, [id]: value }));
   };
 
+  const handleForgotPasswordClick = () => {
+    navigate("/forgot-password");
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     runClientSideValidation();
@@ -43,10 +48,10 @@ export default function Login() {
       setClientSideErrors({}); 
 
       try {
-        await dispatch(login({ credentials: form })).unwrap();
+        await dispatch(login({ credentials: form })).unwrap()
         navigate("/dashboard");
       } catch (err) {
-        console.log(err);
+        toast.error("Invalid username or password", { position: "top-right" });
       }
     }
   };
@@ -55,14 +60,7 @@ export default function Login() {
     <div>
       {/* Login Form Section */}
       <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">Login to Your Account</h2>
-
-      {/* Error Display */}
-      {error && (
-        <div className="text-red-600 text-center mb-4 bg-red-100 border-l-4 border-red-500 p-3 rounded-lg">
-          <span>{error}</span>
-        </div>
-      )}
-
+      <ToastContainer/>
       {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -92,6 +90,15 @@ export default function Login() {
             <span className="text-red-500 text-sm">{clientSideErrors.password}</span>
           )}
         </div>
+
+        <p className="text-right">
+          <span
+          onClick={handleForgotPasswordClick}
+          className="text-blue-500 text-sm  text-right inline-block cursor-pointer hover:underline"
+          >
+          Forgot Password?
+          </span>
+        </p>
 
         <div className="text-center">
           <button
