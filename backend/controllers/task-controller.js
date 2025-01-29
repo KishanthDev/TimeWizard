@@ -186,4 +186,16 @@ taskController.completeTask = async (req, res) => {
   }
 };
 
+taskController.get = async (req,res) => {
+  try {
+    const tasks = await Task.find({assignedTo:req.currentUser.id})
+    if(!tasks){
+      return res.status(400).json({error:"No tasks assigned to you"})
+    }
+    return res.status(400).json(tasks)
+  } catch (error) {
+    return res.status(500).json({message:"Error occured while geting the tasks",error:error.message})
+  }
+}
+
 export default taskController;

@@ -9,6 +9,7 @@ router.post("/create/:userId",auth,authorizeUser(["admin"]),taskController.creat
 router.post("/clockIn/:taskId",taskController.clockIn)
 router.post("/clockOut/:taskId",taskController.clockOut)
 router.get("/totalTime/:taskId",taskController.getTotalTimeSpent)
+router.get("/get",auth,taskController.get)
 router.put("/completeTask/:taskId",taskController.completeTask)
 
 export default router

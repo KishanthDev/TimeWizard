@@ -107,9 +107,6 @@ userCntrl.login = async(req,res)=>{
       if(!hashedpassword){
         return res.status(404).json({error:"Invalid password"})
       }
-      if(!user.isVerified){
-        return res.status(403).json({error:"Contact the admin"})
-      }
       const token = jwt.sign({id:user._id,role:user.role},process.env.SECRET_KEY,{expiresIn:"7d"})
       res.status(201).json({token,user})
     } catch (err) {
@@ -204,9 +201,9 @@ userCntrl.verifyUser = async (req, res) => {
         return res.status(404).json({ message: "User not found" });
       }
 
-      const existingUser = await User.findOne({username})
-      if(existingUser){
-        return res.status(400).json({error:"Username already exists try pick other name"})
+      const existingUser = await User.findOne({ username });
+      if (existingUser && existingUser.id !== userId) {
+        return res.status(400).json({ error: "Username already exists, try picking another name" });
       }
   
       let profileImage = currentUser.profileImage || null;
