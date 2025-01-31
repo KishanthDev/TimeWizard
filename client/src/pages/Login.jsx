@@ -18,7 +18,6 @@ export default function Login() {
   const [clientSideErrors, setClientSideErrors] = useState({});
   const errors = {};
 
-  
   const runClientSideValidation = () => {
     if (!form.usernameorEmail) {
       errors.usernameorEmail = "Enter a username or email";
@@ -48,8 +47,7 @@ export default function Login() {
       setClientSideErrors({}); 
 
       try {
-        await dispatch(login({ credentials: form })).unwrap()
-        navigate("/dashboard");
+        await dispatch(login({ credentials: form,navigate })).unwrap()
       } catch (err) {
         toast.error("Invalid username or password", { position: "top-right" });
       }

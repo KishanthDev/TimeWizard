@@ -14,7 +14,7 @@ const ForgotPassword = () => {
   const [timeLeft, setTimeLeft] = useState(600);
   const [otpExpired, setOtpExpired] = useState(false);
   const dispatch = useDispatch();
-  const { isLoading } = useSelector((state) => state.user);
+  const { isLoading } = useSelector((state) => state.forgotPassword);
 
 
   useEffect(() => {
