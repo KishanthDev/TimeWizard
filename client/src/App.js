@@ -1,6 +1,6 @@
 import {Routes,Route, useNavigate} from "react-router-dom"
 import Home from "./pages/Home";
-import Dashboard from "./pages/Dashboard";
+import EmployeeDashboard from "./pages/employee/EmployeeDashboard";
 import Calendar from "./pages/Calendar";
 import Reports from "./pages/Reports";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,6 +9,9 @@ import { useEffect } from "react";
 import Profile from "./pages/Profile";
 import Navbar from "./components/NavBar";
 import ForgotPassword from "./pages/ForgotPassword";
+import ProtectedRoute from "./components/ProtectedRoute";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import ProjectPage from "./pages/admin/ProjectPage";
 
 function App() {
   const dispatch = useDispatch()
@@ -40,7 +43,9 @@ function App() {
         ) : (
           <>
           <Route path="/profile" element={<Profile/>}/>
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/admin" element={<ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>} />
+          <Route path="/project" element={<ProtectedRoute role="admin"><ProjectPage/></ProtectedRoute>}/>
+          <Route path="/employee" element={<ProtectedRoute role="employee"><EmployeeDashboard /></ProtectedRoute>} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/calendar" element={<Calendar />} />
           </>

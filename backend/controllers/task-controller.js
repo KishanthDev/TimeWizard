@@ -198,4 +198,20 @@ taskController.get = async (req,res) => {
   }
 }
 
+
+taskController.getEmployeeTasksForProject = async (req, res) => {
+  try {
+    const { projectId, employeeId } = req.params;
+
+    const tasks = await Task.find({ projectId, assignedTo: employeeId })
+      .populate("projectId", "name description")  // Populate project details
+      .populate("assignedTo", "name email"); // Populate user details
+
+    res.status(200).json(tasks);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching tasks", error: error.message });
+  }
+};
+
+
 export default taskController;

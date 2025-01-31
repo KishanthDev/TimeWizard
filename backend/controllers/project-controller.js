@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import Project from "../models/project-model.js";
 const projectCntrl = {};
+import cloudinary from '../config/cloudinary.js';
 
 projectCntrl.createProject = async (req, res) => {
   try {
@@ -25,7 +26,7 @@ projectCntrl.createProject = async (req, res) => {
 
     const { name, description, teams, budget } = req.body;
     
-    const teamIds = JSON.parse(teams).map(team => new mongoose.Types.ObjectId(team));
+    const teamIds = teams.map(team =>team);
 
     const project = new Project({
       name,
@@ -35,7 +36,6 @@ projectCntrl.createProject = async (req, res) => {
       attachments: projectDocuments,
     });
 
-    io.emit("projectCreated", { projectId: project._id, teams });
 
     await project.save();
 
@@ -48,10 +48,10 @@ projectCntrl.createProject = async (req, res) => {
 
 projectCntrl.get = async (req,res) => {
   try {
-    const project = await Project.find({})
+    const project = await Project.find({}).populate("teams","name email profileImage")
     return res.status(200).json({project})
   } catch (err) {
-    return res.status(500).json({message:"Error while getting alll project",error:err.message})
+    return res.status(500).json({message:"Error while getting all project",error:err.message})
   }
 }
 
