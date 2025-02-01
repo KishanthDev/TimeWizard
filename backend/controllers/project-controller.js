@@ -55,4 +55,18 @@ projectCntrl.get = async (req,res) => {
   }
 }
 
+projectCntrl.remove = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const project = await Project.findByIdAndDelete(id);
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+    res.status(200).json({ message: "Project deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error", error: error.message });
+  }
+};
+
+
 export default projectCntrl;

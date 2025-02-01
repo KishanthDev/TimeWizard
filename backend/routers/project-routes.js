@@ -7,6 +7,7 @@ import upload from "../middleware/multer.js"
 const router = express.Router()
 
 router.post("/create",auth,authorizeUser(["admin"]),upload.array("attachments"),projectCntrl.createProject)
+router.delete("/:id/remove",auth,authorizeUser(["admin"]),projectCntrl.remove)
 router.get("/get",auth,authorizeUser(["admin"]),projectCntrl.get)
 
 export default router

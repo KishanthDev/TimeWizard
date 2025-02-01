@@ -148,8 +148,8 @@ userCntrl.get = async (req, res) => {
 
     const totalUsers = await User.countDocuments(searchQuery);
 
-    if (users.length === 0) {
-      return res.status(404).json({ message: "No users found." });
+    if (!users || users.length === 0) {
+      return res.status(200).json({ users: [], message: "No users found." });
     }
 
     res.status(200).json({

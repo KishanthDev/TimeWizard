@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { assignTask,fetchTasks } from "../../slices/taskSlice";
+import { assignTask, fetchTasks } from "../../slices/taskSlice";
 import { toast } from "react-toastify";
 
 const EmployeeTasks = ({ tasks, employee, projectId, onClose }) => {
@@ -46,37 +46,37 @@ const EmployeeTasks = ({ tasks, employee, projectId, onClose }) => {
               <li key={task._id} className="text-sm border-b pb-2">
                 <strong>{task.name}</strong> - Due: {new Date(task.dueDate).toLocaleDateString()}
                 <div className="text-xs text-gray-500">{task.description || "No description"}</div>
-                <div className="text-xs text-gray-500">Estimated Time: {task.estimatedTime} hours</div>
+                <div className="text-xs text-gray-500">Status: {task.status}</div>
               </li>
             ))}
           </ul>
         ) : (
           <div className="mt-4">
             <p className="text-gray-500">No tasks assigned. Assign a task below:</p>
-            <input 
-              type="text" 
-              placeholder="Task Name" 
-              className="w-full p-2 border mt-2 rounded" 
+            <input
+              type="text"
+              placeholder="Task Name"
+              className="w-full p-2 border mt-2 rounded"
               value={newTask.name}
               onChange={(e) => setNewTask({ ...newTask, name: e.target.value })}
             />
-            <input 
-              type="text" 
-              placeholder="Description" 
-              className="w-full p-2 border mt-2 rounded" 
+            <input
+              type="text"
+              placeholder="Description"
+              className="w-full p-2 border mt-2 rounded"
               value={newTask.description}
               onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
             />
-            <input 
-              type="date" 
-              className="w-full p-2 border mt-2 rounded" 
+            <input
+              type="date"
+              className="w-full p-2 border mt-2 rounded"
               value={newTask.dueDate}
               onChange={(e) => setNewTask({ ...newTask, dueDate: e.target.value })}
             />
-            <input 
-              type="number" 
-              placeholder="Estimated Time (hrs)" 
-              className="w-full p-2 border mt-2 rounded" 
+            <input
+              type="number"
+              placeholder="Estimated Time (hrs)"
+              className="w-full p-2 border mt-2 rounded"
               value={newTask.estimatedTime}
               onChange={(e) => setNewTask({ ...newTask, estimatedTime: e.target.value })}
             />

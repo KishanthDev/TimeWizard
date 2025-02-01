@@ -22,7 +22,7 @@ const ProjectList = () => {
   const handleDelete = async (projectId) => {
     if (window.confirm("Are you sure you want to delete this project?")) {
       try {
-        await dispatch(deleteProject(projectId)).unwrap();
+        await dispatch(deleteProject({id:projectId})).unwrap();
         toast.success("Project deleted successfully");
       } catch (error) {
         toast.error(error);
