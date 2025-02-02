@@ -48,6 +48,7 @@ const userSlice = createSlice({
                 state.isLoggedIn = true;
                 state.isLoading = false;
             })
+            .addCase(login.rejected,(state)=>{state.isLoading = false})
             .addCase(profile.fulfilled, (state, action) => {
                 state.user = action.payload;
                 state.isLoggedIn = true;

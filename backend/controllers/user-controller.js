@@ -1,8 +1,8 @@
 import User from "../models/user-model.js"
 import jwt from "jsonwebtoken"
+import fs from "fs"
+import csv from "csv-parser"
 import { validationResult } from "express-validator"
-import TempUser from "../models/tempUser-model.js"
-import sendEmail from "../utils/emailUtils.js"
 import { comparePassword, hashPassword } from "../utils/hashUtils.js"
 import cloudinary from "../config/cloudinary.js"
 
@@ -13,84 +13,29 @@ userCntrl.signup = async (req, res) => {
     if(!errors.isEmpty()){
         return res.status(400).json({errors:errors.array()})
     }
-  const { name, username, email, password,role } = req.body;
+  const { name, username, email, password } = req.body;
 
   try {
     const existingUser = await User.findOne({ $or: [{ email }, { username }] });
     if (existingUser) {
-      return res.status(400).json({ error: "Email or username is already taken." });
+      return res.status(200).json({ error: "Email or username is already taken." });
     }
-
-    const existingTempUser = await TempUser.findOne({ $or: [{ email }, { username }] });
-    if (existingTempUser) {
-      return res.status(400).json({ error: "Email or username is already being used in an ongoing signup process." });
-    }
-
-    const otp = Math.floor(100000 + Math.random() * 900000); 
-    const otpExpiry = Date.now() + 10 * 60 * 1000; 
 
     const hashedPassword = await hashPassword(password);
 
-    const tempUser = new TempUser({
+    const user = new User({
       name,
       username,
       email,
       password: hashedPassword,
-      role,
-      otp,
-      otpExpiry,
     });
-    const countDocuments = await User.countDocuments()
-    if (countDocuments === 0) {
-        tempUser.role = "admin";
-    } else if (tempUser.role === "admin") {
-        return res.status(401).json({ error: "Admin role can only be assigned to the first user." });
-    }  
-    await tempUser.save();
-
-    await sendEmail({
-      to: email,
-      subject: "Email Verification OTP",
-      text: `Your OTP is ${otp}. It is valid for 10 minutes.`,
-    })
-
-    res.status(200).json({ message: "OTP sent to email. Verify to complete signup." });
+    await user.save()
+    res.status(200).json({ message: "User created successfully",user });
   } catch (err) {
     res.status(500).json({ error: "Signup failed. Try again.", message: err.message });
   }
 };
 
-userCntrl.verifyOtp = async (req, res) => {
-  const { email, otp } = req.body;
-
-  try {
-    const tempUser = await TempUser.findOne({ email });
-
-    if (!tempUser) {
-      return res.status(404).json({ error: "No signup process found for this email." });
-    }
-
-    if (tempUser.otp !== parseInt(otp) || Date.now() > tempUser.otpExpiry) {
-      return res.status(400).json({ error: "Invalid or expired OTP." });
-    }
-
-    const user = new User({
-      name: tempUser.name,
-      username: tempUser.username,
-      email: tempUser.email,
-      password: tempUser.password,
-      role:tempUser.role
-    });
-
-    await user.save();
-
-    await TempUser.deleteOne({ email });
-
-    res.status(201).json({ message: "Account created successfully. You can now log in." });
-  } catch (err) {
-    res.status(500).json({ error: "Verification failed. Try again.", message: err.message });
-  }
-};
 
 userCntrl.login = async(req,res)=>{
     const errors = validationResult(req)
@@ -132,6 +77,7 @@ userCntrl.get = async (req, res) => {
     const regex = new RegExp(search, "i");
 
     const searchQuery = {
+      role:"employee",
       $or: [
         { name: regex },
         { username: regex },
@@ -171,24 +117,6 @@ userCntrl.profile = async (req,res) => {
         res.status(500).json({error:err})
     }
 }
-
-userCntrl.verifyUser = async (req, res) => {
-    try {
-      const { userId } = req.params;
-      const user = await User.findById(userId);
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-      user.isVerified = !user.isVerified;
-  
-      await user.save();
-  
-      res.status(200).json({ message: 'User verified successfully', user });
-    } catch (error) {
-      console.error('Error verifying user:', error);
-      res.status(500).json({ message: 'Error verifying user', error: error.message });
-    }
-  };
 
   userCntrl.edit = async (req, res) => {
     try {
@@ -241,5 +169,64 @@ userCntrl.verifyUser = async (req, res) => {
     }
   };
   
+  userCntrl.importUsersFromCSV = async (req, res) => {
+    if (!req.file) {
+      return res.status(400).json({ message: "Please upload a CSV file" });
+    }
+  
+    const users = [];
+    const errors = [];
+    const filePath = req.file.path;
+  
+    fs.createReadStream(filePath)
+      .pipe(csv())
+      .on("data", (row) => {
+        users.push(row);
+      })
+      .on("end", async () => {
+        try {
+          const newUsers = [];
+  
+          for (const user of users) {
+            const { name, password, username, email } = user;
+  
+            if (!name || !password || !username || !email) {
+              errors.push({ user, error: "Missing required fields" });
+              continue;
+            }
+  
+            // Check for existing user
+            const existingUser = await User.findOne({
+              $or: [{ username }, { email }],
+            });
+  
+            if (existingUser) {
+              errors.push({ user, error: "Username or Email already exists" });
+              continue;
+            }
+  
+            // Create new user
+            newUsers.push({ name, password, username, email });
+          }
+  
+          // Insert valid users into DB
+          if (newUsers.length > 0) {
+            await User.insertMany(newUsers);
+          }
+  
+          // Delete temp file
+          fs.unlinkSync(filePath);
+  
+          res.status(201).json({
+            message: `${newUsers.length} users uploaded successfully`,
+            uploadedUsers: newUsers,
+            errors,
+          });
+        } catch (error) {
+          console.error(error);
+          res.status(500).json({ message: "Internal Server Error", error });
+        }
+      });
+  };
   
 export default userCntrl

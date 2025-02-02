@@ -18,10 +18,45 @@ export const fetchEmployees = createAsyncThunk(
     }
 );
 
+export const importUsers = createAsyncThunk(
+    "users/importUsers",
+    async (file, { rejectWithValue }) => {
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+  
+        const response = await axios.post("/api/users/import-csv", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+  
+        return response.data;
+      } catch (error) {
+        return rejectWithValue(error.response?.data || "Something went wrong");
+      }
+    }
+  );
+
+export const addEmployee = createAsyncThunk(
+    "employees/addEmployee",
+    async (employeeData, { rejectWithValue }) => {
+        try {
+            const response = await axios.post("/api/users/create", employeeData, {
+                headers: {
+                    Authorization: localStorage.getItem("token"),
+                },
+            });
+            return response.data.user
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
 const employeeSlice = createSlice({
     name: "employees",
     initialState: {
         employees: [],
+        users:[],
         totalUsers: 0,
         currentPage: 1,
         totalPages: 1,
@@ -47,6 +82,11 @@ const employeeSlice = createSlice({
         setLimit: (state, action) => {
             state.limit = action.payload;
         },
+        clearUsers: (state) => {
+            state.users = [];
+            state.error = [];
+            state.success = false;
+          },
     },
     extraReducers: (builder) => {
         builder
@@ -63,10 +103,36 @@ const employeeSlice = createSlice({
             .addCase(fetchEmployees.rejected, (state, action) => {
                 state.status = "failed";
                 state.error = action.payload?.message || "Something went wrong";
-            });
+            })
+            .addCase(addEmployee.pending, (state) => {
+                state.status = "loading";
+            })
+            .addCase(addEmployee.fulfilled, (state, action) => {
+                state.status = "succeeded";
+                state.employees.push(action.payload); 
+            })
+            .addCase(addEmployee.rejected, (state, action) => {
+                state.status = "idle";
+                state.error = action.payload?.message || "Failed to add employee";
+            })
+            .addCase(importUsers.pending, (state) => {
+                state.loading = true;
+                state.success = false;
+              })
+              .addCase(importUsers.fulfilled, (state, action) => {
+                state.loading = false;
+                state.success = true;
+                state.users = action.payload.uploadedUsers;
+                state.error = action.payload.errors;
+              })
+              .addCase(importUsers.rejected, (state, action) => {
+                state.loading = false;
+                state.success = false;
+                state.error = [action.payload];
+              });
     },
 });
 
 
-export const { setSearch, toggleSortOrder, setLimit } = employeeSlice.actions;
+export const { setSearch,clearUsers, toggleSortOrder, setLimit } = employeeSlice.actions;
 export default employeeSlice.reducer;

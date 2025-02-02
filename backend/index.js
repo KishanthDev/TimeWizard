@@ -11,6 +11,7 @@ import taskRoutes from "./routers/task-routes.js"
 import activityRoutes from "./routers/activity-routes.js"
 import chatRoutes from "./routers/chat-routers.js"
 import chatHandler from "./controllers/chat-handler.js"
+import loggerMiddleware from "./middleware/loggerMiddleware.js"
 
 const app = express()
 const server = http.createServer(app);
@@ -24,10 +25,12 @@ const io = new Server(server, {
 const PORT = process.env.PORT
 configdb()
 app.use(express.json());
+app.use(loggerMiddleware)
 
 global.io = io
 
 app.use(cors())
+
 
 io.on('connection', (socket) => {
     console.log('A user connected:', socket.id);

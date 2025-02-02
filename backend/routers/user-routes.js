@@ -5,15 +5,14 @@ import { loginUserValidation, registerUserValidation } from "../validators/user-
 import { checkSchema } from "express-validator"
 import auth from "../middleware/auth.js"
 import userPassCntrl from "../controllers/user-pass-controller.js"
-import authorizeUser from "../middleware/authorizeUser.js"
 import upload from "../middleware/multer.js"
+import uploadCSV from "../middleware/multerCSV.js"
 
 
-router.post("/signup",checkSchema(registerUserValidation),userCnrtl.signup)
-router.post("/verifyOtp",userCnrtl.verifyOtp)
+router.post("/create",checkSchema(registerUserValidation),userCnrtl.signup)
 router.post("/login",checkSchema(loginUserValidation),userCnrtl.login)
+router.post("/import-csv",uploadCSV.single("file"),userCnrtl.importUsersFromCSV)
 router.get("/profile",auth,userCnrtl.profile)
-router.put("/approve/:userId",auth,authorizeUser(["admin"]),userCnrtl.verifyUser)
 router.get("/get",auth,userCnrtl.get)
 router.post("/forgotPassword",userPassCntrl.forgotPassword)
 router.post("/verifyOtpAndResetPassword",userPassCntrl.verifyOtpAndResetPassword)

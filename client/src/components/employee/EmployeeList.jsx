@@ -4,7 +4,7 @@ import { setLimit, toggleSortOrder, fetchEmployees } from "../../slices/employee
 import SearchBar from "./SearchBar";
 import Pagination from "./Pagination";
 import EmployeeRow from "./EmployeeRow";
-import ViewEmployeeModal from "./ViewEmployeeModal";
+import ViewEmployeeModal from "./View-EmployeeDetails";
 
 const EmployeeList = () => {
     const dispatch = useDispatch();
