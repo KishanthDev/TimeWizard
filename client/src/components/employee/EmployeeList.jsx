@@ -1,60 +1,89 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setLimit, toggleSortOrder, fetchEmployees } from "../../slices/employeeSlice";
+import { setLimit, fetchEmployees,deleteEmployee } from "../../slices/employeeSlice";
 import SearchBar from "./SearchBar";
 import Pagination from "./Pagination";
 import EmployeeRow from "./EmployeeRow";
 import ViewEmployeeModal from "./View-EmployeeDetails";
+import { toast } from "react-toastify";
 
-const EmployeeList = () => {
+const EmployeeList = ({handleEdit}) => {
     const dispatch = useDispatch();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedEmployee, setSelectedEmployee] = useState(null);
-    const { employees, status, currentPage, totalPages, sortBy, order, limit } = useSelector(
+    const [localSortBy, setLocalSortBy] = useState("name");
+    const [localOrder, setLocalOrder] = useState("asc");
+    
+    const { employees, status, currentPage, totalPages, limit } = useSelector(
         (state) => state.employees
     );
 
+    // Fetch employees only on mount, pagination, or limit change
     useEffect(() => {
-        dispatch(fetchEmployees({ sortBy, order, page: currentPage, limit }));
-    }, [dispatch, sortBy, order, currentPage, limit]);
+        dispatch(fetchEmployees({ page: currentPage, limit }));
+    }, [dispatch, currentPage, limit]);
 
-    const handleSort = (column) => { dispatch(toggleSortOrder(column)) };
-    const handleLimitChange = (e) => { dispatch(setLimit(Number(e.target.value))); };
+    // Local sorting to prevent flicker
+    const sortedEmployees = useMemo(() => {
+        return [...employees].sort((a, b) => {
+            if (localOrder === "asc") return a[localSortBy]?.localeCompare(b[localSortBy]);
+            return b[localSortBy]?.localeCompare(a[localSortBy]);
+        });
+    }, [employees, localSortBy, localOrder]);
+
+    const handleSort = (column) => {
+        if (localSortBy === column) {
+            setLocalOrder((prev) => (prev === "asc" ? "desc" : "asc"));
+        } else {
+            setLocalSortBy(column);
+            setLocalOrder("asc");
+        }
+    };
+
+    const handleLimitChange = (e) => {
+        dispatch(setLimit(Number(e.target.value)));
+    };
 
     const handleCloseModal = () => {
         setIsModalOpen(false);
         setSelectedEmployee(null);
     };
 
-    const renderArrow = (column) => {
-        return (
-            <span className={`ml-1 ${sortBy === column ? "font-bold text-black" : "text-gray-500"}`}>
-                {order === "asc" ? "↑" : "↓"}
-            </span>
-        );
-    };
+    const renderArrow = (column) => (
+        <span className={`ml-1 ${localSortBy === column ? "font-bold text-black" : "text-gray-500"}`}>
+            {localOrder === "asc" ? "↑" : "↓"}
+        </span>
+    );
 
     const handleView = (id) => {
-        const employee = employees.find(emp => emp._id === id);
+        const employee = employees.find((emp) => emp._id === id);
         setSelectedEmployee(employee);
         setIsModalOpen(true);
     };
 
-    const handleEdit = (id) => {
-        console.log(`Editing employee ${id}`);
+    const handleDelete = async (id) => {
+        if (window.confirm("Are you sure you want to delete this employee?")) {
+            try {
+                await dispatch(deleteEmployee(id)).unwrap();
+                toast.success("Employee deleted successfully!");
+            } catch (error) {
+                toast.error("Error deleting employee. Please try again.");
+            }
+        }
     };
+    
+    if (status === "loading") {
+        return <p className="text-center mt-4">Loading...</p>;
+    }
 
-    const handleDelete = (id) => {
-        console.log(`Deleting employee ${id}`);
-    };
-
-    if (status === "loading") return <p className="text-center mt-4">Loading...</p>;
-    if (status === "failed") return <p className="text-red-500 text-center mt-4">Failed to load employees.</p>;
+    if (status === "failed") {
+        return <p className="text-red-500 text-center mt-4">Failed to load employees.</p>;
+    }
 
     return (
         <div className="p-6">
-
             <h1 className="text-2xl font-bold mb-4">Employee Management</h1>
+            
             <div className="flex justify-between items-center mb-4">
                 <div>
                     <label className="mr-2">Show</label>
@@ -86,15 +115,15 @@ const EmployeeList = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {employees.length > 0 ? (
-                            employees.map((emp, i) => (
+                        {sortedEmployees.length > 0 ? (
+                            sortedEmployees.map((emp, i) => (
                                 <EmployeeRow
                                     key={emp._id}
                                     emp={emp}
                                     index={i}
                                     onView={handleView}
-                                    onEdit={handleEdit}
                                     onDelete={handleDelete}
+                                    onEdit={handleEdit}
                                 />
                             ))
                         ) : (

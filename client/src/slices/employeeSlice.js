@@ -7,7 +7,8 @@ export const fetchEmployees = createAsyncThunk(
     async ({ search, sortBy, order, page, limit }, { rejectWithValue }) => {
         try {
             const response = await axios.get("/api/users/get", {
-                params: { search, sortBy, order, page, limit }, headers: {
+                params: search || sortBy || order || page || limit ? { search, sortBy, order, page, limit } : undefined,
+                headers: {
                     Authorization: localStorage.getItem("token")
                 },
             });
@@ -18,23 +19,37 @@ export const fetchEmployees = createAsyncThunk(
     }
 );
 
+export const deleteEmployee = createAsyncThunk("employees/deleteEmployee", async (id, { rejectWithValue }) => {
+    try {
+        await axios.delete(`/api/users/${id}/remove`, {
+            headers: {
+                Authorization: localStorage.getItem("token")
+            }
+        })
+
+        return id; // Return deleted employee's ID
+    } catch (error) {
+        return rejectWithValue(error.message);
+    }
+});
+
 export const importUsers = createAsyncThunk(
     "users/importUsers",
     async (file, { rejectWithValue }) => {
-      try {
-        const formData = new FormData();
-        formData.append("file", file);
-  
-        const response = await axios.post("/api/users/import-csv", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-  
-        return response.data;
-      } catch (error) {
-        return rejectWithValue(error.response?.data || "Something went wrong");
-      }
+        try {
+            const formData = new FormData();
+            formData.append("file", file);
+
+            const response = await axios.post("/api/users/import-csv", formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+            });
+
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || "Something went wrong");
+        }
     }
-  );
+);
 
 export const addEmployee = createAsyncThunk(
     "employees/addEmployee",
@@ -52,20 +67,32 @@ export const addEmployee = createAsyncThunk(
     }
 );
 
+export const editEmployee = createAsyncThunk(
+    "employees/editEmployee",
+    async ({ id, updatedData }, { rejectWithValue }) => {
+      try {
+        const response = await axios.put(`/api/users/${id}/edit`, updatedData);
+        return response.data; // Returns the updated employee
+      } catch (error) {
+        return rejectWithValue(error.response.data);
+      }
+    }
+  );
+
 const employeeSlice = createSlice({
     name: "employees",
     initialState: {
         employees: [],
-        users:[],
+        importedUsers: [],
         totalUsers: 0,
         currentPage: 1,
         totalPages: 1,
         status: "idle",
         error: null,
         search: "",
-        sortBy: "name", // Default sort by name
+        sortBy: "name",
         order: "asc",
-        limit: 5 // Default sort order
+        limit: 5
     },
     reducers: {
         setSearch: (state, action) => {
@@ -73,20 +100,19 @@ const employeeSlice = createSlice({
         },
         toggleSortOrder: (state, action) => {
             if (state.sortBy === action.payload) {
-                state.order = state.order === "asc" ? "desc" : "asc"; // Toggle order
+                state.order = state.order === "asc" ? "desc" : "asc";// Toggle order
             } else {
                 state.sortBy = action.payload;
-                state.order = "asc"; // Reset to ascending when changing column
+                state.order = "asc";
             }
         },
         setLimit: (state, action) => {
             state.limit = action.payload;
         },
         clearUsers: (state) => {
-            state.users = [];
+            state.importedUsers = [];
             state.error = [];
-            state.success = false;
-          },
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -109,30 +135,61 @@ const employeeSlice = createSlice({
             })
             .addCase(addEmployee.fulfilled, (state, action) => {
                 state.status = "succeeded";
-                state.employees.push(action.payload); 
+                state.employees.push(action.payload);
             })
             .addCase(addEmployee.rejected, (state, action) => {
                 state.status = "idle";
                 state.error = action.payload?.message || "Failed to add employee";
             })
             .addCase(importUsers.pending, (state) => {
-                state.loading = true;
-                state.success = false;
-              })
-              .addCase(importUsers.fulfilled, (state, action) => {
-                state.loading = false;
-                state.success = true;
-                state.users = action.payload.uploadedUsers;
-                state.error = action.payload.errors;
-              })
-              .addCase(importUsers.rejected, (state, action) => {
-                state.loading = false;
-                state.success = false;
+                state.status = "loading";
+            })
+            .addCase(importUsers.fulfilled, (state, action) => {
+                state.status = "succeeded";
+
+                // Ensure uploadedUsers is an array
+                state.importedUsers = Array.isArray(action.payload.uploadedUsers) ? action.payload.uploadedUsers : [];
+
+                // Extract only the error messages from errors array
+                if (Array.isArray(action.payload.errors)) {
+                    state.error = action.payload.errors.map(err =>
+                        `User: ${err.user.name} (${err.user.email}) - ${err.error}`
+                    );
+                } else {
+                    state.error = [];
+                }
+            })
+            .addCase(importUsers.rejected, (state, action) => {
+                state.status = "idle";
                 state.error = [action.payload];
+            })
+            .addCase(deleteEmployee.pending, (state) => {
+                state.status = "loading";
+            })
+            .addCase(deleteEmployee.fulfilled, (state, action) => {
+                state.status = "succeeded";
+                state.employees = state.employees.filter((emp) => emp._id !== action.payload);
+            })
+            .addCase(deleteEmployee.rejected, (state, action) => {
+                state.status = "failed";
+                state.error = action.payload;
+            })
+            .addCase(editEmployee.pending, (state) => {
+                state.status = "loading";
+              })
+              .addCase(editEmployee.fulfilled, (state, action) => {
+                state.status = "succeeded";
+                state.employees = state.employees.map((emp) =>
+                  emp._id === action.payload._id ? action.payload : emp
+                );
+              })
+              .addCase(editEmployee.rejected, (state, action) => {
+                state.status = "failed";
+                state.error = action.payload;
               });
     },
 });
 
 
-export const { setSearch,clearUsers, toggleSortOrder, setLimit } = employeeSlice.actions;
+export const { setSearch, clearUsers, toggleSortOrder, setLimit } = employeeSlice.actions;
 export default employeeSlice.reducer;

@@ -5,10 +5,13 @@ import { Upload, FilePlus, Download, ChevronDown } from "lucide-react";
 import EmployeeModal from "../../components/employee/import-export/EmployeeModal";
 import ImportCSVModal from "../../components/employee/import-export/ImportCSVModal"; // Import CSV Modal
 import { addEmployee } from "../../slices/employeeSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { exportToCSV,exportToExcel } from "../../components/employee/import-export/Export";
+
 
 const EmployeesPage = () => {
     const [openDropdown, setOpenDropdown] = useState(null);
+    const {employees} = useSelector(state=>state.employees)
     const dispatch = useDispatch();
     const [isModalOpen, setIsModalOpen] = useState(false); // Add Employee Modal
     const [isCSVModalOpen, setIsCSVModalOpen] = useState(false); // CSV Import Modal
@@ -92,7 +95,7 @@ const EmployeesPage = () => {
                     {/* Export Dropdown */}
                     <div className="relative">
                         <button
-                            onClick={() => handleDropdownToggle("export")}
+                            onClick={() => {handleDropdownToggle("export")}}
                             className="flex items-center gap-2 px-4 py-2 border rounded-lg bg-white shadow hover:bg-gray-100"
                         >
                             <Download className="w-4 h-4" />
@@ -104,14 +107,14 @@ const EmployeesPage = () => {
                             <div className="absolute left-0 mt-2 w-37 bg-white border shadow-lg rounded-lg z-10">
                                 <button
                                     className="w-full flex items-center px-2 py-2 hover:bg-gray-100"
-                                    onClick={() => console.log("Export as CSV")}
+                                    onClick={() =>exportToCSV(employees)}
                                 >
                                     <Download className="w-4 h-4 mr-0.5" />
                                     <span className="text-sm">Export as CSV</span>
                                 </button>
                                 <button
                                     className="w-full flex items-center px-2 py-2 hover:bg-gray-100"
-                                    onClick={() => console.log("Export as Excel")}
+                                    onClick={() => exportToExcel(employees)}
                                 >
                                     <Download className="w-4 h-4 mr-0.5" />
                                     <span className="text-sm">Export as Excel</span>
