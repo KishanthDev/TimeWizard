@@ -47,7 +47,7 @@ export default function Login() {
       setClientSideErrors({}); 
 
       try {
-        await dispatch(login({ credentials: form,navigate })).unwrap()
+        await dispatch(login({ credentials: form, navigate })).unwrap()
       } catch (err) {
         toast.error("Invalid username or password", { position: "top-right" });
       }

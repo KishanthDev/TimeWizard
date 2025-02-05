@@ -120,17 +120,17 @@ userCntrl.profile = async (req,res) => {
 
   userCntrl.edit = async (req, res) => {
     try {
-      const userId = req.currentUser.id; 
+      const id = req.params.id
       const {name, username, contact, jobTitle } = req.body;
   
-      const currentUser = await User.findById(userId);
+      const currentUser = await User.findById(id);
   
       if (!currentUser) {
         return res.status(404).json({ message: "User not found" });
       }
 
       const existingUser = await User.findOne({ username });
-      if (existingUser && existingUser.id !== userId) {
+      if (existingUser && existingUser.id !== id) {
         return res.status(400).json({ error: "Username already exists, try picking another name" });
       }
   
@@ -160,7 +160,7 @@ userCntrl.profile = async (req,res) => {
         ...(profileImage && { profileImage }),
       };
   
-      const updatedUser = await User.findByIdAndUpdate(userId, updateFields, { new: true });
+      const updatedUser = await User.findByIdAndUpdate(id, updateFields, { new: true });
   
       res.status(200).json({ message: "Profile updated successfully", user: updatedUser });
     } catch (error) {

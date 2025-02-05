@@ -41,7 +41,7 @@ export default function Profile() {
       setImage(URL.createObjectURL(file)); // Update the preview
       const formData = new FormData();
       formData.append("profileImage", file);
-      await dispatch(updateProfile(formData));
+      await dispatch(updateProfile({id:user._id,formData}));
       setIsSuccess(true); 
     }
   };
@@ -82,7 +82,7 @@ export default function Profile() {
       formData.append("contact", form.contact);
       formData.append("jobTitle", form.jobTitle);
 
-      await dispatch(updateProfile(formData));
+      await dispatch(updateProfile({id:user._id,formData}));
       error?setIsSuccess(false):setIsSuccess(true)
       setIsEditing(false);
     }

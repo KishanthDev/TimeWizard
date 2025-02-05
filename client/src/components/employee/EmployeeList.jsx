@@ -1,13 +1,13 @@
 import { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setLimit, fetchEmployees,deleteEmployee } from "../../slices/employeeSlice";
+import { setLimit, fetchEmployees,deleteEmployee, setEditEmp } from "../../slices/employeeSlice";
 import SearchBar from "./SearchBar";
 import Pagination from "./Pagination";
 import EmployeeRow from "./EmployeeRow";
 import ViewEmployeeModal from "./View-EmployeeDetails";
 import { toast } from "react-toastify";
 
-const EmployeeList = ({handleEdit}) => {
+const EmployeeList = () => {
     const dispatch = useDispatch();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedEmployee, setSelectedEmployee] = useState(null);
@@ -54,6 +54,8 @@ const EmployeeList = ({handleEdit}) => {
             {localOrder === "asc" ? "↑" : "↓"}
         </span>
     );
+
+    const handleEdit = (id) =>{dispatch(setEditEmp(id))}
 
     const handleView = (id) => {
         const employee = employees.find((emp) => emp._id === id);

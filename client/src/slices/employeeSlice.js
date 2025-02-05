@@ -67,17 +67,10 @@ export const addEmployee = createAsyncThunk(
     }
 );
 
-export const editEmployee = createAsyncThunk(
-    "employees/editEmployee",
-    async ({ id, updatedData }, { rejectWithValue }) => {
-      try {
-        const response = await axios.put(`/api/users/${id}/edit`, updatedData);
-        return response.data; // Returns the updated employee
-      } catch (error) {
-        return rejectWithValue(error.response.data);
-      }
-    }
-  );
+export const editEmployee = createAsyncThunk("/api/updateProfile", async ({id,formData}) => {
+    const response = await axios.put(`/api/users/${id}/edit`, formData)
+    return response.data.user;
+});
 
 const employeeSlice = createSlice({
     name: "employees",
@@ -92,7 +85,8 @@ const employeeSlice = createSlice({
         search: "",
         sortBy: "name",
         order: "asc",
-        limit: 5
+        limit: 5,
+        selectedEmployee:null,
     },
     reducers: {
         setSearch: (state, action) => {
@@ -113,7 +107,11 @@ const employeeSlice = createSlice({
             state.importedUsers = [];
             state.error = [];
         },
+        setEditEmp:(state,action)=>{
+            state.selectedEmployee = action.payload
+        },
     },
+    
     extraReducers: (builder) => {
         builder
             .addCase(fetchEmployees.pending, (state) => {
@@ -176,20 +174,19 @@ const employeeSlice = createSlice({
             })
             .addCase(editEmployee.pending, (state) => {
                 state.status = "loading";
-              })
-              .addCase(editEmployee.fulfilled, (state, action) => {
+            })
+            .addCase(editEmployee.fulfilled, (state, action) => {
                 state.status = "succeeded";
-                state.employees = state.employees.map((emp) =>
-                  emp._id === action.payload._id ? action.payload : emp
+                state.employees = state.employees.map((employee) =>
+                    employee._id === action.payload._id ? action.payload : employee
                 );
-              })
-              .addCase(editEmployee.rejected, (state, action) => {
+            })
+            .addCase(editEmployee.rejected, (state, action) => {
                 state.status = "failed";
-                state.error = action.payload;
-              });
+                state.error = action.payload || "Failed to update employee";
+            });
     },
 });
 
-
-export const { setSearch, clearUsers, toggleSortOrder, setLimit } = employeeSlice.actions;
+export const { setSearch, clearUsers, toggleSortOrder, setLimit ,setEditEmp } = employeeSlice.actions;
 export default employeeSlice.reducer;

@@ -9,7 +9,7 @@ const EmployeeRow = ({ emp, index, onView, onEdit, onDelete }) => {
             <td className="border p-2">{emp.email}</td>
             <td className="border p-2">
                 <ActionButtons
-                    empId={emp._id}
+                    emp={emp}
                     onView={onView}
                     onEdit={onEdit}
                     onDelete={onDelete}

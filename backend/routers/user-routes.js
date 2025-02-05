@@ -18,7 +18,7 @@ router.get("/get",auth,userCnrtl.get)
 router.post("/forgotPassword",userPassCntrl.forgotPassword)
 router.post("/verifyOtpAndResetPassword",userPassCntrl.verifyOtpAndResetPassword)
 router.post("/resetPassword",userPassCntrl.resetPassword)
-router.put("/edit",auth,upload.single("profileImage"),userCnrtl.edit) 
+router.put("/:id/edit",upload.single("profileImage"),userCnrtl.edit) 
 router.delete("/:id/remove",auth,authorizeUser(["admin"]),userCnrtl.remove)
 
 export default router

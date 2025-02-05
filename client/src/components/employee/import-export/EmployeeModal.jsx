@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import validator from "validator";
 import "./EmployeeModal.css"; // Include your CSS file for animations
+import { useSelector } from "react-redux";
 
 const form = {
     name: "",
@@ -11,8 +12,21 @@ const form = {
 
 const EmployeeModal = ({ isOpen, onClose, onSubmit }) => {
     const [formData, setFormData] = useState(form);
-
+    const { selectedEmployee } = useSelector(state => state.employees)
     const [errors, setErrors] = useState({}); // To store error messages
+
+    useEffect(() => {
+        if (selectedEmployee) {
+            setFormData({
+                name: selectedEmployee.name,
+                username: selectedEmployee.username,
+                email: selectedEmployee.email,
+                password: ""
+            })
+        }else{
+            setFormData(form)
+        }
+    }, [selectedEmployee])
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -41,7 +55,7 @@ const EmployeeModal = ({ isOpen, onClose, onSubmit }) => {
         }
 
         // Validate password strength
-        if (formData.password && !validator.isStrongPassword(formData.password, { minLength: 8, minSymbols: 1 })) {
+        if (formData.password && !validator.isStrongPassword(formData.password)) {
             formErrors.password = "Password must be at least 8 characters long and contain at least one symbol.";
         }
 
@@ -50,14 +64,14 @@ const EmployeeModal = ({ isOpen, onClose, onSubmit }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
+
         const formErrors = validate(); // Validate client-side
-    
+
         if (Object.keys(formErrors).length === 0) {
             try {
                 await onSubmit(formData);
-                onClose();
                 setFormData(form)
+                onClose();
             } catch (serverError) {
                 if (serverError.errors) {
                     const serverFormErrors = {};
@@ -79,13 +93,13 @@ const EmployeeModal = ({ isOpen, onClose, onSubmit }) => {
             setErrors(formErrors); // Display client-side validation errors
         }
     };
-    
+
 
     return (
-        isOpen && (
+        (isOpen || selectedEmployee) && (
             <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center animate-fadeIn">
                 <div className="bg-white p-6 rounded-lg shadow-lg w-96 transform transition-all animate-slideIn">
-                    <h2 className="text-xl font-semibold mb-4">Add Employee</h2>
+                    <h2 className="text-xl font-semibold mb-4">{selectedEmployee?"Edit":"Add"} Employee</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="mb-4">
                             <label className="block text-sm">Name</label>
@@ -143,7 +157,7 @@ const EmployeeModal = ({ isOpen, onClose, onSubmit }) => {
                                 type="submit"
                                 className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-all"
                             >
-                                Add Employee
+                                {selectedEmployee?"Update":"Add"} Employee
                             </button>
                         </div>
                     </form>

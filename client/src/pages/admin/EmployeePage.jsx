@@ -4,14 +4,14 @@ import EmployeeList from "../../components/employee/EmployeeList";
 import { Upload, FilePlus, Download, ChevronDown } from "lucide-react";
 import EmployeeModal from "../../components/employee/import-export/EmployeeModal";
 import ImportCSVModal from "../../components/employee/import-export/ImportCSVModal"; // Import CSV Modal
-import { addEmployee } from "../../slices/employeeSlice";
+import { addEmployee, editEmployee, setEditEmp } from "../../slices/employeeSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { exportToCSV,exportToExcel } from "../../components/employee/import-export/Export";
+import { exportToCSV, exportToExcel } from "../../components/employee/import-export/Export";
 
 
 const EmployeesPage = () => {
     const [openDropdown, setOpenDropdown] = useState(null);
-    const {employees} = useSelector(state=>state.employees)
+    const { employees, selectedEmployee } = useSelector(state => state.employees)
     const dispatch = useDispatch();
     const [isModalOpen, setIsModalOpen] = useState(false); // Add Employee Modal
     const [isCSVModalOpen, setIsCSVModalOpen] = useState(false); // CSV Import Modal
@@ -26,6 +26,7 @@ const EmployeesPage = () => {
 
     const handleCloseModal = () => {
         setIsModalOpen(false);
+        dispatch(setEditEmp(null))
     };
 
     const handleUploadCSVClick = () => {
@@ -38,8 +39,13 @@ const EmployeesPage = () => {
 
     const handleSubmitEmployee = async (employeeData) => {
         try {
-            await dispatch(addEmployee(employeeData)).unwrap();
-            toast.success("Employee created successfully");
+            if (selectedEmployee) {
+                await dispatch(editEmployee({ id: selectedEmployee._id,formData:employeeData })).unwrap()
+                toast.success("Employee updated successfully");
+            } else {
+                await dispatch(addEmployee(employeeData)).unwrap();
+                toast.success("Employee created successfully");
+            }
         } catch (error) {
             console.log(error.errors.map(ele => ele.msg));
             throw error;
@@ -95,7 +101,7 @@ const EmployeesPage = () => {
                     {/* Export Dropdown */}
                     <div className="relative">
                         <button
-                            onClick={() => {handleDropdownToggle("export")}}
+                            onClick={() => { handleDropdownToggle("export") }}
                             className="flex items-center gap-2 px-4 py-2 border rounded-lg bg-white shadow hover:bg-gray-100"
                         >
                             <Download className="w-4 h-4" />
@@ -107,7 +113,7 @@ const EmployeesPage = () => {
                             <div className="absolute left-0 mt-2 w-37 bg-white border shadow-lg rounded-lg z-10">
                                 <button
                                     className="w-full flex items-center px-2 py-2 hover:bg-gray-100"
-                                    onClick={() =>exportToCSV(employees)}
+                                    onClick={() => exportToCSV(employees)}
                                 >
                                     <Download className="w-4 h-4 mr-0.5" />
                                     <span className="text-sm">Export as CSV</span>

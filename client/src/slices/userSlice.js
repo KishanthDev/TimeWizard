@@ -22,17 +22,14 @@ export const fetchEmployees = createAsyncThunk("/api/employees",async () => {
     return response.data.users
 })
 
-export const updateProfile = createAsyncThunk("/api/updateProfile", async (formData, { dispatch }) => {
-    const response = await axios.put("/api/users/edit", formData, {
-        headers: { Authorization: localStorage.getItem("token") },
-    });
-    dispatch(profile())
-    return response.data;
+export const updateProfile = createAsyncThunk("/api/updateProfile", async ({id,formData}) => {
+    const response = await axios.put(`/api/users/${id}/edit`, formData)
+    return response.data.user;
 });
 
 const userSlice = createSlice({
     name: "user",
-    initialState: { user: null, isLoggedIn: false, isLoading: false ,employees:[]},
+    initialState: { user: null, isLoggedIn: false, isLoading: false},
     reducers: {
         logout(state) {
             state.user = null;
@@ -57,9 +54,11 @@ const userSlice = createSlice({
                 state.isLoading = true;
             })
             .addCase(updateProfile.fulfilled, (state, action) => {
-                state.user = action.payload;
-                state.isLoggedIn = true;
-                state.isLoading = false;
+                    const updatedUser = action.payload;
+                    if (state.user && state.user._id === updatedUser._id) {
+                        state.user = updatedUser;
+                    }
+                    state.isLoading = false;
             })
             .addCase(fetchEmployees.fulfilled,(state,action)=>{
                 state.employees = action.payload
