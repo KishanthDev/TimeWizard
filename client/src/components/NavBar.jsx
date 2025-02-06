@@ -30,6 +30,9 @@ export default function Navbar({ handleLogout }) {
           <li>
             <Link to="/reports" className={`px-3 py-1 ${getLinkClass("/reports")}`}>Reports</Link>
           </li>
+          <li>
+            <Link to="/employee-task" className={`px-3 py-1 ${getLinkClass("/employee-task")}`}>Task</Link>
+          </li>
         </>
       )}
       <li>

@@ -182,7 +182,7 @@ const employeeSlice = createSlice({
                 );
             })
             .addCase(editEmployee.rejected, (state, action) => {
-                state.status = "failed";
+                state.status = "idle";
                 state.error = action.payload || "Failed to update employee";
             });
     },

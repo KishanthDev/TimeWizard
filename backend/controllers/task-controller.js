@@ -1,4 +1,5 @@
 import Task from "../models/task-model.js";
+import User from "../models/user-model.js";
 import Project from "../models/project-model.js";
 import ActivityLog from "../models/activity-model.js";
 
@@ -114,38 +115,6 @@ taskController.clockOut = async (req, res) => {
   }
 };
 
-taskController.getTotalTimeSpent = async (req, res) => {
-  try {
-    const { taskId } = req.params;
-
-    const task = await Task.findById(taskId);
-    if (!task) {
-      return res.status(404).json({ message: "Task not found" });
-    }
-
-    const totalTime = task.timeSpent.reduce((total, entry) => {
-      if (entry.clockIn && entry.clockOut) {
-        const duration = new Date(entry.clockOut) - new Date(entry.clockIn);
-        return total + duration;
-      }
-      return total;
-    }, 0);
-
-    const hours = Math.floor(totalTime / (1000 * 60 * 60));
-    const minutes = Math.floor((totalTime % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((totalTime % (1000 * 60)) / 1000);
-
-    res.status(200).json({
-      message: "Total time spent calculated",
-      totalTime: `${hours}h ${minutes}m ${seconds}s`,
-    });
-  } catch (error) {
-    console.error("Error calculating total time spent:", error);
-    res.status(500).json({ message: "Error calculating total time spent", error: error.message });
-  }
-};
-
-
 taskController.completeTask = async (req, res) => {
   try {
     const { taskId } = req.params;
@@ -192,7 +161,7 @@ taskController.get = async (req,res) => {
     if(!tasks){
       return res.status(400).json({error:"No tasks assigned to you"})
     }
-    return res.status(400).json(tasks)
+    return res.status(200).json(tasks)
   } catch (error) {
     return res.status(500).json({message:"Error occured while geting the tasks",error:error.message})
   }
@@ -213,5 +182,12 @@ taskController.getEmployeeTasksForProject = async (req, res) => {
   }
 };
 
-
+taskController.getAll = async (req,res) => {
+  try {
+    const tasks = await Task.find()
+    return res.status(200).json(tasks)
+  } catch (error) {
+    return res.status(500).json({message:"Error occured while geting all the tasks",error:error.message})
+  }
+}
 export default taskController;

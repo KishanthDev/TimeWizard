@@ -13,6 +13,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ProjectPage from "./pages/admin/ProjectPage";
 import EmployeesPage from "./pages/admin/EmployeePage";
+import TaskDetailsPage from "./pages/employee/TaskDetailsPage";
 
 function App() {
   const dispatch = useDispatch()
@@ -48,6 +49,7 @@ function App() {
           <Route path="/emp" element={<ProtectedRoute role="admin"><EmployeesPage/></ProtectedRoute>}/>
           <Route path="/project" element={<ProtectedRoute role="admin"><ProjectPage/></ProtectedRoute>}/>
           <Route path="/employee" element={<ProtectedRoute role="employee"><EmployeeDashboard /></ProtectedRoute>} />
+          <Route path="/employee-task" element={<ProtectedRoute role="employee"><TaskDetailsPage /></ProtectedRoute>} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/calendar" element={<Calendar />} />
           </>

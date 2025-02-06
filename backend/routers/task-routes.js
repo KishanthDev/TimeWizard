@@ -8,9 +8,9 @@ const router = express.Router()
 router.post("/create/:userId",auth,authorizeUser(["admin"]),taskController.createTask)
 router.post("/clockIn/:taskId",taskController.clockIn)
 router.post("/clockOut/:taskId",taskController.clockOut)
-router.get("/totalTime/:taskId",taskController.getTotalTimeSpent)
 router.get("/get",auth,taskController.get)
 router.put("/completeTask/:taskId",taskController.completeTask)
 router.get("/:projectId/:employeeId",taskController.getEmployeeTasksForProject)
+router.get("/getAll",taskController.getAll)
 
 export default router
