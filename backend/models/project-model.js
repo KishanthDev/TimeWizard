@@ -9,7 +9,7 @@ const ProjectSchema = new Schema({
     filePath: {type:String}
   }],
   budget:Number,
-  deadlLine:Date,
+  deadLine:Date,
   status: { type: String, enum: ['pending', 'in-progress', 'completed'], default: 'pending' },
 },{timestamps:true});
 

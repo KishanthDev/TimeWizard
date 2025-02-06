@@ -1,24 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createProject } from "../../slices/projectSlice";
-import { fetchEmployees } from "../../slices/userSlice";
+import { fetchEmployees } from "../../slices/employeeSlice";
 import { toast, ToastContainer } from "react-toastify";
 import Select from "react-select";
 
 const ProjectForm = ({ handleClose }) => {
-  const { employees } = useSelector((state) => state.user);
+  const { employees } = useSelector((state) => state.employees);
   const dispatch = useDispatch();
 
+  const [search, setSearch] = useState("")
+
   useEffect(() => {
-    dispatch(fetchEmployees());
-  }, [dispatch]);
+    dispatch(fetchEmployees({ search }));
+  }, [dispatch, search]);
 
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     teams: [],
     budget: "",
-    deadline: "",
+    deadLine: "",
     attachments: [],
   });
 
@@ -36,7 +38,7 @@ const ProjectForm = ({ handleClose }) => {
     if (files.length === 0) return;
     setFormData((prev) => ({
       ...prev,
-      attachments:files,
+      attachments: files,
     }));
   };
 
@@ -76,22 +78,22 @@ const ProjectForm = ({ handleClose }) => {
       newErrors.teams = "Please assign at least 3 team members!";
     }
 
-    // Deadline validation (ensure it's not a past date)
-    if (!formData.deadline) {
-      newErrors.deadline = "Deadline is required!";
-    } else if (new Date(formData.deadline) < new Date()) {
-      newErrors.deadline = "Deadline cannot be a past date!";
+    // DeadLine validation (ensure it's not a past date)
+    if (!formData.deadLine) {
+      newErrors.deadLine = "DeadLine is required!";
+    } else if (new Date(formData.deadLine) < new Date()) {
+      newErrors.deadLine = "DeadLine cannot be a past date!";
     }
 
-    if (!formData.attachments || formData.attachments.length === 0) {
-      newErrors.attachments = "Upload at least one project document!";
+    if (!formData.attachments || formData.attachments.length < 2) {
+      newErrors.attachments = "Upload at least 2 project document!";
     } else {
       const allowedTypes = ["image/jpeg", "image/png", "application/pdf", "application/x-pdf"];
-      
+
       const invalidFiles = formData.attachments.filter((file) => {
         return !file.type || !allowedTypes.includes(file.type);
       });
-    
+
       if (invalidFiles.length > 0) {
         newErrors.attachments = "Only JPG, PNG, and PDF files are allowed!";
       }
@@ -112,21 +114,21 @@ const ProjectForm = ({ handleClose }) => {
     projectData.append("name", formData.name);
     projectData.append("description", formData.description);
     projectData.append("budget", formData.budget);
-    projectData.append("deadline", formData.deadline);
+    projectData.append("deadLine", formData.deadLine);
     formData.teams.forEach((team) => projectData.append("teams", team));
-    formData.attachments.forEach((file) => projectData.append("attachments[]", file));
+    formData.attachments.forEach((file) => projectData.append("attachments", file));
 
     try {
       await dispatch(createProject(projectData)).unwrap();
       console.log(projectData);
-      
+
       toast.success("Project created successfully");
       setFormData({
         name: "",
         description: "",
         teams: [],
         budget: "",
-        deadline: "",
+        deadLine: "",
         attachments: [],
       });
       setErrors({});
@@ -143,7 +145,7 @@ const ProjectForm = ({ handleClose }) => {
 
   return (
     <div className="bg-white p-4 shadow-md rounded-lg">
-      <ToastContainer/>
+      <ToastContainer />
       <h2 className="text-lg font-semibold mb-2 flex justify-between items-center">
         Create Project
         <button
@@ -205,42 +207,37 @@ const ProjectForm = ({ handleClose }) => {
             {errors.budget && <p className="text-red-500 text-sm">{errors.budget}</p>}
           </div>
 
-           {/* Deadline */}
-           <div className="flex flex-col">
-            <label className="text-sm font-medium text-gray-700" htmlFor="deadline">
-              Deadline:
+          {/* DeadLine */}
+          <div className="flex flex-col">
+            <label className="text-sm font-medium text-gray-700" htmlFor="deadLine">
+              DeadLine:
             </label>
             <input
               type="date"
-              name="deadline"
-              id="deadline"
-              value={formData.deadline}
+              name="deadLine"
+              id="deadLine"
+              value={formData.deadLine}
               onChange={handleChange}
-              className={`border p-2 rounded ${errors.deadline ? "border-red-500" : ""}`}
+              className={`border p-2 rounded ${errors.deadLine ? "border-red-500" : ""}`}
             />
-            {errors.deadline && <p className="text-red-500 text-sm">{errors.deadline}</p>}
+            {errors.deadLine && <p className="text-red-500 text-sm">{errors.deadLine}</p>}
           </div>
 
           {/* Teams */}
           <div className="flex flex-col col-span-2">
-            <label className="text-sm font-medium text-gray-700" htmlFor="teams">
-              Assign Teams:
-            </label>
+            <label className="text-sm font-medium text-gray-700">Assign Teams:</label>
             <Select
-              isMulti // Enables multiple selections
+              isMulti
               name="teams"
-              id="teams"
               options={employeeOptions}
-              value={employeeOptions.filter((option) =>
-                formData.teams.includes(option.value)
-              )}
+              onInputChange={(inputValue) => setSearch(inputValue)} // Triggers backend search
               onChange={handleTeamChange}
-              className={`mb-2 ${errors.teams ? "border-red-500" : ""}`}
+              placeholder="Search and select employees..."
             />
             {errors.teams && <p className="text-red-500 text-sm">{errors.teams}</p>}
           </div>
 
-         
+
 
           {/* File Upload */}
           <div className="flex flex-col col-span-2">

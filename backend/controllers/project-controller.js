@@ -24,7 +24,7 @@ projectCntrl.createProject = async (req, res) => {
       });
     }
 
-    const { name, description, teams, budget } = req.body;
+    const { name, description, teams, budget,deadLine } = req.body;
     
     const teamIds = teams.map(team =>team);
 
@@ -34,8 +34,8 @@ projectCntrl.createProject = async (req, res) => {
       teams: teamIds,  
       budget,
       attachments: projectDocuments,
+      deadLine
     });
-
 
     await project.save();
 

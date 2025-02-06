@@ -67,7 +67,7 @@ export const addEmployee = createAsyncThunk(
     }
 );
 
-export const editEmployee = createAsyncThunk("/api/updateProfile", async ({id,formData}) => {
+export const editEmployee = createAsyncThunk("/api/updateProfile", async ({ id, formData }) => {
     const response = await axios.put(`/api/users/${id}/edit`, formData)
     return response.data.user;
 });
@@ -86,7 +86,7 @@ const employeeSlice = createSlice({
         sortBy: "name",
         order: "asc",
         limit: 5,
-        selectedEmployee:null,
+        selectedEmployee: null,
     },
     reducers: {
         setSearch: (state, action) => {
@@ -107,11 +107,11 @@ const employeeSlice = createSlice({
             state.importedUsers = [];
             state.error = [];
         },
-        setEditEmp:(state,action)=>{
+        setEditEmp: (state, action) => {
             state.selectedEmployee = action.payload
         },
     },
-    
+
     extraReducers: (builder) => {
         builder
             .addCase(fetchEmployees.pending, (state) => {
@@ -188,5 +188,5 @@ const employeeSlice = createSlice({
     },
 });
 
-export const { setSearch, clearUsers, toggleSortOrder, setLimit ,setEditEmp } = employeeSlice.actions;
+export const { setSearch, clearUsers, toggleSortOrder, setLimit, setEditEmp } = employeeSlice.actions;
 export default employeeSlice.reducer;
