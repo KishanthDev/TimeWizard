@@ -15,6 +15,18 @@ export const fetchProjects = createAsyncThunk(
   }
 );
 
+export const fetchMyProject = createAsyncThunk(
+  "projects/fetchMyProjects",
+  async (projectId, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`/api/projects/${projectId}/get`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || "Failed to fetch projects");
+    }
+  }
+);
+
 // Create Project
 export const createProject = createAsyncThunk(
   "projects/createProject",
@@ -48,7 +60,8 @@ const projectSlice = createSlice({
   name: "projects",
   initialState: {
     projects: [],
-    status: "idle",
+    myProject:null,
+    isLoading: false,
     error: null,
   },
   reducers: {},
@@ -56,14 +69,14 @@ const projectSlice = createSlice({
     builder
       // Fetch Projects
       .addCase(fetchProjects.pending, (state) => {
-        state.status = "loading";
+        state.isLoading = true
       })
       .addCase(fetchProjects.fulfilled, (state, action) => {
-        state.status = "succeeded";
+        state.isLoading = false
         state.projects = action.payload;
       })
       .addCase(fetchProjects.rejected, (state, action) => {
-        state.status = "failed";
+        state.isLoading = false
         state.error = action.payload;
       })
 
@@ -81,7 +94,19 @@ const projectSlice = createSlice({
       })
       .addCase(deleteProject.rejected, (state, action) => {
         state.error = action.payload;
-      });
+      })
+
+      .addCase(fetchMyProject.pending, (state) => {
+        state.isLoading = true
+      })
+      .addCase(fetchMyProject.fulfilled, (state, action) => {
+        state.isLoading = false
+        state.myProject = action.payload;
+      })
+      .addCase(fetchMyProject.rejected, (state, action) => {
+        state.isLoading = false
+        state.error = action.payload;
+      })
   },
 });
 

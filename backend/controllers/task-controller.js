@@ -157,7 +157,7 @@ taskController.completeTask = async (req, res) => {
 
 taskController.get = async (req,res) => {
   try {
-    const tasks = await Task.find({assignedTo:req.currentUser.id})
+    const tasks = await Task.find({assignedTo:req.currentUser.id}).populate("projectId","name")
     if(!tasks){
       return res.status(400).json({error:"No tasks assigned to you"})
     }

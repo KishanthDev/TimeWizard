@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import TaskClockInOut from '../../components/employee-task/TaskClockInOut';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchMyTasks } from '../../slices/taskSlice';
-import "./TaskDetailsPage.css"
 const TaskDetailsPage = () => {
   const { myTasks, loading, error } = useSelector((state) => state.tasks);
   const dispatch = useDispatch();
@@ -25,8 +24,8 @@ const TaskDetailsPage = () => {
       <div className="pending-tasks mb-6">
         <h2 className="text-xl font-semibold mb-2">Pending Tasks</h2>
         {pendingTasks.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {pendingTasks.map((task) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 px-4 md:px-10 lg:px-20">
+          {pendingTasks.map((task) => (
               <TaskClockInOut key={task._id} task={task} />
             ))}
           </div>
@@ -41,8 +40,8 @@ const TaskDetailsPage = () => {
       <div className="ongoing-tasks mb-6">
         <h2 className="text-xl font-semibold mb-2">Ongoing Tasks</h2>
         {ongoingTasks.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {ongoingTasks.map((task) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 px-4 md:px-10 lg:px-20">
+          {ongoingTasks.map((task) => (
               <TaskClockInOut key={task._id} task={task} />
             ))}
           </div>
@@ -57,8 +56,8 @@ const TaskDetailsPage = () => {
       <div className="completed-tasks mb-6">
         <h2 className="text-xl font-semibold mb-2">Completed Tasks</h2>
         {completedTasks.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {completedTasks.map((task) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 px-4 md:px-10 lg:px-20">
+          {completedTasks.map((task) => (
               <TaskClockInOut key={task._id} task={task} />
             ))}
           </div>

@@ -1,7 +1,7 @@
 import { useDispatch } from "react-redux";
-import EmployeeStatusChart from "../../components/AdminDashboard/EmployeeStatusChart.jsx";
 import { fetchAllTasks } from "../../slices/taskSlice.js";
 import { useEffect } from "react";
+import TaskStatusChart from "../../components/AdminDashboard/TaskStatusChart.jsx";
 
 export default function AdminDashboard() {
     const dispatch = useDispatch()
@@ -11,7 +11,7 @@ export default function AdminDashboard() {
     return (
         <>
             <h1>Admin</h1>
-            <EmployeeStatusChart/>
+            <TaskStatusChart/>
         </>
     )
 }

@@ -9,5 +9,6 @@ const router = express.Router()
 router.post("/create",auth,authorizeUser(["admin"]),upload.array("attachments"),projectCntrl.createProject)
 router.delete("/:id/remove",auth,authorizeUser(["admin"]),projectCntrl.remove)
 router.get("/get",auth,authorizeUser(["admin"]),projectCntrl.get)
+router.get("/:id/get",projectCntrl.getById)
 
 export default router

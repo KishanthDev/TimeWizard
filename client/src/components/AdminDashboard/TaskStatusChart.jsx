@@ -3,38 +3,35 @@ import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllTasks } from "../../slices/taskSlice";
 import { FaSyncAlt } from "react-icons/fa";
-import { useNavigate } from "react-router-dom"; // Import for navigation
 
-const EmployeeStatusChart = () => {
+const TaskStatusChart = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate(); // Hook for navigation
-  
+
   useEffect(() => {
     dispatch(fetchAllTasks());
   }, [dispatch]);
 
   const allTasks = useSelector((state) => state.tasks?.allTasks || []);
-  
+
   const [data, setData] = useState([]);
-  
+
   useEffect(() => {
     if (allTasks.length > 0) {
-      const employeeStatus = allTasks.reduce((acc, task) => {
-        const isActive = task.timeSpent.some((entry) => entry.clockIn && !entry.clockOut);
-        
-        if (isActive) {
-          acc.active += 1;
-        } else {
-          acc.inactive += 1;
-        }
-        
-        return acc;
-      }, { active: 0, inactive: 0 });
-      
-      setData([
-        { name: "Active", value: employeeStatus.active },
-        { name: "Inactive", value: employeeStatus.inactive }
-      ]);
+      const taskStatusCount = allTasks.reduce(
+        (acc, task) => {
+          acc[task.status] = (acc[task.status] || 0) + 1;
+          return acc;
+        },
+        { pending: 0, ongoing: 0, completed: 0 }
+      );
+
+      setTimeout(() => {
+        setData([
+          { name: "Pending", value: taskStatusCount.pending },
+          { name: "Ongoing", value: taskStatusCount.ongoing },
+          { name: "Completed", value: taskStatusCount.completed }
+        ]);
+      }, 500);
     }
   }, [allTasks]);
 
@@ -46,18 +43,13 @@ const EmployeeStatusChart = () => {
     return <>Loading...</>;
   }
 
-  const COLORS = ["#00C49F", "#FF4444"];
-
-  // Function to navigate to employee details
-  const handleViewDetails = () => {
-    navigate("/emp"); // Navigate to employee details page
-  };
+  const COLORS = ["#FFA500", "#007BFF", "#28A745"];
 
   return (
     <div className="flex flex-col items-start bg-gray-100 p-4 rounded-xl shadow-lg max-w-xs mx-4">
       <div className="flex justify-between items-center w-full mb-4">
-        <h3 className="text-lg font-semibold">Employee Status</h3>
-        <button 
+        <h3 className="text-lg font-semibold">Task Status</h3>
+        <button
           className="bg-teal-500 text-white p-2 rounded-full hover:bg-teal-600 focus:outline-none"
           onClick={handleRefresh}
         >
@@ -74,23 +66,21 @@ const EmployeeStatusChart = () => {
           fill="#8884d8"
           dataKey="value"
           label
+          isAnimationActive={true} // Ensure animation is active
+          animationBegin={0} // Start animation immediately
+          animationDuration={1000} // Set duration
+          animationEasing="ease-out" // Smoother effect
         >
           {data.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={COLORS[index]} />
           ))}
         </Pie>
+
         <Tooltip />
         <Legend />
       </PieChart>
-
-      <p 
-        onClick={handleViewDetails}
-        className="text-blue-500 hover:underline cursor-pointer mt-3"
-      >
-        View Employee Details
-      </p>
     </div>
   );
 };
 
-export default EmployeeStatusChart;
+export default TaskStatusChart;

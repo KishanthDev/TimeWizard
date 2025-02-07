@@ -1,4 +1,3 @@
-import mongoose from 'mongoose';
 import Project from "../models/project-model.js";
 const projectCntrl = {};
 import cloudinary from '../config/cloudinary.js';
@@ -63,6 +62,19 @@ projectCntrl.remove = async (req, res) => {
       return res.status(404).json({ message: "Project not found" });
     }
     res.status(200).json({ message: "Project deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error", error: error.message });
+  }
+};
+
+projectCntrl.getById = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const project = await Project.findById(id).populate("teams","username")
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+    res.status(200).json(project);
   } catch (error) {
     res.status(500).json({ message: "Internal Server Error", error: error.message });
   }
