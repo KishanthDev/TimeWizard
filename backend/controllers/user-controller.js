@@ -121,7 +121,7 @@ userCntrl.profile = async (req,res) => {
   userCntrl.edit = async (req, res) => {
     try {
       const id = req.params.id
-      const {name, username, contact, jobTitle } = req.body;
+      const {name, username, contact, jobTitle,password } = req.body;
   
       const currentUser = await User.findById(id);
   
@@ -151,12 +151,15 @@ userCntrl.profile = async (req,res) => {
           publicId: result.public_id,  
         };
       }
+
+      const hashedPassword = await hashPassword(password)
   
       const updateFields = {
         name,
         username,
         contact,
         jobTitle,
+        password:hashedPassword,
         ...(profileImage && { profileImage }),
       };
   

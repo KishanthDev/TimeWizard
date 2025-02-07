@@ -70,6 +70,8 @@ const EmployeeModal = ({ isOpen, onClose, onSubmit }) => {
         if (Object.keys(formErrors).length === 0) {
             try {
                 await onSubmit(formData);
+                console.log(formData);
+                
                 setFormData(form)
                 onClose();
             } catch (serverError) {
