@@ -70,21 +70,17 @@ const ChatPopup = ({ projectId, isOpen, onClose }) => {
 
         {/* Messages Container */}
         <div className="h-64 overflow-y-auto border p-2 rounded-md flex flex-col gap-2">
-          {isLoading ? (
+          {isLoading ? 
             <p className="text-gray-500 text-center">Loading messages...</p>
-          ) : (
+           : Array.isArray(messages) && messages.length > 0 ? (
             messages.map((msg, index) => (
               <div
                 key={index}
-                className={`flex ${
-                  msg.userId === user._id ? "justify-end" : "justify-start"
-                }`}
+                className={`flex ${msg.userId === user._id ? "justify-end" : "justify-start"}`}
               >
                 <div
                   className={`p-2 mb-1 rounded-md max-w-xs ${
-                    msg.userId === user._id
-                      ? "bg-blue-500 text-white rounded-br-none"
-                      : "bg-gray-200 text-black rounded-bl-none"
+                    msg.userId === user._id ? "bg-blue-500 text-white rounded-br-none" : "bg-gray-200 text-black rounded-bl-none"
                   }`}
                 >
                   <strong className="block text-sm">
@@ -97,7 +93,10 @@ const ChatPopup = ({ projectId, isOpen, onClose }) => {
                 </div>
               </div>
             ))
+          ) : (
+            <p className="text-gray-500 text-center">No messages yet.</p>
           )}
+          
           {/* Empty div for auto-scroll */}
           <div ref={messagesEndRef} />
         </div>

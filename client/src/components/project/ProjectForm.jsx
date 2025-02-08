@@ -7,6 +7,7 @@ import Select from "react-select";
 
 const ProjectForm = ({ handleClose }) => {
   const { employees } = useSelector((state) => state.employees);
+  const {isLoading} = useSelector((state)=>state.projects)
   const dispatch = useDispatch();
 
   const [search, setSearch] = useState("")
@@ -121,7 +122,6 @@ const ProjectForm = ({ handleClose }) => {
     try {
       await dispatch(createProject(projectData)).unwrap();
       console.log(projectData);
-
       toast.success("Project created successfully");
       setFormData({
         name: "",
@@ -132,7 +132,10 @@ const ProjectForm = ({ handleClose }) => {
         attachments: [],
       });
       setErrors({});
+      handleClose()
     } catch (error) {
+      console.log(error);
+      
       toast.error(error);
     }
   };
@@ -140,7 +143,7 @@ const ProjectForm = ({ handleClose }) => {
   // Prepare options for react-select
   const employeeOptions = employees.map((emp) => ({
     value: emp._id,
-    label: emp.name,
+    label: emp.username,
   }));
 
   return (
@@ -257,8 +260,8 @@ const ProjectForm = ({ handleClose }) => {
         </div>
         {/* Submit Button */}
         <div className="mt-4">
-          <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 w-full sm:w-auto">
-            Create Project
+          <button disabled={isLoading} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 w-full sm:w-auto">
+            {isLoading?"Creating":"Create"} Project
           </button>
         </div>
       </form>

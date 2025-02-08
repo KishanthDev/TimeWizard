@@ -64,7 +64,14 @@ const projectSlice = createSlice({
     isLoading: false,
     error: null,
   },
-  reducers: {},
+  reducers: {
+    setRemProjectId:(state)=>{
+
+    },
+    setEditProjectId:(state)=>{
+
+    }
+  },
   extraReducers: (builder) => {
     builder
       // Fetch Projects
@@ -81,10 +88,13 @@ const projectSlice = createSlice({
       })
 
       // Create Project
+      .addCase(createProject.pending,(state)=>{state.isLoading=true})
       .addCase(createProject.fulfilled, (state, action) => {
+        state.isLoading=false
         state.projects.push(action.payload);
       })
       .addCase(createProject.rejected, (state, action) => {
+        state.isLoading=false
         state.error = action.payload;
       })
 
@@ -110,4 +120,6 @@ const projectSlice = createSlice({
   },
 });
 
+
+export const {setRemProjectId,setEditProjectId} = projectSlice.actions
 export default projectSlice.reducer;
