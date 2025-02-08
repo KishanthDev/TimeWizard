@@ -118,59 +118,68 @@ userCntrl.profile = async (req,res) => {
     }
 }
 
-  userCntrl.edit = async (req, res) => {
-    try {
-      const id = req.params.id
-      const {name, username, contact, jobTitle,password } = req.body;
-  
-      const currentUser = await User.findById(id);
-  
-      if (!currentUser) {
-        return res.status(404).json({ message: "User not found" });
-      }
 
+userCntrl.edit= async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { name, username, contact, jobTitle, password } = req.body;
+
+    const currentUser = await User.findById(id);
+    if (!currentUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Check for unique username if it's being updated
+    if (username && username !== currentUser.username) {
       const existingUser = await User.findOne({ username });
       if (existingUser && existingUser.id !== id) {
         return res.status(400).json({ error: "Username already exists, try picking another name" });
       }
-  
-      let profileImage = currentUser.profileImage || null;
-  
-      if (req.file) {
-        if (profileImage && profileImage.publicId) {
-          await cloudinary.uploader.destroy(profileImage.publicId);
-        }
-  
-        const result = await cloudinary.uploader.upload(req.file.path, {
-          folder: "user_profiles",
-          resource_type: "auto",
-        });
-  
-        profileImage = {
-          filePath: result.secure_url, 
-          publicId: result.public_id,  
-        };
+    }
+
+    let profileImage = currentUser.profileImage || null;
+
+    // Handle profile image update
+    if (req.file) {
+      if (profileImage?.publicId) {
+        await cloudinary.uploader.destroy(profileImage.publicId);
       }
 
-      const hashedPassword = await hashPassword(password)
-  
-      const updateFields = {
-        name,
-        username,
-        contact,
-        jobTitle,
-        password:hashedPassword,
-        ...(profileImage && { profileImage }),
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "user_profiles",
+        resource_type: "auto",
+      });
+
+      profileImage = {
+        filePath: result.secure_url,
+        publicId: result.public_id,
       };
-  
-      const updatedUser = await User.findByIdAndUpdate(id, updateFields, { new: true });
-  
-      res.status(200).json({ message: "Profile updated successfully", user: updatedUser });
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      res.status(500).json({ message: "Error updating profile", error: error.message });
     }
-  };
+
+    // Only hash the password if it's provided
+    let hashedPassword;
+    if (password) {
+      hashedPassword = await hashPassword(password)
+    }
+
+    // Update only the provided fields
+    const updateFields = {};
+    if (name) updateFields.name = name;
+    if (username) updateFields.username = username;
+    if (contact) updateFields.contact = contact;
+    if (jobTitle) updateFields.jobTitle = jobTitle;
+    if (password) updateFields.password = hashedPassword;
+    if (profileImage) updateFields.profileImage = profileImage;
+
+    const updatedUser = await User.findByIdAndUpdate(id, updateFields, { new: true });
+
+    res.status(200).json({ message: "Profile updated successfully", user: updatedUser });
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    res.status(500).json({ message: "Error updating profile", error: error.message });
+  }
+};
+
   
   userCntrl.importUsersFromCSV = async (req, res) => {
     if (!req.file) {

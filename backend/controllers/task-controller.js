@@ -182,12 +182,22 @@ taskController.getEmployeeTasksForProject = async (req, res) => {
   }
 };
 
-taskController.getAll = async (req,res) => {
+taskController.getAll = async (req, res) => {
   try {
-    const tasks = await Task.find()
-    return res.status(200).json(tasks)
+    let tasks;
+    if (req.currentUser.role === "admin") {
+      tasks = await Task.find();
+    } else {
+      tasks = await Task.find({ assignedTo: req.currentUser.id });
+    }
+
+    return res.status(200).json(tasks);
   } catch (error) {
-    return res.status(500).json({message:"Error occured while geting all the tasks",error:error.message})
+    return res.status(500).json({
+      message: "Error occurred while getting tasks",
+      error: error.message,
+    });
   }
-}
+};
+
 export default taskController;

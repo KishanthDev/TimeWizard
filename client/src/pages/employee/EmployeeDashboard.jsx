@@ -1,13 +1,34 @@
-import { useSelector } from "react-redux"
+import { useDispatch } from "react-redux"
+import { fetchAllTasks } from "../../slices/taskSlice"
+import TaskStatusChart from "../../components/AdminDashboard/TaskStatusChart"
+import { useEffect, useState } from "react"
+import EmployeeDashboardTask from "../../components/employee-dashboard/EmployeeDashboardTask"
+import ChatPopup from "../../components/employee-task/ChatPopUp"
 
 export default function EmployeeDashboard(){
-    const {tasks} = useSelector(state=>state.tasks)
-    
+    const [isChatOpen,setIsChatOpen] = useState(false)
+    const [projectId,setProjectId] = useState(null)
+    const dispatch = useDispatch()
+    useEffect(()=>{
+        dispatch(fetchAllTasks())
+    },[dispatch])
 
-    return(
+    const handleChatOpen = ()=>{
+        setIsChatOpen(true)
+    }
+    const handleChatClose = ()=>{
+        setIsChatOpen(false)
+    }
+
+    const handleProjectId = (id)=>{
+        setProjectId(id)
+    }
+    return (
         <>
-            <h1>Dashboard</h1>
-            <h4>Task assigned - {tasks?.length||0}</h4>   
+            <h1>Employee</h1>
+            <TaskStatusChart/>
+            <EmployeeDashboardTask projectId={handleProjectId} isOpen={handleChatOpen}/>
+            {(isChatOpen&&projectId)&&<ChatPopup projectId={projectId} isOpen={isChatOpen} onClose={handleChatClose}/>}
         </>
     )
 }

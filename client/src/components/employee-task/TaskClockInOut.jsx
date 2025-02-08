@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { clockIn, clockOut, completeTask } from '../../slices/taskSlice';
 import { View } from 'lucide-react';
 import ProjectDetailsModal from './ProjectDetailsModal';
+import { format } from 'date-fns';
 
 const TaskClockInOut = ({ task }) => {
   const [isOpen,setIsOpen] = useState(false)
@@ -63,14 +64,14 @@ const TaskClockInOut = ({ task }) => {
     Task: <span className="text-green-600">{task.name}</span>
   </h2>
 </div>
-        <p className="text-sm text-gray-500">Due Date: {new Date(task.dueDate).toLocaleDateString()}</p>
+        <p className="text-sm text-gray-500">Due Date: {format(new Date(task.dueDate), "dd MMM yyyy")}</p>
         <p className="text-sm text-gray-500">Estimated Time: {task.estimatedTime} hours</p>
         <p className="text-sm text-gray-500">Total Hours Worked: {calculateTotalTime()} hours</p>
       </div>
 
       {/* Clock In / Clock Out and Complete Task Button */}
       {task.status!=="completed" && (
-        <div className="flex justify-between gap-60 items-center mb-4">
+        <div className="flex justify-between gap-40 items-center mb-4">
           <div>
             {!isClockedIn ? (
               <button
@@ -104,7 +105,7 @@ const TaskClockInOut = ({ task }) => {
 
       {/* Expandable Time Entries */}
       <div className="time-summary">
-        <div className="flex justify-between gap-60 items-center">
+        <div className="flex justify-between gap-40 items-center">
           <p className="text-sm font-semibold">Time Entries</p>
           <button
             onClick={toggleExpand}

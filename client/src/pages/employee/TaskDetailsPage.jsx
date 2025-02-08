@@ -22,7 +22,7 @@ const TaskDetailsPage = () => {
     <div className="task-details-page">
       {/* Pending Tasks */}
       <div className="pending-tasks mb-6">
-        <h2 className="text-xl font-semibold mb-2">Pending Tasks</h2>
+        <h2 className="text-xl font-semibold p-5 mb-2">Pending Tasks</h2>
         {pendingTasks.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 px-4 md:px-10 lg:px-20">
           {pendingTasks.map((task) => (
@@ -38,7 +38,7 @@ const TaskDetailsPage = () => {
 
       {/* Ongoing Tasks */}
       <div className="ongoing-tasks mb-6">
-        <h2 className="text-xl font-semibold mb-2">Ongoing Tasks</h2>
+        <h2 className="text-xl font-semibold p-5 mb-2">Ongoing Tasks</h2>
         {ongoingTasks.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 px-4 md:px-10 lg:px-20">
           {ongoingTasks.map((task) => (
@@ -47,14 +47,14 @@ const TaskDetailsPage = () => {
           </div>
         ) : (
           <div className="no-tasks-found">
-            <p className="text-lg text-gray-600">No ongoing tasks found.</p>
+            <p className="text-lg  text-gray-600">No ongoing tasks found.</p>
           </div>
         )}
       </div>
 
       {/* Completed Tasks */}
       <div className="completed-tasks mb-6">
-        <h2 className="text-xl font-semibold mb-2">Completed Tasks</h2>
+        <h2 className="text-xl font-semibold p-5 mb-2">Completed Tasks</h2>
         {completedTasks.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 px-4 md:px-10 lg:px-20">
           {completedTasks.map((task) => (
@@ -63,7 +63,7 @@ const TaskDetailsPage = () => {
           </div>
         ) : (
           <div className="no-tasks-found">
-            <p className="text-lg text-gray-600">No completed tasks found.</p>
+            <p className="text-lg text-center text-gray-600">No completed tasks found.</p>
           </div>
         )}
       </div>

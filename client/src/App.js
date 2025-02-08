@@ -14,6 +14,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import ProjectPage from "./pages/admin/ProjectPage";
 import EmployeesPage from "./pages/admin/EmployeePage";
 import TaskDetailsPage from "./pages/employee/TaskDetailsPage";
+import TopNavbar from "./components/TopNavBar";
 
 function App() {
   const dispatch = useDispatch()
@@ -34,8 +35,9 @@ function App() {
 
   return (
     <div>
-      {isLoggedIn && <Navbar handleLogout={handleLogout} />}
+      {isLoggedIn && <><TopNavbar handleLogout={handleLogout}/><Navbar  /></>}
 
+      <div className={isLoggedIn?"ml-56 pt-16":""}>
       <Routes>
         {!isLoggedIn ? (
           <>
@@ -55,6 +57,7 @@ function App() {
           </>
         )}
       </Routes>
+      </div>
     </div>
   );
 }

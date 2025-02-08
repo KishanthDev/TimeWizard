@@ -16,7 +16,7 @@ export const fetchTasks = createAsyncThunk(
 export const fetchAllTasks = createAsyncThunk(
   "/tasks/getAll", 
   async () => {
-    const response = await axios.get(`/api/tasks/getAll`);
+    const response = await axios.get(`/api/tasks/getAll`,{headers:{Authorization:localStorage.getItem("token")}});
     return response.data;
   }
 );

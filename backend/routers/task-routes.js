@@ -11,6 +11,6 @@ router.post("/clockOut/:taskId",taskController.clockOut)
 router.get("/get",auth,taskController.get)
 router.put("/completeTask/:taskId",taskController.completeTask)
 router.get("/:projectId/:employeeId",taskController.getEmployeeTasksForProject)
-router.get("/getAll",taskController.getAll)
+router.get("/getAll",auth,taskController.getAll)
 
 export default router
