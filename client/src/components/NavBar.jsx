@@ -22,6 +22,12 @@ export default function Navbar({ handleLogout }) {
             <li>
               <Link to="/emp" className={`block py-2 ${getLinkClass("/emp")}`}>Employee</Link>
             </li>
+            <li>
+              <Link to="/activities" className={`block py-2 ${getLinkClass("/activities")}`}>Activity</Link>
+            </li>
+            <li>
+              <Link to="/activity-calendar" className={`block py-2 ${getLinkClass("/activity-calendar")}`}>Calendar</Link>
+            </li>
           </>
         ) : (
           <>
@@ -29,16 +35,13 @@ export default function Navbar({ handleLogout }) {
               <Link to="/employee" className={`block py-2 ${getLinkClass("/employee")}`}>Dashboard</Link>
             </li>
             <li>
-              <Link to="/reports" className={`block py-2 ${getLinkClass("/reports")}`}>Reports</Link>
-            </li>
-            <li>
               <Link to="/employee-task" className={`block py-2 ${getLinkClass("/employee-task")}`}>Task</Link>
             </li>
           </>
         )}
         <li>
-          <Link to="/calendar" className={`block py-2 ${getLinkClass("/calendar")}`}>Calendar</Link>
-        </li>
+              <Link to="/settings" className={`block py-2 ${getLinkClass("/settings")}`}>Settings</Link>
+            </li>
       </ul>
     </div>
   );

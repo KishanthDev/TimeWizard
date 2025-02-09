@@ -1,8 +1,6 @@
 import {Routes,Route, useNavigate} from "react-router-dom"
 import Home from "./pages/Home";
 import EmployeeDashboard from "./pages/employee/EmployeeDashboard";
-import Calendar from "./pages/Calendar";
-import Reports from "./pages/Reports";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, profile } from "./slices/userSlice";
 import { useEffect } from "react";
@@ -15,6 +13,9 @@ import ProjectPage from "./pages/admin/ProjectPage";
 import EmployeesPage from "./pages/admin/EmployeePage";
 import TaskDetailsPage from "./pages/employee/TaskDetailsPage";
 import TopNavbar from "./components/TopNavBar";
+import ActivityLog from "./pages/admin/ActivityPage";
+import ActivityFullCalendar from "./pages/admin/ActivityFullCalendar";
+import Settings from "./pages/Settings";
 
 function App() {
   const dispatch = useDispatch()
@@ -49,11 +50,12 @@ function App() {
           <Route path="/profile" element={<Profile/>}/>
           <Route path="/admin" element={<ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>} />
           <Route path="/emp" element={<ProtectedRoute role="admin"><EmployeesPage/></ProtectedRoute>}/>
+          <Route path="/activities" element={<ProtectedRoute role="admin"><ActivityLog/></ProtectedRoute>}/>
+          <Route path="/activity-calendar" element={<ProtectedRoute role="admin"><ActivityFullCalendar /></ProtectedRoute>} />
           <Route path="/project" element={<ProtectedRoute role="admin"><ProjectPage/></ProtectedRoute>}/>
           <Route path="/employee" element={<ProtectedRoute role="employee"><EmployeeDashboard /></ProtectedRoute>} />
           <Route path="/employee-task" element={<ProtectedRoute role="employee"><TaskDetailsPage /></ProtectedRoute>} />
-          <Route path="/reports" element={<Reports />} />
-          <Route path="/calendar" element={<Calendar />} />
+          <Route path="/settings" element={<Settings/>}/>
           </>
         )}
       </Routes>

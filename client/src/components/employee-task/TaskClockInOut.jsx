@@ -48,25 +48,25 @@ const TaskClockInOut = ({ task }) => {
   const toggleExpand = () => setExpanded((prev) => !prev);
 
   return (
-    <div className="task-clockin-out bg-white shadow-md rounded-lg p-6 my-4 max-w-xl mx-auto">
+    <div className="task-clockin-out bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 my-4 max-w-xl mx-auto">
       {/* Task Details */}
       <div className="task-details mb-4">
       <div className="mb-4">
       <div className="flex items-center gap-2">
-  <h1 className="text-lg font-semibold text-gray-700">
+  <h1 className="text-lg font-semibold dark:text-gray-200 text-gray-700">
     Project: <span className="text-blue-600">{task.projectId.name}</span>
   </h1>
   <button onClick={handleProjectModal} className="text-blue-500 hover:text-blue-700">
     <View size={20} />
   </button>
 </div>
-  <h2 className="text-base font-semibold text-gray-700">
+  <h2 className="text-base font-semibold dark:text-gray-200 text-gray-700">
     Task: <span className="text-green-600">{task.name}</span>
   </h2>
 </div>
-        <p className="text-sm text-gray-500">Due Date: {format(new Date(task.dueDate), "dd MMM yyyy")}</p>
-        <p className="text-sm text-gray-500">Estimated Time: {task.estimatedTime} hours</p>
-        <p className="text-sm text-gray-500">Total Hours Worked: {calculateTotalTime()} hours</p>
+        <p className="text-sm dark:text-gray-400 text-gray-500">Due Date: {format(new Date(task.dueDate), "dd MMM yyyy")}</p>
+        <p className="text-sm dark:text-gray-400 text-gray-500">Estimated Time: {task.estimatedTime} hours</p>
+        <p className="text-sm dark:text-gray-400 text-gray-500">Total Hours Worked: {calculateTotalTime()} hours</p>
       </div>
 
       {/* Clock In / Clock Out and Complete Task Button */}
@@ -121,7 +121,7 @@ const TaskClockInOut = ({ task }) => {
             expanded ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
           }`}
         >
-          <div className="bg-gray-100 rounded-lg p-4 mt-2 shadow-md">
+          <div className="bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg p-4 mt-2 shadow-md">
             {task.timeSpent && task.timeSpent.length > 0 ? (
               task.timeSpent.map((entry, index) => (
                 <div key={index} className="flex justify-between py-2 border-b">
@@ -132,7 +132,7 @@ const TaskClockInOut = ({ task }) => {
                 </div>
               ))
             ) : (
-              <p className="text-xs text-gray-500">No time entries yet.</p>
+              <p className="text-xs dark:bg-gray-700 dark:text-gray-200  text-gray-500">No time entries yet.</p>
             )}
           </div>
         </div>

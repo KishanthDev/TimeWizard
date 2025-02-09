@@ -6,6 +6,7 @@ import taskSlice from "./slices/taskSlice.js"
 import projectSlice from "./slices/projectSlice.js"
 import employeeSlice from "./slices/employeeSlice.js"
 import messageSlice from "./slices/messageSlice.js"
+import activitySlice from "./slices/activitySlice.js"
 
 const store = configureStore({
     reducer:{
@@ -14,7 +15,8 @@ const store = configureStore({
         tasks:taskSlice,
         projects:projectSlice,
         employees:employeeSlice,
-        messages:messageSlice
+        messages:messageSlice,
+        activities:activitySlice
     }
 })
 

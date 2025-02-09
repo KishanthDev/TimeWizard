@@ -89,7 +89,7 @@ const EmployeeList = () => {
             <div className="flex justify-between items-center mb-4">
                 <div>
                     <label className="mr-2">Show</label>
-                    <select value={limit} onChange={handleLimitChange} className="border p-2 rounded">
+                    <select value={limit} onChange={handleLimitChange} className="border dark:bg-gray-700 dark:text-gray-300 p-2 rounded">
                         <option value="5">5</option>
                         <option value="10">10</option>
                         <option value="20">20</option>
@@ -101,7 +101,7 @@ const EmployeeList = () => {
 
             <div className="overflow-x-auto">
                 <table className="w-full border-collapse border border-gray-300">
-                    <thead className="bg-gray-200">
+                    <thead className="bg-gray-200 dark:bg-gray-700 dark:text-gray-300">
                         <tr>
                             <th className="border p-2 cursor-pointer">#</th>
                             <th className="border p-2 cursor-pointer" onClick={() => handleSort("name")}>

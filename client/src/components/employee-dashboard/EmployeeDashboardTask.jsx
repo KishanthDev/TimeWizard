@@ -22,7 +22,7 @@ const EmployeeDashboardTask = ({projectId,isOpen}) => {
           assignedTasks.map((task) => (
             <div
               key={task.id}
-              className="bg-white shadow-md p-4 rounded-lg border border-gray-200"
+              className="bg-white dark:bg-gray-800 shadow-md p-4 rounded-lg border border-gray-200"
             >
               <div className="flex justify-between items-center">
                 <h3 className="text-lg font-semibold">{task.name}</h3>
@@ -33,7 +33,7 @@ const EmployeeDashboardTask = ({projectId,isOpen}) => {
                   <Eye size={18} />
                 </button>
               </div>
-              <p className="text-sm text-gray-600">Deadline: {format(new Date(task.dueDate), "dd MMM yyyy")}</p>
+              <p className="text-sm dark:text-gray-400 text-gray-600">Deadline: {format(new Date(task.dueDate), "dd MMM yyyy")}</p>
               <div className="flex justify-between items-center mt-4">
                 <span className={`px-3 py-1 rounded text-white ${
                   task.status === "pending" ? "bg-yellow-500" : "bg-blue-500"

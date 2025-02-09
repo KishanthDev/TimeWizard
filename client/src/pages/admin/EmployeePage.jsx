@@ -65,7 +65,7 @@ const EmployeesPage = () => {
                     <div className="relative">
                         <button
                             onClick={() => handleDropdownToggle("import")}
-                            className="flex items-center gap-2 px-4 py-2 border rounded-lg bg-white shadow hover:bg-gray-100"
+                            className="flex items-center gap-2 px-4 py-2 border rounded-lg  dark:bg-gray-700 dark:text-gray-300 bg-white shadow hover:bg-gray-100"
                         >
                             <Upload className="w-4 h-4" />
                             Import
@@ -73,9 +73,9 @@ const EmployeesPage = () => {
                         </button>
 
                         {openDropdown === "import" && (
-                            <div className="absolute left-0 mt-2 w-37 bg-white border shadow-lg rounded-lg z-10">
+                            <div className="absolute left-0 mt-2 w-37  dark:bg-gray-700 dark:text-gray-300 bg-white border shadow-lg rounded-lg z-10">
                                 <button
-                                    className="w-full flex items-center px-2 py-2 hover:bg-gray-100"
+                                    className="w-full flex items-center px-2 py-2 dark:hover:bg-gray-600 hover:bg-gray-100"
                                     onClick={() => {
                                         handleAddEmployeeClick();
                                         handleDropdownToggle("import");
@@ -85,7 +85,7 @@ const EmployeesPage = () => {
                                     <span className="text-sm">Add Employee</span>
                                 </button>
                                 <button
-                                    className="w-full flex items-center px-2 py-2 hover:bg-gray-100"
+                                    className="w-full flex items-center px-2 py-2 dark:hover:bg-gray-600 hover:bg-gray-100"
                                     onClick={() => {
                                         handleUploadCSVClick();
                                         handleDropdownToggle("import");
@@ -102,7 +102,7 @@ const EmployeesPage = () => {
                     <div className="relative">
                         <button
                             onClick={() => { handleDropdownToggle("export") }}
-                            className="flex items-center gap-2 px-4 py-2 border rounded-lg bg-white shadow hover:bg-gray-100"
+                            className="flex items-center gap-2 px-4 py-2 border rounded-lg  dark:bg-gray-700 dark:text-gray-300 bg-white shadow hover:bg-gray-100"
                         >
                             <Download className="w-4 h-4" />
                             Export
@@ -110,16 +110,16 @@ const EmployeesPage = () => {
                         </button>
 
                         {openDropdown === "export" && (
-                            <div className="absolute left-0 mt-2 w-37 bg-white border shadow-lg rounded-lg z-10">
+                            <div className="absolute left-0 mt-2 w-37  dark:bg-gray-700 dark:text-gray-300 bg-white border shadow-lg rounded-lg z-10">
                                 <button
-                                    className="w-full flex items-center px-2 py-2 hover:bg-gray-100"
+                                    className="w-full flex items-center px-2 py-2 dark:hover:bg-gray-600 hover:bg-gray-100"
                                     onClick={() => exportToCSV(employees)}
                                 >
                                     <Download className="w-4 h-4 mr-0.5" />
                                     <span className="text-sm">Export as CSV</span>
                                 </button>
                                 <button
-                                    className="w-full flex items-center px-2 py-2 hover:bg-gray-100"
+                                    className="w-full flex items-center px-2 py-2 dark:hover:bg-gray-600 hover:bg-gray-100"
                                     onClick={() => exportToExcel(employees)}
                                 >
                                     <Download className="w-4 h-4 mr-0.5" />

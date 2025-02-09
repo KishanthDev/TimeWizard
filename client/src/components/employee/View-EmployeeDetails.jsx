@@ -5,7 +5,7 @@ const ViewEmployeeModal = ({ isOpen, onClose, employee }) => {
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white rounded-lg shadow-lg p-6 w-96">
+            <div className="bg-white dark:bg-gray-800 dark:text-gray-300 rounded-lg shadow-lg p-6 w-96">
                 <h2 className="text-xl font-bold mb-4">Employee Details</h2>
 
                 <div className="space-y-2">

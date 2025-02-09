@@ -8,7 +8,7 @@ const TaskStatusChart = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchAllTasks());
+    dispatch(fetchAllTasks({limit:20}));
   }, [dispatch]);
 
   const allTasks = useSelector((state) => state.tasks?.allTasks || []);
@@ -43,7 +43,7 @@ const TaskStatusChart = () => {
   const COLORS = ["#FFA500", "#007BFF", "#28A745"];
 
   return (
-    <div className="flex flex-col items-start bg-gray-100 p-4 rounded-xl shadow-lg max-w-xs mx-4">
+    <div className="flex flex-col items-start bg-gray-100 dark:bg-gray-800 p-4 rounded-xl shadow-lg max-w-xs mx-4">
       <div className="flex justify-between items-center w-full mb-4">
         <h3 className="text-2xl font-bold mb-4">Task Status</h3>
         <button

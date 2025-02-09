@@ -147,7 +147,7 @@ const ProjectForm = ({ handleClose }) => {
   }));
 
   return (
-    <div className="bg-white p-4 shadow-md rounded-lg">
+    <div className="bg-white  dark:bg-gray-800 dark:text-gray-300 p-4 shadow-md rounded-lg">
       <ToastContainer />
       <h2 className="text-lg font-semibold mb-2 flex justify-between items-center">
         Create Project
@@ -162,7 +162,7 @@ const ProjectForm = ({ handleClose }) => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Project Name */}
           <div className="flex flex-col">
-            <label className="text-sm font-medium text-gray-700" htmlFor="name">
+            <label className="text-sm font-medium  text-gray-700" htmlFor="name">
               Project Name:
             </label>
             <input
@@ -172,7 +172,7 @@ const ProjectForm = ({ handleClose }) => {
               placeholder="Project Name"
               value={formData.name}
               onChange={handleChange}
-              className={`border p-2 rounded ${errors.name ? "border-red-500" : ""}`}
+              className={`border p-2  dark:bg-gray-800 dark:text-white rounded ${errors.name ? "border-red-500" : ""}`}
             />
             {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
           </div>
@@ -188,7 +188,7 @@ const ProjectForm = ({ handleClose }) => {
               placeholder="Project Description"
               value={formData.description}
               onChange={handleChange}
-              className={`border p-2 rounded ${errors.description ? "border-red-500" : ""}`}
+              className={`border p-2  dark:bg-gray-800 dark:text-white rounded ${errors.description ? "border-red-500" : ""}`}
             />
             {errors.description && <p className="text-red-500 text-sm">{errors.description}</p>}
           </div>
@@ -205,7 +205,7 @@ const ProjectForm = ({ handleClose }) => {
               placeholder="Budget"
               value={formData.budget}
               onChange={handleChange}
-              className={`border p-2 rounded ${errors.budget ? "border-red-500" : ""}`}
+              className={`border p-2  dark:bg-gray-800 dark:text-white rounded ${errors.budget ? "border-red-500" : ""}`}
             />
             {errors.budget && <p className="text-red-500 text-sm">{errors.budget}</p>}
           </div>
@@ -221,14 +221,14 @@ const ProjectForm = ({ handleClose }) => {
               id="deadLine"
               value={formData.deadLine}
               onChange={handleChange}
-              className={`border p-2 rounded ${errors.deadLine ? "border-red-500" : ""}`}
+              className={`border p-2  dark:bg-gray-800 dark:text-white rounded ${errors.deadLine ? "border-red-500" : ""}`}
             />
             {errors.deadLine && <p className="text-red-500 text-sm">{errors.deadLine}</p>}
           </div>
 
           {/* Teams */}
-          <div className="flex flex-col col-span-2">
-            <label className="text-sm font-medium text-gray-700">Assign Teams:</label>
+          <div className="flex  flex-col col-span-2">
+            <label className="text-sm font-medium  text-gray-700">Assign Teams:</label>
             <Select
               isMulti
               name="teams"
@@ -236,11 +236,10 @@ const ProjectForm = ({ handleClose }) => {
               onInputChange={(inputValue) => setSearch(inputValue)} // Triggers backend search
               onChange={handleTeamChange}
               placeholder="Search and select employees..."
+              className=""
             />
             {errors.teams && <p className="text-red-500 text-sm">{errors.teams}</p>}
           </div>
-
-
 
           {/* File Upload */}
           <div className="flex flex-col col-span-2">

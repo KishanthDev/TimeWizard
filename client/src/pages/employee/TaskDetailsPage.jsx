@@ -19,7 +19,7 @@ const TaskDetailsPage = () => {
   const completedTasks = myTasks.filter((task) => task.status === 'completed');
 
   return (
-    <div className="task-details-page">
+    <div className="task-details-page ">
       {/* Pending Tasks */}
       <div className="pending-tasks mb-6">
         <h2 className="text-xl font-semibold p-5 mb-2">Pending Tasks</h2>

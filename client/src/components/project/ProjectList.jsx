@@ -45,13 +45,13 @@ const ProjectList = () => {
   };
 
   return (
-    <div className="p-4">
+    <div className="p-4 dark:bg-gray-900 dark:text-gray-300">
       <h2 className="text-lg font-semibold mb-4">Project List</h2>
       {status === "loading" && <p>Loading projects...</p>}
       <div className="overflow-x-auto">
-        <table className="min-w-full bg-white shadow-md rounded">
+        <table className="min-w-full dark:bg-gray-900 dark:text-gray-300 bg-white shadow-md rounded">
           <thead>
-            <tr className="bg-gray-200">
+            <tr className="bg-gray-200  dark:bg-gray-800 dark:text-gray-300">
               <th className="py-2 px-4">Name</th>
               <th className="py-2 px-4">Budget</th>
               <th className="py-2 px-4">Status</th>

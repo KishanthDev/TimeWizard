@@ -2,7 +2,7 @@ import ActionButtons from "./ActionButtons";  // Import ActionButtons component
 
 const EmployeeRow = ({ emp, index, onView, onEdit, onDelete }) => {
     return (
-        <tr key={emp._id} className="hover:bg-gray-100">
+        <tr key={emp._id} className="dark:text-gray-300">
             <td className="border p-2">{index + 1}</td>
             <td className="border p-2">{emp.name}</td>
             <td className="border p-2">{emp.username}</td>

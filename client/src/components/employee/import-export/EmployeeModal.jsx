@@ -100,7 +100,7 @@ const EmployeeModal = ({ isOpen, onClose, onSubmit }) => {
     return (
         (isOpen || selectedEmployee) && (
             <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center animate-fadeIn">
-                <div className="bg-white p-6 rounded-lg shadow-lg w-96 transform transition-all animate-slideIn">
+                <div className="bg-white dark:bg-gray-700 dark:text-gray-300 p-6 rounded-lg shadow-lg w-96 transform transition-all animate-slideIn">
                     <h2 className="text-xl font-semibold mb-4">{selectedEmployee?"Edit":"Add"} Employee</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="mb-4">
@@ -110,7 +110,7 @@ const EmployeeModal = ({ isOpen, onClose, onSubmit }) => {
                                 name="name"
                                 value={formData.name}
                                 onChange={handleChange}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                                className="w-full px-4 py-2 border dark:bg-gray-700 dark:text-gray-300 border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
                             />
                             {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
                         </div>
@@ -121,7 +121,7 @@ const EmployeeModal = ({ isOpen, onClose, onSubmit }) => {
                                 name="username"
                                 value={formData.username}
                                 onChange={handleChange}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                                className="w-full px-4 py-2 border dark:bg-gray-700 dark:text-gray-300 border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
                             />
                             {errors.username && <p className="text-red-500 text-sm">{errors.username}</p>}
                         </div>
@@ -132,7 +132,7 @@ const EmployeeModal = ({ isOpen, onClose, onSubmit }) => {
                                 name="email"
                                 value={formData.email}
                                 onChange={handleChange}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                                className="w-full px-4 py-2 border dark:bg-gray-700 dark:text-gray-300 border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
                             />
                             {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
                         </div>
@@ -143,7 +143,7 @@ const EmployeeModal = ({ isOpen, onClose, onSubmit }) => {
                                 name="password"
                                 value={formData.password}
                                 onChange={handleChange}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                                className="w-full px-4 py-2 border dark:bg-gray-700 dark:text-gray-300 border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
                             />
                             {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
                         </div>
