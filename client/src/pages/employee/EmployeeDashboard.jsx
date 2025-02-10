@@ -28,7 +28,7 @@ export default function EmployeeDashboard() {
     };
 
     return (
-        <div className="flex flex-col p-4 h-screen">
+        <div className="flex flex-col p-4">
             <h1 className="text-2xl font-bold mb-4">Employee Dashboard</h1>
 
             {/* Two-column layout for Task Status and Notes */}

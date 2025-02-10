@@ -23,8 +23,8 @@ const ActivityLog = () => {
 
 
     return (
-        <div className="p-4 bg-white dark:bg-gray-900 dark:text-gray-300 shadow rounded">
-            <h2 className="text-xl font-bold mb-4">Activity Logs</h2>
+        <div className="p-7 bg-white dark:bg-gray-900 dark:text-gray-300 shadow rounded">
+            <h2 className="text-xl font-bold mb-9">Activity Logs</h2>
 
             {/* Filters */}
             <div className="flex gap-2 mb-4">

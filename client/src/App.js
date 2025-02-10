@@ -35,34 +35,37 @@ function App() {
   }
 
   return (
-    <div>
-      {isLoggedIn && <><TopNavbar handleLogout={handleLogout}/><Navbar  /></>}
-
-      <div className={isLoggedIn?"ml-56 pt-16":""}>
-      <Routes>
-        {!isLoggedIn ? (
-          <>
+    <div className="min-h-screen dark:bg-gray-900 bg-white flex flex-col">
+      {!isLoggedIn ? (
+        // 🌟 Show public routes when NOT logged in
+        <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/forgot-password" element={<ForgotPassword/>}/>
-          </>
-        ) : (
-          <>
-          <Route path="/profile" element={<Profile/>}/>
-          <Route path="/admin" element={<ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>} />
-          <Route path="/emp" element={<ProtectedRoute role="admin"><EmployeesPage/></ProtectedRoute>}/>
-          <Route path="/activities" element={<ProtectedRoute role="admin"><ActivityLog/></ProtectedRoute>}/>
-          <Route path="/activity-calendar" element={<ProtectedRoute role="admin"><ActivityFullCalendar /></ProtectedRoute>} />
-          <Route path="/project" element={<ProtectedRoute role="admin"><ProjectPage/></ProtectedRoute>}/>
-          <Route path="/employee" element={<ProtectedRoute role="employee"><EmployeeDashboard /></ProtectedRoute>} />
-          <Route path="/employee-task" element={<ProtectedRoute role="employee"><TaskDetailsPage /></ProtectedRoute>} />
-          <Route path="/settings" element={<Settings/>}/>
-          </>
-        )}
-      </Routes>
-      </div>
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+        </Routes>
+      ) : (
+        // 🌟 Show protected routes when LOGGED IN
+        <>
+          <TopNavbar handleLogout={handleLogout} />
+          <div className="flex flex-1">
+            <Navbar />
+            <div className="flex-1 p-4 overflow-auto ml-56 pt-16">
+              <Routes>
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/admin" element={<ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>} />
+                <Route path="/emp" element={<ProtectedRoute role="admin"><EmployeesPage /></ProtectedRoute>} />
+                <Route path="/activities" element={<ProtectedRoute role="admin"><ActivityLog /></ProtectedRoute>} />
+                <Route path="/activity-calendar" element={<ProtectedRoute role="admin"><ActivityFullCalendar /></ProtectedRoute>} />
+                <Route path="/project" element={<ProtectedRoute role="admin"><ProjectPage /></ProtectedRoute>} />
+                <Route path="/employee" element={<ProtectedRoute role="employee"><EmployeeDashboard /></ProtectedRoute>} />
+                <Route path="/employee-task" element={<ProtectedRoute role="employee"><TaskDetailsPage /></ProtectedRoute>} />
+                <Route path="/settings" element={<Settings />} />
+              </Routes>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
-
 
 export default App;

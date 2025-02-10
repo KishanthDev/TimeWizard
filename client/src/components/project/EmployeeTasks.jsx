@@ -35,8 +35,8 @@ const EmployeeTasks = ({ tasks, employee, projectId, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-96 relative">
+    <div className="fixed  inset-0 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="bg-white dark:bg-gray-900 dark:text-gray-300  p-6 rounded-lg shadow-lg w-96 relative">
         <button className="absolute top-2 right-2 text-gray-500" onClick={onClose}>✖</button>
         <h3 className="text-lg font-semibold mb-4">Tasks for {employee.name}</h3>
 
@@ -56,27 +56,27 @@ const EmployeeTasks = ({ tasks, employee, projectId, onClose }) => {
             <input
               type="text"
               placeholder="Task Name"
-              className="w-full p-2 border mt-2 rounded"
+              className="w-full dark:bg-gray-900 dark:text-gray-300  p-2 border mt-2 rounded"
               value={newTask.name}
               onChange={(e) => setNewTask({ ...newTask, name: e.target.value })}
             />
             <input
               type="text"
               placeholder="Description"
-              className="w-full p-2 border mt-2 rounded"
+              className="w-full dark:bg-gray-900 dark:text-gray-300  p-2 border mt-2 rounded"
               value={newTask.description}
               onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
             />
             <input
               type="date"
-              className="w-full p-2 border mt-2 rounded"
+              className="w-full dark:bg-gray-900 dark:text-gray-300  p-2 border mt-2 rounded"
               value={newTask.dueDate}
               onChange={(e) => setNewTask({ ...newTask, dueDate: e.target.value })}
             />
             <input
               type="number"
               placeholder="Estimated Time (hrs)"
-              className="w-full p-2 border mt-2 rounded"
+              className="w-full dark:bg-gray-900 dark:text-gray-300  p-2 border mt-2 rounded"
               value={newTask.estimatedTime}
               onChange={(e) => setNewTask({ ...newTask, estimatedTime: e.target.value })}
             />

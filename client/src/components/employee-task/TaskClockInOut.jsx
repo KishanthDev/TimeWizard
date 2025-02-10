@@ -71,7 +71,7 @@ const TaskClockInOut = ({ task }) => {
 
       {/* Clock In / Clock Out and Complete Task Button */}
       {task.status!=="completed" && (
-        <div className="flex justify-between gap-40 items-center mb-4">
+        <div className="flex justify-between gap-28 items-center mb-4">
           <div>
             {!isClockedIn ? (
               <button
