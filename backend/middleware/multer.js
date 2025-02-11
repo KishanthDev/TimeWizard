@@ -12,6 +12,14 @@ const storage = new CloudinaryStorage({
   },
 });
 
-const upload = multer({ storage });
+const taskStorage = new CloudinaryStorage({
+  cloudinary:cloudinary,
+  params:{
+    folder:"task_documents",
+    resource_type:"auto"
+  }
+})
 
-export default upload;
+export const upload = multer({ storage });
+
+export const taskUpload = multer({storage:taskStorage})

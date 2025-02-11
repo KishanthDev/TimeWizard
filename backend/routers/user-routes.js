@@ -5,7 +5,7 @@ import { loginUserValidation, registerUserValidation } from "../validators/user-
 import { checkSchema } from "express-validator"
 import auth from "../middleware/auth.js"
 import userPassCntrl from "../controllers/user-pass-controller.js"
-import upload from "../middleware/multer.js"
+import {upload} from "../middleware/multer.js"
 import uploadCSV from "../middleware/multerCSV.js"
 import authorizeUser from "../middleware/authorizeUser.js"
 

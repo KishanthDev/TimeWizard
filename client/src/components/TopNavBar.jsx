@@ -7,7 +7,7 @@ export default function TopNavbar({ handleLogout }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   return (
-    <div className="bg-gray-800 text-white flex justify-between items-center px-6 py-3 fixed top-0 left-0 right-0 z-10 shadow-md">
+    <div className="dark:bg-gray-800 dark:text-white bg-gray-200 text-black flex justify-between items-center px-6 py-3 fixed top-0 left-0 right-0 z-10 shadow-md">
       {/* Company Name */}
       <h1 className="text-xl font-bold">TimeWizard</h1>
 
@@ -23,9 +23,9 @@ export default function TopNavbar({ handleLogout }) {
 
         {/* Dropdown Menu */}
         {dropdownOpen && (
-          <div className="absolute right-0 mt-2 w-40 bg-white text-gray-800 rounded shadow-lg">
-            <Link to="/profile" className="block px-4 py-2 hover:bg-gray-200">Profile</Link>
-            <button onClick={handleLogout} className="block w-full text-left px-4 py-2 hover:bg-gray-200">
+          <div className="absolute right-0 mt-2 w-40 dark:text-gray-100  dark:bg-gray-700 bg-white text-gray-800 rounded shadow-lg">
+            <Link to="/profile" className="block px-4 py-2 dark:hover:bg-gray-500 hover:bg-gray-200">Profile</Link>
+            <button onClick={handleLogout} className="block w-full text-left px-4 py-2 dark:hover:bg-gray-500 hover:bg-gray-200">
               Logout
             </button>
           </div>

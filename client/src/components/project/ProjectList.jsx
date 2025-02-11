@@ -69,6 +69,7 @@ const ProjectList = () => {
                 <td className="py-2 px-4">{project.deadLine && format(new Date(project?.deadLine), "MMMM dd, yyyy")}</td>
                 <td className="py-2 px-4">
                   <TeamDisplay
+                    tasks={tasks}
                     team={project.teams}
                     projectId={project._id}
                     onProfileClick={handleViewTasks}

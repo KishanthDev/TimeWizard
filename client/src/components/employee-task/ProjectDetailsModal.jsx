@@ -43,7 +43,6 @@ const ProjectDetailsModal = ({ projectId, isOpen, handleProjectModal }) => {
                 {/* Project Info */}
                 <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">Project - {myProject?.name}</h2>
                 <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">Description - {myProject?.description}</p>
-                <p className="text-sm font-medium text-gray-700 dark:text-gray-400">Budget: ${myProject?.budget}</p>
                 <p className="text-sm font-medium text-gray-700 dark:text-gray-400">
                     Deadline: {new Date(myProject?.deadLine).toLocaleDateString()}
                 </p>

@@ -30,6 +30,15 @@ function App() {
     dispatch(profile())
   },[dispatch])
 
+  useEffect(() => {
+    if (localStorage.getItem("theme") === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, []);
+  
+
   if(localStorage.getItem("token")&&!isLoggedIn){
     return <>...loading</>
   }
@@ -37,13 +46,11 @@ function App() {
   return (
     <div className="min-h-screen dark:bg-gray-900 bg-white flex flex-col">
       {!isLoggedIn ? (
-        // 🌟 Show public routes when NOT logged in
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
         </Routes>
       ) : (
-        // 🌟 Show protected routes when LOGGED IN
         <>
           <TopNavbar handleLogout={handleLogout} />
           <div className="flex flex-1">

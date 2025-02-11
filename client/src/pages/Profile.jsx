@@ -89,7 +89,7 @@ export default function Profile() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 ">
+    <div className="dark:bg-gray-900 dark:text-white bg-gray-100 ">
       <ToastContainer />
       <div className="max-w-7xl mx-auto p-6 ">
         <div className="flex items-center justify-between">
@@ -124,29 +124,29 @@ export default function Profile() {
 
           {/* Name Field */}
           <div className="flex justify-center items-center w-full">
-            <span className="block text-2xl font-bold text-gray-800 uppercase">
+            <span className="block text-2xl font-bold dark:text-white text-gray-800 uppercase">
               {user.name}
             </span>
           </div>
         </div>
 
         {/* Other Fields */}
-        <div className="mt-6 grid grid-cols-2 gap-4">
+        <div className="mt-6  grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-600">Username:</label>
-            <span className="text-sm text-gray-800">{user.username}</span>
+            <label className="block  dark:text-white  text-sm font-medium text-gray-600">Username:</label>
+            <span className="text-sm dark:text-gray-300  text-gray-800">{user.username}</span>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600">Email:</label>
-            <span className="text-sm text-gray-800">{user.email}</span>
+            <label className="block dark:text-white  text-sm font-medium text-gray-600">Email:</label>
+            <span className="text-sm dark:text-gray-300  text-gray-800">{user.email}</span>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600">Contact:</label>
-            <span className="text-sm text-gray-800">{user.contact || "N/A"}</span>
+            <label className="block dark:text-white  text-sm font-medium text-gray-600">Contact:</label>
+            <span className="text-sm  dark:text-gray-300 text-gray-800">{user.contact || "N/A"}</span>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600">Job Title:</label>
-            <span className="text-sm text-gray-800">{user.jobTitle || "N/A"}</span>
+            <label className="block dark:text-white text-sm font-medium text-gray-600">Job Title:</label>
+            <span className="text-sm dark:text-gray-300 text-gray-800">{user.jobTitle || "N/A"}</span>
           </div>
         </div>
 
@@ -154,7 +154,7 @@ export default function Profile() {
         {!isEditing && (
           <button
             onClick={() => setIsEditing(true)}
-            className="mt-6 py-2 px-4 bg-indigo-600 text-white font-medium rounded-md hover:bg-indigo-700"
+            className="mt-6 py-2 px-4 bg-indigo-600 text-white  font-medium rounded-md hover:bg-indigo-700"
           >
             Edit Profile
           </button>
@@ -162,50 +162,50 @@ export default function Profile() {
 
         {isEditing && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
-            <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-              <h2 className="text-lg font-semibold text-gray-800 mb-4">Edit Profile</h2>
+            <div className="bg-white dark:bg-gray-700 dark:text-white p-6 rounded-lg shadow-lg max-w-md w-full">
+              <h2 className="text-lg font-semibold dark:text-white  text-gray-800 mb-4">Edit Profile</h2>
               <form onSubmit={handleSubmit} className="grid gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Name</label>
+                  <label className="block text-sm dark:text-white  font-medium text-gray-700">Name</label>
                   <input
                     type="text"
                     id="name"
                     value={form.name}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-indigo-500"
+                    className="w-full px-3 py-2 border dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-indigo-500"
                   />
                   {errors.name && <div className="text-red-600 text-sm">{errors.name}</div>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Username</label>
+                  <label className="block text-sm dark:text-white  font-medium text-gray-700">Username</label>
                   <input
                     type="text"
                     id="username"
                     value={form.username}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-indigo-500"
+                    className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-indigo-500"
                   />
                   {errors.username && <div className="text-red-600 text-sm">{errors.username}</div>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Contact</label>
+                  <label className="block text-sm dark:text-white  font-medium text-gray-700">Contact</label>
                   <input
                     type="text"
                     id="contact"
                     value={form.contact}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-indigo-500"
+                    className="w-full px-3 py-2 border dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-indigo-500"
                   />
                   {errors.contact && <div className="text-red-600 text-sm">{errors.contact}</div>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">JobTitle</label>
+                  <label className="block text-sm dark:text-white font-medium text-gray-700">JobTitle</label>
                   <input
                     type="text"
                     id="jobTitle"
                     value={form.jobTitle}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-indigo-500"
+                    className="w-full px-3 py-2 border dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-indigo-500"
                   />
                   {errors.jobTitle && <div className="text-red-600 text-sm">{errors.jobTitle}</div>}
                 </div>

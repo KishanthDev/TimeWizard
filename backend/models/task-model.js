@@ -19,6 +19,24 @@ const TaskSchema = new Schema(
         clockOut: { type: Date },
       },
     ],
+    submissionHistory: [
+      {
+        submittedAt: { type: Date, default: Date.now },
+        notes: String,
+        attachments: [{
+          publicId: { type: String },
+          filePath: {type:String}
+        }],
+        status: { type: String, enum: ["pending_review", "needs_revision", "approved"], default: "pending_review" }
+      }
+    ],
+    rejectionDetails: {
+      feedback: String,
+      reviewedBy: { type: Schema.Types.ObjectId, ref: "User" },
+      rejectedAt: Date,
+    },
+    approvedBy: { type: Schema.Types.ObjectId, ref: "User" },
+    completedAt: Date
   },
   { timestamps: true }
 );

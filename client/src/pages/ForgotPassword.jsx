@@ -90,7 +90,7 @@ const ForgotPassword = () => {
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
         <ToastContainer/>
       <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-        <h2 className="text-xl font-bold mb-4 text-center">Forgot Password</h2>
+        <h2 className="text-xl font-bold dark:text-black mb-4 text-center">Forgot Password</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Email Field */}
           <div className="flex items-center gap-2">
@@ -99,7 +99,7 @@ const ForgotPassword = () => {
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className={`w-full px-4 py-2 border rounded ${
+              className={`w-full dark:text-black  px-4 py-2 border rounded ${
                 errors.email ? "border-red-500" : "border-gray-300"
               }`}
             />
@@ -107,7 +107,7 @@ const ForgotPassword = () => {
               type="button"
               onClick={handleSendOtp}
               disabled={otpSent}
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-400"
+              className="bg-blue-500 text-white  px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-400"
             >
               {isLoading ? "sending..." : otpSent ? "OTP Sent" : "Send OTP"}
             </button>
@@ -124,7 +124,7 @@ const ForgotPassword = () => {
                 placeholder="Enter OTP"
                 value={otp}
                 onChange={(e) => setOtp(e.target.value)}
-                className={`w-full px-4 py-2 border rounded ${errors.otp ? "border-red-500" : "border-gray-300"}`}
+                className={`w-full px-4 py-2 border dark:text-black  rounded ${errors.otp ? "border-red-500" : "border-gray-300"}`}
                 disabled={otpExpired}
               />
               {errors.otp && <p className="text-red-500 text-sm">{errors.otp}</p>}
@@ -169,7 +169,7 @@ const ForgotPassword = () => {
                   placeholder="Confirm new password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className={`w-full px-4 py-2 border rounded ${
+                  className={`w-full px-4 py-2 dark:text-black  border rounded ${
                     errors.confirmPassword ? "border-red-500" : "border-gray-300"
                   }`}
                 />
