@@ -1,110 +1,101 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { clockIn, clockOut, completeTask } from '../../slices/taskSlice';
 import { View } from 'lucide-react';
 import ProjectDetailsModal from './ProjectDetailsModal';
+import SubmissionHistoryModal from './SubmissionHistoryModal';
+import TaskCompletionModal from './TaskSubmission';
 import { format } from 'date-fns';
 
 const TaskClockInOut = ({ task }) => {
-  const [isOpen,setIsOpen] = useState(false)
-  // Get the last time entry to determine the clock-in status
-  const lastEntry = task.timeSpent?.[task.timeSpent.length - 1];
-  const [isClockedIn, setIsClockedIn] = useState(
-    lastEntry && !lastEntry.clockOut ? true : false
-  );
-  const [expanded, setExpanded] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [showSubmissionHistory, setShowSubmissionHistory] = useState(false);
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
+  const {error} = useSelector(state=>state.tasks)
   const dispatch = useDispatch();
 
-  const handleProjectModal = ()=>{setIsOpen(prev=>!prev)}
+  const lastEntry = task.timeSpent?.[task.timeSpent.length - 1];
+  const [isClockedIn, setIsClockedIn] = useState(lastEntry && !lastEntry.clockOut);
 
-  // Function to start the clock-in (save the clock-in time)
+  const handleProjectModal = () => setIsOpen((prev) => !prev);
+  const handleSubmissionHistoryModal = () => setShowSubmissionHistory((prev) => !prev);
+  const handleCompletionModal = () => setShowCompletionModal((prev) => !prev);
+
   const handleClockIn = () => {
     setIsClockedIn(true);
     dispatch(clockIn({ taskId: task._id }));
   };
+  const [expanded, setExpanded] = useState(false);
 
-  // Function to stop the clock-out (save the clock-out time and calculate the duration)
   const handleClockOut = () => {
     setIsClockedIn(false);
     dispatch(clockOut({ taskId: task._id }));
   };
 
-  // Function to mark task as complete
-  const handleCompleteTask = () => {
-    dispatch(completeTask({ taskId: task._id }));
+  const handleCompleteTask = async(submissionData) => {
+    try {
+      dispatch(completeTask({ taskId: task._id, submissionData })).unwrap()
+    } catch (err) {
+      console.log(err);
+      
+    }
+    setShowCompletionModal(false);
   };
 
-  // Calculate total time worked based on clock-in and clock-out times in task object
   const calculateTotalTime = () => {
     if (!task.timeSpent || task.timeSpent.length === 0) return 0;
-
-    return task.timeSpent.reduce((total, entry) => {
-      const timeWorked = (new Date(entry.clockOut) - new Date(entry.clockIn)) / 1000 / 60 / 60; // Convert milliseconds to hours
-      return total + timeWorked;
-    }, 0).toFixed(2);
-  };
-
-  // Toggle expand/collapse time entries section
-  const toggleExpand = () => setExpanded((prev) => !prev);
+    return task.timeSpent
+      .reduce((total, entry) => {
+        const timeWorked = (new Date(entry.clockOut) - new Date(entry.clockIn)) / 1000 / 60 / 60;
+        return total + timeWorked;
+      }, 0)
+      .toFixed(2);
+  }; const toggleExpand = () => setExpanded((prev) => !prev);
 
   return (
     <div className="task-clockin-out bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 my-4 max-w-xl mx-auto">
-      {/* Task Details */}
       <div className="task-details mb-4">
-      <div className="mb-4">
-      <div className="flex items-center gap-2">
-  <h1 className="text-lg font-semibold dark:text-gray-200 text-gray-700">
-    Project: <span className="text-blue-600">{task.projectId.name}</span>
-  </h1>
-  <button onClick={handleProjectModal} className="text-blue-500 hover:text-blue-700">
-    <View size={20} />
-  </button>
-</div>
-  <h2 className="text-base font-semibold dark:text-gray-200 text-gray-700">
-    Task: <span className="text-green-600">{task.name}</span>
-  </h2>
-</div>
-        <p className="text-sm dark:text-gray-400 text-gray-500">Due Date: {format(new Date(task.dueDate), "dd MMM yyyy")}</p>
+        <div className="flex items-center gap-2">
+          <h1 className="text-lg font-semibold dark:text-gray-200 text-gray-700">
+            Project: <span className="text-blue-600">{task.projectId.name}</span>
+          </h1>
+          <button onClick={handleProjectModal} className="text-blue-500 hover:text-blue-700">
+            <View size={20} />
+          </button>
+        </div>
+        <h2 className="text-base font-semibold dark:text-gray-200 text-gray-700">
+          Task: <span className="text-green-600">{task.name}</span>
+        </h2>
+        <p className="text-sm dark:text-gray-400 text-gray-500">Due Date: {format(new Date(task.dueDate), 'dd MMM yyyy')}</p>
         <p className="text-sm dark:text-gray-400 text-gray-500">Estimated Time: {task.estimatedTime} hours</p>
         <p className="text-sm dark:text-gray-400 text-gray-500">Total Hours Worked: {calculateTotalTime()} hours</p>
       </div>
 
-      {/* Clock In / Clock Out and Complete Task Button */}
-      {task.status!=="completed" && (
+      {task.status !== 'completed' ? (
         <div className="flex justify-between gap-28 items-center mb-4">
-          <div>
-            {!isClockedIn ? (
-              <button
-                onClick={handleClockIn}
-                className="bg-green-500 text-white px-3 py-1 rounded-lg hover:bg-green-600"
-              >
-                Clock In
-              </button>
-            ) : (
-              <button
-                onClick={handleClockOut}
-                className="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600"
-              >
-                Clock Out
-              </button>
-            )}
-          </div>
+          <button
+            onClick={isClockedIn ? handleClockOut : handleClockIn}
+            className={`px-3 py-1 rounded-lg text-white ${isClockedIn ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'}`}
+          >
+            {isClockedIn ? 'Clock Out' : 'Clock In'}
+          </button>
 
-          <div>
-            {task.status!=="completed" && (
-              <button
-                onClick={handleCompleteTask}
-                className="bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600"
-              >
-                Complete Task
-              </button>
-            )}
-          </div>
+          <button
+            onClick={handleCompletionModal}
+            className="bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600"
+          >
+            {task.status === 'pending_review' ? 'Waiting for Review' : task.status === 'needs_revision' ? 'Resubmit Task' : 'Complete Task'}
+          </button>
+        </div>
+      ) : (
+        <div className="text-center">
+          <button onClick={handleSubmissionHistoryModal} className="text-blue-500 hover:text-blue-700">
+            View Submission History
+          </button>
         </div>
       )}
 
-      {/* Expandable Time Entries */}
-      <div className="time-summary">
+<div className="time-summary">
         <div className="flex justify-between gap-40 items-center">
           <p className="text-sm font-semibold">Time Entries</p>
           <button
@@ -137,16 +128,11 @@ const TaskClockInOut = ({ task }) => {
           </div>
         </div>
       </div>
-      {isOpen && (
-        <ProjectDetailsModal
-          isOpen={isOpen}
-          handleProjectModal={handleProjectModal}
-          projectId={task.projectId._id}
-        />
-      )}
+      {isOpen && <ProjectDetailsModal isOpen={isOpen} handleProjectModal={handleProjectModal} projectId={task.projectId._id} />}
+      {showSubmissionHistory && <SubmissionHistoryModal isOpen={showSubmissionHistory} handleClose={handleSubmissionHistoryModal} submissions={task.submissionHistory} />}
+      {showCompletionModal && <TaskCompletionModal isOpen={showCompletionModal} handleClose={handleCompletionModal} handleSubmit={handleCompleteTask} />}
     </div>
-  )
+  );
 };
-
 
 export default TaskClockInOut;

@@ -1,4 +1,4 @@
-import express from "express"
+import express, { Router } from "express"
 import taskController from "../controllers/task-controller.js"
 import auth from "../middleware/auth.js"
 import authorizeUser from "../middleware/authorizeUser.js"
@@ -16,6 +16,7 @@ router.get("/getAll",auth,taskController.getAll)
 
 router.put("/completeTask/:taskId",taskUpload.array("attachments"),taskVerifyController.submitTask)
 router.put("/approveTask/:taskId",taskVerifyController.approveTask)
-router.put("/revison/:taskId",taskVerifyController.requestRevision)
+router.put("/revision/:taskId",taskVerifyController.requestRevision)
+router.put("/update/:taskId",taskVerifyController.updateTaskStatus)
 
 export default router

@@ -23,6 +23,9 @@ export default function Navbar() {
               <Link to="/emp" className={`block py-2 ${getLinkClass("/emp")}`}>Employee</Link>
             </li>
             <li>
+              <Link to="/task-review" className={`block py-2 ${getLinkClass("/task-review")}`}>Task Review</Link>
+            </li>
+            <li>
               <Link to="/activities" className={`block py-2 ${getLinkClass("/activities")}`}>Activity</Link>
             </li>
             <li>
@@ -36,6 +39,9 @@ export default function Navbar() {
             </li>
             <li>
               <Link to="/employee-task" className={`block py-2 ${getLinkClass("/employee-task")}`}>Task</Link>
+            </li>
+            <li>
+              <Link to="/task-approvals" className={`block py-2 ${getLinkClass("/task-approvals")}`}>Task Approvals</Link>
             </li>
           </>
         )}

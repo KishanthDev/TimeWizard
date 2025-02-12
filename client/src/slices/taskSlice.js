@@ -58,10 +58,10 @@ export const clockOut = createAsyncThunk(
 
 export const completeTask = createAsyncThunk(
   "/tasks/completeTask", 
-  async ({taskId}, { rejectWithValue }) => {
+  async ({taskId,submissionData}, { rejectWithValue }) => {
     try {
       const response = await axios.put(
-        `/api/tasks/completeTask/${taskId}`,"",
+        `/api/tasks/completeTask/${taskId}`,submissionData,
         {
           headers: { Authorization: localStorage.getItem("token") },
         }
@@ -112,17 +112,52 @@ export const assignTask = createAsyncThunk(
   }
 );
 
+export const resubmitTask = createAsyncThunk("tasks/updateTask",async(taskId)=>{
+  try {
+    const response = await axios.put(`/api/tasks/update/${taskId}`)
+    return response.data.task
+  } catch (error) {
+    console.log(error);
+  }
+})
+
+export const approveTask = createAsyncThunk("tasks/approveTask", async (taskId, { rejectWithValue }) => {
+  try {
+    const response = await axios.patch(`/api/tasks/${taskId}/approve`);
+    return response.data.task;
+  } catch (error) {
+    return rejectWithValue(error.response.data);
+  }
+});
+
+// Request Revision
+export const requestRevision = createAsyncThunk(
+  "tasks/requestRevision",
+  async ({ taskId, feedback }, { rejectWithValue }) => {
+    try {
+      const response = await axios.patch(`/api/tasks/${taskId}/request-revision`, { feedback });
+      return response.data.task;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
 // Initial state for the task slice
 const taskSlice = createSlice({
   name: "task",
   initialState: { 
-    tasks: [], 
+    tasks: [],
+    pendingReviewTasks: [], 
     allTasks: [],
     myTasks:[], // Store all tasks separately
     isLoading: null, 
     error: null 
   },
-  reducers: {},
+  reducers: {
+    setPendingReviewTasks: (state, action) => {
+      state.pendingReviewTasks = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     // Handling fetching specific tasks for a project/employee
     builder
@@ -174,7 +209,33 @@ const taskSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload;
       })
+      .addCase(resubmitTask.fulfilled, (state, action) => {
+        state.isLoading = false;
+        // Update the task in the list
+        const index = state.myTasks.findIndex((task) => task._id === action.payload._id);
+        if (index !== -1) {
+          state.myTasks[index] = action.payload;
+        }
+      })
+      .addCase(approveTask.fulfilled, (state, action) => {
+        state.pendingReviewTasks = state.pendingReviewTasks.filter(
+          (task) => task._id !== action.payload._id
+        );
+      })
+      .addCase(requestRevision.fulfilled, (state, action) => {
+        state.pendingReviewTasks = state.pendingReviewTasks.map((task) =>
+          task._id === action.payload._id ? action.payload : task
+        );
+      })
+      .addCase(approveTask.rejected, (state, action) => {
+        state.error = action.payload.message;
+      })
+      .addCase(requestRevision.rejected, (state, action) => {
+        state.error = action.payload.message;
+      });
   },
 });
 
+
+export const {setPendingReviewTasks} = taskSlice.actions
 export default taskSlice.reducer;

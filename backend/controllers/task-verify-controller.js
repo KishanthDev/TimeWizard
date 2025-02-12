@@ -25,6 +25,14 @@ taskVerifyController.submitTask = async (req, res) => {
         return res.status(400).json({ message: "Clock out before submitting the task." });
       }
   
+      if(task.status==="pending_review"){
+        return res.status(400).json({message:"Task is already submitted"})
+      }
+
+      if(!files){
+        return res.status(400).json({message:"no file selected"})
+      }
+
       // Handle file uploads
       let uploadedAttachments = [];
       if (files && files.length > 0) {
@@ -44,7 +52,7 @@ taskVerifyController.submitTask = async (req, res) => {
           publicId: result.public_id,  // Cloudinary Public ID
         }));
       }
-  
+      task.status = "pending_review"
       // Push to submissionHistory instead of overwriting
       task.submissionHistory.push({
         notes,
@@ -73,107 +81,111 @@ taskVerifyController.submitTask = async (req, res) => {
       res.status(500).json({ message: "An error occurred while submitting the task.", error: error.message });
     }
   };
-  
   taskVerifyController.approveTask = async (req, res) => {
     try {
-      const { taskId } = req.params;
-  
-      const task = await Task.findById(taskId);
-      if (!task) {
-        return res.status(404).json({ message: "Task not found" });
-      }
-  
-      // ✅ Check if any submission exists in review
-      const hasPendingReview = task.submissionHistory.some(
-        (ele) => ele.status === "pending_review" || ele.status === "needs_revision"
-      );
-  
-      if (!hasPendingReview) {
-        return res.status(400).json({ message: "Task must be in review before approval." });
-      }
-  
-      // ✅ Mark all "pending_review" or "needs_revision" submissions as "approved"
-      task.submissionHistory.forEach((submission) => {
-        if (submission.status === "pending_review" || submission.status === "needs_revision") {
-          submission.status = "approved";
+        const { taskId } = req.params;
+
+        const task = await Task.findById(taskId);
+        if (!task) {
+            return res.status(404).json({ message: "Task not found" });
         }
-      });
-  
-      // ✅ Mark task as completed
-      task.status = "completed";
-      task.completedAt = new Date();
-      await task.save();
-  
-      // ✅ Log Activity
-      await ActivityLog.create({
-        userId: task.assignedTo,
-        action: 'approved a task',
-        taskId,
-        projectId: task.projectId,
-        details: `Task ${taskId} marked as completed in Project ${task.projectId}`,
-      });
-  
-      // ✅ Notify the employee
-      io.to(task.assignedTo).emit("taskApproved", { taskId, projectId: task.projectId });
-  
-      res.status(200).json({ message: "Task approved and marked as completed.", task });
-  
+
+        if (task.status !== "pending_review") {
+            return res.status(400).json({ message: "Task is not in review state." });
+        }
+
+        // ✅ Mark task as completed
+        task.status = "completed";
+        task.completedAt = new Date();
+        await task.save();
+
+        // ✅ Log Activity
+        await ActivityLog.create({
+            userId: task.assignedTo,
+            action: "approved a task",
+            taskId,
+            projectId: task.projectId,
+            details: `Task ${taskId} marked as completed in Project ${task.projectId}`,
+        });
+
+        // ✅ Notify the employee
+        io.to(task.assignedTo).emit("taskApproved", { taskId, projectId: task.projectId });
+
+        res.status(200).json({ message: "Task approved and marked as completed.", task });
+
     } catch (error) {
-      console.error("Error approving the task:", error);
-      res.status(500).json({ message: "An error occurred while approving the task.", error: error.message });
+        console.error("Error approving the task:", error);
+        res.status(500).json({ message: "An error occurred while approving the task.", error: error.message });
     }
-  };
-  
-  
-  taskVerifyController.requestRevision = async (req, res) => {
+};
+
+taskVerifyController.requestRevision = async (req, res) => {
     try {
-      const { taskId } = req.params;
-      const { feedback } = req.body; // Admin gives feedback for revision
-  
-      const task = await Task.findById(taskId);
-      if (!task) {
-        return res.status(404).json({ message: "Task not found" });
-      }
-  
-      // Find the latest submission that is pending review
-      const lastSubmission = task.submissionHistory.find(
-        (submission) => submission.status === "pending_review"
-      );
-  
-      if (!lastSubmission) {
-        return res.status(400).json({ message: "No pending review submission found." });
-      }
-  
-      // Mark the submission as "needs_revision"
-      lastSubmission.status = "needs_revision";
-  
-      // Store feedback for the revision
-      task.rejectionDetails = {
-        feedback,
-        reviewedBy: req.user.id, // Assuming the admin is authenticated
-        rejectedAt: new Date(),
-      };
-  
-      await task.save();
-  
-      // Log Activity
-      await ActivityLog.create({
-        userId: task.assignedTo,
-        action: 'requested a revision',
-        taskId,
-        projectId: task.projectId,
-        details: `Task ${taskId} requires revision in Project ${task.projectId}. Feedback: ${feedback}`,
-      });
-  
-      // Notify the employee
-      io.to(task.assignedTo).emit("taskNeedsRevision", { taskId, feedback });
-  
-      res.status(200).json({ message: "Task revision requested.", task });
-  
+        const { taskId } = req.params;
+        const { feedback } = req.body; // Admin provides feedback for revision
+
+        const task = await Task.findById(taskId);
+        if (!task) {
+            return res.status(404).json({ message: "Task not found" });
+        }
+
+        if (task.status !== "pending_review") {
+            return res.status(400).json({ message: "Task is not in a review state." });
+        }
+
+        if (!feedback) {
+            return res.status(400).json({ message: "Feedback is required for revision request." });
+        }
+
+        // ✅ Mark task as "needs_revision"
+        task.status = "needs_revision";
+        task.rejectionDetails = {
+            feedback,
+            rejectedAt: new Date(),
+        };
+        await task.save();
+
+        // ✅ Log Activity
+        await ActivityLog.create({
+            userId: task.assignedTo,
+            action: "requested a revision",
+            taskId,
+            projectId: task.projectId,
+            details: `Task ${taskId} requires revision in Project ${task.projectId}. Feedback: ${feedback}`,
+        });
+
+        // ✅ Notify the employee
+        io.to(task.assignedTo).emit("taskNeedsRevision", { taskId, feedback });
+
+        res.status(200).json({ message: "Task revision requested.", task });
+
     } catch (error) {
-      console.error("Error requesting revision:", error);
-      res.status(500).json({ message: "An error occurred while requesting revision.", error: error.message });
+        console.error("Error requesting revision:", error);
+        res.status(500).json({ message: "An error occurred while requesting revision.", error: error.message });
     }
-  };
+};
+
+
+  taskVerifyController.updateTaskStatus = async (req, res) => {
+    try {
+        const { taskId } = req.params; // Get task ID from request params
+
+        // Find and update the task status
+        const updatedTask = await Task.findByIdAndUpdate(
+            taskId,
+            { status: "ongoing" },
+            { new: true } // Return updated task
+        );
+
+        if (!updatedTask) {
+            return res.status(404).json({ message: "Task not found" });
+        }
+
+        res.status(200).json({ message: "Task resubmitted successfully", task: updatedTask });
+    } catch (error) {
+        res.status(500).json({ message: "Error updating task status", error });
+    }
+};
+
   
   export default taskVerifyController

@@ -10,7 +10,7 @@ const TaskSchema = new Schema(
     estimatedTime:Number,
     status: {
       type: String,
-      enum: ["pending", "ongoing", "completed"],
+      enum: ["pending", "ongoing", "completed","pending_review", "needs_revision"],
       default: "pending",
     },
     timeSpent: [
@@ -26,12 +26,11 @@ const TaskSchema = new Schema(
         attachments: [{
           publicId: { type: String },
           filePath: {type:String}
-        }],
-        status: { type: String, enum: ["pending_review", "needs_revision", "approved"], default: "pending_review" }
+        }]
       }
     ],
     rejectionDetails: {
-      feedback: String,
+      feedback: {type :String},
       reviewedBy: { type: Schema.Types.ObjectId, ref: "User" },
       rejectedAt: Date,
     },

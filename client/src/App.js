@@ -16,6 +16,8 @@ import TopNavbar from "./components/TopNavBar";
 import ActivityLog from "./pages/admin/ActivityPage";
 import ActivityFullCalendar from "./pages/admin/ActivityFullCalendar";
 import Settings from "./pages/Settings";
+import TaskApprovals from "./pages/employee/TaskApprovals";
+import TaskReview from "./pages/admin/TaskReview";
 
 function App() {
   const dispatch = useDispatch()
@@ -62,8 +64,10 @@ function App() {
                 <Route path="/emp" element={<ProtectedRoute role="admin"><EmployeesPage /></ProtectedRoute>} />
                 <Route path="/activities" element={<ProtectedRoute role="admin"><ActivityLog /></ProtectedRoute>} />
                 <Route path="/activity-calendar" element={<ProtectedRoute role="admin"><ActivityFullCalendar /></ProtectedRoute>} />
+                <Route path="/task-review" element={<ProtectedRoute role="admin"><TaskReview /></ProtectedRoute>} />
                 <Route path="/project" element={<ProtectedRoute role="admin"><ProjectPage /></ProtectedRoute>} />
                 <Route path="/employee" element={<ProtectedRoute role="employee"><EmployeeDashboard /></ProtectedRoute>} />
+                <Route path="/task-approvals" element={<ProtectedRoute role="employee"><TaskApprovals /></ProtectedRoute>} />
                 <Route path="/employee-task" element={<ProtectedRoute role="employee"><TaskDetailsPage /></ProtectedRoute>} />
                 <Route path="/settings" element={<Settings />} />
               </Routes>
