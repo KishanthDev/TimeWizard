@@ -18,6 +18,10 @@ import ActivityFullCalendar from "./pages/admin/ActivityFullCalendar";
 import Settings from "./pages/Settings";
 import TaskApprovals from "./pages/employee/TaskApprovals";
 import TaskReview from "./pages/admin/TaskReview";
+import { fetchAllTasks } from "./slices/taskSlice";
+import { fetchEmployees } from "./slices/employeeSlice";
+import { fetchProjects } from "./slices/projectSlice";
+import GeneralChat from "./pages/employee/GeneralChat";
 
 function App() {
   const dispatch = useDispatch()
@@ -30,6 +34,13 @@ function App() {
   }
   useEffect(()=>{
     dispatch(profile())
+  },[dispatch])
+
+  useEffect(()=>{ 
+    dispatch(fetchAllTasks())
+    dispatch(fetchProjects())
+    dispatch(fetchEmployees({limit:25}))
+    dispatch(fetchAllTasks())
   },[dispatch])
 
   useEffect(() => {
@@ -68,6 +79,7 @@ function App() {
                 <Route path="/project" element={<ProtectedRoute role="admin"><ProjectPage /></ProtectedRoute>} />
                 <Route path="/employee" element={<ProtectedRoute role="employee"><EmployeeDashboard /></ProtectedRoute>} />
                 <Route path="/task-approvals" element={<ProtectedRoute role="employee"><TaskApprovals /></ProtectedRoute>} />
+                <Route path="/chat" element={<ProtectedRoute role="employee"><GeneralChat /></ProtectedRoute>} />
                 <Route path="/employee-task" element={<ProtectedRoute role="employee"><TaskDetailsPage /></ProtectedRoute>} />
                 <Route path="/settings" element={<Settings />} />
               </Routes>

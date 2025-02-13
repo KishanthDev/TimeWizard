@@ -12,6 +12,7 @@ import activityRoutes from "./routers/activity-routes.js"
 import chatRoutes from "./routers/chat-routers.js"
 import chatHandler from "./controllers/chat-handler.js"
 import loggerMiddleware from "./middleware/loggerMiddleware.js"
+import generalChatHandler from "./controllers/generalChat-handler.js"
 
 const app = express()
 const server = http.createServer(app);
@@ -35,6 +36,7 @@ app.use(cors())
 io.on('connection', (socket) => {
     console.log('A user connected:', socket.id);
     chatHandler(io, socket);
+    generalChatHandler(io,socket)
   });
 
 app.use("/api/users",userRoutes)

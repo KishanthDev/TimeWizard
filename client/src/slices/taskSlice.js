@@ -31,7 +31,7 @@ export const clockIn = createAsyncThunk(
           headers: { Authorization: localStorage.getItem("token") },
         }
       );
-      return response.data;
+      return response.data.task;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || "Failed to clock in");
     }
@@ -49,7 +49,7 @@ export const clockOut = createAsyncThunk(
           headers: { Authorization: localStorage.getItem("token") },
         }
       );
-      return response.data;
+      return response.data.task;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || "Failed to clock out");
     }
@@ -123,7 +123,7 @@ export const resubmitTask = createAsyncThunk("tasks/updateTask",async(taskId)=>{
 
 export const approveTask = createAsyncThunk("tasks/approveTask", async (taskId, { rejectWithValue }) => {
   try {
-    const response = await axios.patch(`/api/tasks/${taskId}/approve`);
+    const response = await axios.put(`/api/tasks/approveTask/${taskId}`);
     return response.data.task;
   } catch (error) {
     return rejectWithValue(error.response.data);
@@ -135,7 +135,7 @@ export const requestRevision = createAsyncThunk(
   "tasks/requestRevision",
   async ({ taskId, feedback }, { rejectWithValue }) => {
     try {
-      const response = await axios.patch(`/api/tasks/${taskId}/request-revision`, { feedback });
+      const response = await axios.put(`/api/tasks/revision/${taskId}`, { feedback });
       return response.data.task;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -148,18 +148,19 @@ const taskSlice = createSlice({
   initialState: { 
     tasks: [],
     pendingReviewTasks: [], 
+    clockedInTasks:{},
     allTasks: [],
-    myTasks:[], // Store all tasks separately
+    myTasks:[],
     isLoading: null, 
     error: null 
   },
   reducers: {
-    setPendingReviewTasks: (state, action) => {
-      state.pendingReviewTasks = action.payload;
+    setPendingReviewTasks: (state) => {
+      const pendingTasks  = state.allTasks.filter(ele=>ele.status==="pending_review")
+      state.pendingReviewTasks = pendingTasks
     },
   },
   extraReducers: (builder) => {
-    // Handling fetching specific tasks for a project/employee
     builder
       .addCase(fetchTasks.pending, (state) => {
         state.isLoading = true;
@@ -167,10 +168,6 @@ const taskSlice = createSlice({
       .addCase(fetchTasks.fulfilled, (state, action) => {
         state.isLoading = false;
         state.tasks = action.payload; // Store specific tasks in `tasks` array
-      })
-      .addCase(fetchTasks.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload;
       })
       
       // Handling fetching all tasks
@@ -181,11 +178,6 @@ const taskSlice = createSlice({
         state.isLoading = false;
         state.allTasks = action.payload; // Store all tasks in `allTasks` array
       })
-      .addCase(fetchAllTasks.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload;
-      })
-
       // Handling task assignment
       .addCase(assignTask.pending, (state) => {
         state.isLoading = true;
@@ -205,13 +197,8 @@ const taskSlice = createSlice({
         state.isLoading = false;
         state.myTasks = action.payload; 
       })
-      .addCase(fetchMyTasks.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload;
-      })
       .addCase(resubmitTask.fulfilled, (state, action) => {
         state.isLoading = false;
-        // Update the task in the list
         const index = state.myTasks.findIndex((task) => task._id === action.payload._id);
         if (index !== -1) {
           state.myTasks[index] = action.payload;
@@ -232,7 +219,15 @@ const taskSlice = createSlice({
       })
       .addCase(requestRevision.rejected, (state, action) => {
         state.error = action.payload.message;
-      });
+      })
+      .addCase(clockIn.fulfilled, (state, action) => {
+        const { _id } = action.payload;
+        state.clockedInTasks[_id] = true; // Mark task as clocked in
+      })
+      .addCase(clockOut.fulfilled, (state, action) => {
+        const { _id } = action.payload;
+        state.clockedInTasks[_id] = false; // Mark task as clocked out
+      })
   },
 });
 

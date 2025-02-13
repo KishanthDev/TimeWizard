@@ -6,38 +6,36 @@ import ProjectDetailsModal from './ProjectDetailsModal';
 import SubmissionHistoryModal from './SubmissionHistoryModal';
 import TaskCompletionModal from './TaskSubmission';
 import { format } from 'date-fns';
+import AutoClockOut from './AutoClockOut';
 
 const TaskClockInOut = ({ task }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showSubmissionHistory, setShowSubmissionHistory] = useState(false);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
-  const {error} = useSelector(state=>state.tasks)
+  const { clockedInTasks } = useSelector(state => state.tasks)
   const dispatch = useDispatch();
 
-  const lastEntry = task.timeSpent?.[task.timeSpent.length - 1];
-  const [isClockedIn, setIsClockedIn] = useState(lastEntry && !lastEntry.clockOut);
+  const isClockedIn = clockedInTasks[task._id] || false;
 
   const handleProjectModal = () => setIsOpen((prev) => !prev);
   const handleSubmissionHistoryModal = () => setShowSubmissionHistory((prev) => !prev);
   const handleCompletionModal = () => setShowCompletionModal((prev) => !prev);
 
   const handleClockIn = () => {
-    setIsClockedIn(true);
     dispatch(clockIn({ taskId: task._id }));
   };
   const [expanded, setExpanded] = useState(false);
 
   const handleClockOut = () => {
-    setIsClockedIn(false);
     dispatch(clockOut({ taskId: task._id }));
   };
 
-  const handleCompleteTask = async(submissionData) => {
+  const handleCompleteTask = async (submissionData) => {
     try {
       dispatch(completeTask({ taskId: task._id, submissionData })).unwrap()
     } catch (err) {
       console.log(err);
-      
+
     }
     setShowCompletionModal(false);
   };
@@ -73,12 +71,15 @@ const TaskClockInOut = ({ task }) => {
 
       {task.status !== 'completed' ? (
         <div className="flex justify-between gap-28 items-center mb-4">
+          {isClockedIn && <AutoClockOut taskId={task._id} />}
           <button
             onClick={isClockedIn ? handleClockOut : handleClockIn}
-            className={`px-3 py-1 rounded-lg text-white ${isClockedIn ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'}`}
+            className={`px-3 py-1 rounded-lg text-white ${isClockedIn ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'
+              }`}
           >
             {isClockedIn ? 'Clock Out' : 'Clock In'}
           </button>
+
 
           <button
             onClick={handleCompletionModal}
@@ -95,7 +96,7 @@ const TaskClockInOut = ({ task }) => {
         </div>
       )}
 
-<div className="time-summary">
+      <div className="time-summary">
         <div className="flex justify-between gap-40 items-center">
           <p className="text-sm font-semibold">Time Entries</p>
           <button
@@ -108,9 +109,8 @@ const TaskClockInOut = ({ task }) => {
 
         {/* Absolutely positioned log details to prevent card height expansion */}
         <div
-          className={`transition-all duration-300 overflow-hidden ${
-            expanded ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-          }`}
+          className={`transition-all duration-300 overflow-hidden ${expanded ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+            }`}
         >
           <div className="bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg p-4 mt-2 shadow-md">
             {task.timeSpent && task.timeSpent.length > 0 ? (
