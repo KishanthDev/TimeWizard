@@ -1,4 +1,5 @@
 import Chat from "../models/chat-model.js";
+import GeneralChat from "../models/generalChat-model.js";
 import { validationResult } from "express-validator";
 const chatController = {}
 
@@ -32,5 +33,17 @@ chatController.get = async (req,res) => {
       res.status(500).json({ error: "Error fetching messages", details: err.message });
     }
   };
+
+
+chatController.getGeneralMessages = async (req, res) => {
+  try {
+    const messages = await GeneralChat.find().sort({ createdAt: 1 }); // Get messages in ascending order
+    res.status(200).json(messages);
+  } catch (error) {
+    console.error("Error fetching general messages:", error);
+    res.status(500).json({ message: "Failed to fetch messages" });
+  }
+};
+
 
 export default chatController

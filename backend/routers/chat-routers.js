@@ -6,5 +6,6 @@ import { checkSchema } from "express-validator"
 const router = express.Router()
 
 router.get("/project/:id",checkSchema(idValidation),chatController.get)
+router.get("/chats",chatController.getGeneralMessages)
 
 export default router

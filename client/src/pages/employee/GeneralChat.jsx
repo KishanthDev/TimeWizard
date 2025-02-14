@@ -1,15 +1,29 @@
 import React, { useEffect, useState, useRef } from "react";
 import { io } from "socket.io-client";
 import { Send } from "lucide-react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { getGeneralMessages } from "../../slices/messageSlice";// Import Redux action
 
 const socket = io("http://localhost:3092"); // Change to your backend URL
 
 const GeneralChat = () => {
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.user);
+  const { chats } = useSelector((state) => state.messages); // Get old messages from Redux
+
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
   const chatEndRef = useRef(null);
-  const { user } = useSelector((state) => state.user);
+
+  // Load previous messages when component mounts
+  useEffect(() => {
+    dispatch(getGeneralMessages()); // Fetch old messages from DB
+  }, [dispatch]);
+
+  // Update local state when Redux state updates
+  useEffect(() => {
+    setMessages(chats); // Update local state when Redux store updates
+  }, [chats]);
 
   useEffect(() => {
     if (!user?._id) return;
@@ -31,12 +45,11 @@ const GeneralChat = () => {
     const newMessage = {
       text: message,
       userId: user._id,
-      username: user.username, // Assuming user has a name field
+      username: user.username,
       timestamp: new Date(),
     };
 
     socket.emit("sendGeneralMessage", { message: newMessage });
-
     setMessage("");
   };
 
@@ -46,20 +59,13 @@ const GeneralChat = () => {
 
   return (
     <div className="flex flex-col w-full dark:border border-2 border-gray-400 bg-gray-100 dark:bg-gray-900 h-[calc(100vh-80px)] overflow-hidden">
-      {/* Chat Header */}
-      <div className="p-4  bg-blue-600  text-white text-lg font-semibold text-center shadow-md">
+      <div className="p-4 bg-blue-600 text-white text-lg font-semibold text-center shadow-md">
         General Chat
       </div>
 
-      {/* Messages Section (Fixed Height) */}
       <div className="flex-1 overflow-y-auto px-4 py-2 space-y-3">
         {messages.map((msg, index) => (
-          <div
-            key={index}
-            className={`flex ${
-              msg.userId === user._id ? "justify-end" : "justify-start"
-            }`}
-          >
+          <div key={index} className={`flex ${msg.userId === user._id ? "justify-end" : "justify-start"}`}>
             <div
               className={`p-3 rounded-lg max-w-xs ${
                 msg.userId === user._id
@@ -78,7 +84,6 @@ const GeneralChat = () => {
         <div ref={chatEndRef}></div>
       </div>
 
-      {/* Input Section (Fixed Bottom) */}
       <div className="p-3 border-t flex items-center bg-white dark:bg-gray-800 sticky bottom-0">
         <input
           type="text"
@@ -88,10 +93,7 @@ const GeneralChat = () => {
           onChange={(e) => setMessage(e.target.value)}
           onKeyPress={(e) => e.key === "Enter" && sendMessage()}
         />
-        <button
-          className="ml-3 bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700"
-          onClick={sendMessage}
-        >
+        <button className="ml-3 bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700" onClick={sendMessage}>
           <Send size={24} />
         </button>
       </div>

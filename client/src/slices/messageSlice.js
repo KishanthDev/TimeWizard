@@ -11,6 +11,16 @@ export const fetchMessages = createAsyncThunk("messages/fetchMessages", async (p
     }
 });
 
+
+export const getGeneralMessages = createAsyncThunk("messages/getGeneralMessages", async (_, { rejectWithValue }) => {
+    try {
+        const response = await axios.get(`/api/messages/chats`);
+        return response.data;
+    } catch (error) {
+        return rejectWithValue(error.response.data);
+    }
+});
+
 export const sendMessageToServer = createAsyncThunk(
     "messages/sendMessage",
     async ({ projectId, message }, { rejectWithValue }) => {
@@ -27,6 +37,7 @@ const messageSlice = createSlice({
     name: "messages",
     initialState: {
         messages: [],
+        chats:[],
         isLoading: false,
         error: null,
     },
@@ -51,6 +62,9 @@ const messageSlice = createSlice({
             })
             .addCase(sendMessageToServer.fulfilled, (state, action) => {
                 state.messages.push(action.payload); // Add only after saving to DB
+            })
+            .addCase(getGeneralMessages.fulfilled,(state,action)=>{
+                state.chats=action.payload
             })
     },
 });
