@@ -7,6 +7,7 @@ import projectSlice from "./slices/projectSlice.js"
 import employeeSlice from "./slices/employeeSlice.js"
 import messageSlice from "./slices/messageSlice.js"
 import activitySlice from "./slices/activitySlice.js"
+import subscriptionSlice from "./slices/subscriptionSlice.js"
 
 const store = configureStore({
     reducer:{
@@ -16,7 +17,8 @@ const store = configureStore({
         projects:projectSlice,
         employees:employeeSlice,
         messages:messageSlice,
-        activities:activitySlice
+        activities:activitySlice,
+        subscription:subscriptionSlice
     }
 })
 

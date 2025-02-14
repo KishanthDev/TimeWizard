@@ -1,7 +1,7 @@
 import Project from "../models/project-model.js";
 const projectCntrl = {};
 import cloudinary from '../config/cloudinary.js';
-import mongoose from "mongoose";
+import User from "../models/user-model.js";
 
 projectCntrl.createProject = async (req, res) => {
   try {
@@ -9,6 +9,19 @@ projectCntrl.createProject = async (req, res) => {
 
     if (!files || files.length === 0) {
       return res.status(400).json({ message: "No files uploaded for the project" });
+    }
+
+    const admin = await User.findById(req.currentUser.id)
+
+    const { plan } = admin.subscription;
+    let maxProjects = 0;
+
+    if (plan === "free") maxProjects = 5;  // Limit for free plan
+    else if (plan === "basic") maxProjects = 20; // Limit for basic plan
+    else if (plan === "premium") maxProjects = Infinity; // Unlimited for premium
+
+    if (admin.projectsCreated >= maxProjects) {
+      return res.status(403).json({ message: `Project limit reached for ${plan} plan` });
     }
 
     const projectDocuments = [];
@@ -38,6 +51,8 @@ projectCntrl.createProject = async (req, res) => {
     });
 
     await project.save();
+    
+    await User.findByIdAndUpdate(req.currentUser.id, { $inc: { projectsCreated: 1 } });
 
     res.status(201).json({ message: "Project created successfully", project });
   } catch (error) {

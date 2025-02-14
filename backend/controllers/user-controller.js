@@ -22,13 +22,15 @@ userCntrl.signup = async (req, res) => {
     }
 
     const hashedPassword = await hashPassword(password);
-
     const user = new User({
       name,
       username,
       email,
       password: hashedPassword,
     });
+    if (user.role === "employee") {
+      delete user.subscription;
+    }
     await user.save()
     res.status(200).json({ message: "User created successfully",user });
   } catch (err) {

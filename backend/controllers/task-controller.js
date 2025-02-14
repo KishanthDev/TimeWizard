@@ -1,6 +1,7 @@
 import Task from "../models/task-model.js";
 import Project from "../models/project-model.js";
 import ActivityLog from "../models/activity-model.js";
+import User from "../models/user-model.js";
 
 const taskController = {};
 
@@ -24,6 +25,18 @@ taskController.createTask = async (req, res) => {
       });
     }
 
+    const admin = await User.findById(req.currentUser.id)
+    const { plan } = admin.subscription;
+    let maxTasks = 0;
+
+    if (plan === "free") maxTasks = 10;  // Limit for free plan
+    else if (plan === "basic") maxTasks = 50; // Limit for basic plan
+    else if (plan === "premium") maxTasks = Infinity; // Unlimited for premium
+
+    if (admin.tasksCreated >= maxTasks) {
+      return res.status(403).json({ message: `Task Creation limit reached for ${plan} plan` });
+    }
+
     const task = new Task({
       projectId,
       assignedTo:userId,
@@ -32,7 +45,8 @@ taskController.createTask = async (req, res) => {
       dueDate,
     });
 
-    await task.save();
+    await task.save();    
+    await User.findByIdAndUpdate(req.currentUser.id, { $inc: { tasksCreated: 1 } });
 
     res.status(201).json({ message: "Task created successfully", task });
   } catch (error) {

@@ -13,6 +13,7 @@ import chatRoutes from "./routers/chat-routers.js"
 import chatHandler from "./controllers/chat-handler.js"
 import loggerMiddleware from "./middleware/loggerMiddleware.js"
 import generalChatHandler from "./controllers/generalChat-handler.js"
+import paymentRoutes from "./routers/payment-routes.js"
 
 const app = express()
 const server = http.createServer(app);
@@ -44,6 +45,7 @@ app.use("/api/projects",projectRoutes)
 app.use("/api/tasks",taskRoutes)
 app.use("/api/activities",activityRoutes)
 app.use("/api/messages",chatRoutes)
+app.use("/api/payments",paymentRoutes)
 
 server.listen(PORT,()=>{
     console.log("server is running on port" ,PORT); 

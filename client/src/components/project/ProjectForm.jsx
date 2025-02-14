@@ -162,7 +162,7 @@ const ProjectForm = ({ handleClose }) => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Project Name */}
           <div className="flex flex-col">
-            <label className="text-sm font-medium  text-gray-700" htmlFor="name">
+            <label className="text-sm font-medium   dark:text-gray-300 text-gray-700" htmlFor="name">
               Project Name:
             </label>
             <input
@@ -179,7 +179,7 @@ const ProjectForm = ({ handleClose }) => {
 
           {/* Description */}
           <div className="flex flex-col">
-            <label className="text-sm font-medium text-gray-700" htmlFor="description">
+            <label className="text-sm font-medium dark:text-gray-300 text-gray-700" htmlFor="description">
               Project Description:
             </label>
             <textarea
@@ -195,7 +195,7 @@ const ProjectForm = ({ handleClose }) => {
 
           {/* Budget */}
           <div className="flex flex-col">
-            <label className="text-sm font-medium text-gray-700" htmlFor="budget">
+            <label className="text-sm font-medium  dark:text-gray-300 text-gray-700" htmlFor="budget">
               Budget:
             </label>
             <input
@@ -212,7 +212,7 @@ const ProjectForm = ({ handleClose }) => {
 
           {/* DeadLine */}
           <div className="flex flex-col">
-            <label className="text-sm font-medium text-gray-700" htmlFor="deadLine">
+            <label className="text-sm font-medium  dark:text-gray-300 text-gray-700" htmlFor="deadLine">
               DeadLine:
             </label>
             <input
@@ -228,7 +228,7 @@ const ProjectForm = ({ handleClose }) => {
 
           {/* Teams */}
           <div className="flex  flex-col col-span-2">
-            <label className="text-sm font-medium  text-gray-700">Assign Teams:</label>
+            <label className="text-sm font-medium  dark:text-gray-300 text-gray-700">Assign Teams:</label>
             <Select
               isMulti
               name="teams"
@@ -236,14 +236,28 @@ const ProjectForm = ({ handleClose }) => {
               onInputChange={(inputValue) => setSearch(inputValue)} // Triggers backend search
               onChange={handleTeamChange}
               placeholder="Search and select employees..."
-              className=""
+              className="w-full"
+              classNames={{
+                control: ({ isFocused }) =>
+                  `dark:bg-gray-800 bg-gray-100 dark:border-gray-600 border-gray-300 dark:text-gray-300 text-gray-800 
+                   ${isFocused ? "border-gray-500 ring-0" : ""} shadow-none`, // Removes default blue border
+                menu: () => "dark:bg-gray-800 bg-white border border-gray-600",
+                option: ({ isFocused }) =>
+                  `px-3 py-2 cursor-pointer ${
+                    isFocused ? "dark:bg-gray-700 bg-gray-200" : ""
+                  }`, // Gray hover effect
+                multiValue: () => "dark:bg-gray-700 bg-gray-200 rounded-md px-2 py-1",
+                multiValueLabel: () => "dark:text-gray-300 text-gray-800",
+                multiValueRemove: () =>
+                  "dark:text-gray-300 text-gray-800 hover:bg-red-500 hover:text-white rounded-md px-1",
+              }}
             />
             {errors.teams && <p className="text-red-500 text-sm">{errors.teams}</p>}
           </div>
 
           {/* File Upload */}
           <div className="flex flex-col col-span-2">
-            <label className="text-sm font-medium text-gray-700" htmlFor="attachments">
+            <label className="text-sm font-medium  dark:text-gray-300 text-gray-700" htmlFor="attachments">
               Attachments:
             </label>
             <input

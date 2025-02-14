@@ -30,11 +30,13 @@ const userSchema = new Schema({
     otp: String,
     otpExpiry: Date,
     subscription: {
-        plan: { type: String, enum: ['free', 'premium'], default: 'free' },
-        startDate: { type: Date },
-        endDate: { type: Date },
-        status: { type: String, enum: ['active', 'expired'], default: 'active' },
-    },
+        plan: { type: String, enum: ["free", "basic", "premium"], default: "free" }, // Only for admins
+        status: { type: String, enum: ["active", "canceled"], default: "active" }, // Subscription status
+        stripeCustomerId: { type: String }, // Store Stripe customer ID
+        stripeSubscriptionId: { type: String }, // Store Stripe subscription ID
+      },
+    projectsCreated: { type: Number, default: 0 },
+    tasksCreated: { type: Number, default: 0 },
 },{timestamps:true})
 const User = model("User",userSchema)
 export default User

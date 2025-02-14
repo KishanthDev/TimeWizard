@@ -22,11 +22,19 @@ import { fetchAllTasks } from "./slices/taskSlice";
 import { fetchEmployees } from "./slices/employeeSlice";
 import { fetchProjects } from "./slices/projectSlice";
 import GeneralChat from "./pages/employee/GeneralChat";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import CheckoutForm from "./pages/admin/CheckoutForm";
+import SubscriptionPlans from "./pages/admin/SubcriptionPlans";
+import Success from "./components/admin-payments/Success";
+import Cancel from "./components/admin-payments/Cancel";
 
 function App() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { isLoggedIn } = useSelector((state) => state.user);
+
+  const stripePromise = loadStripe("pk_test_51QsJIsCAuzyXYsf5urQoRitfwrxRtMbUsHp03MeCi5myWju9AgpQPlYuALVMRuXqjMArsKQCU2TOo2lPczp1s9W400BbXKOBC5");
 
   const handleLogout = ()=> {
     dispatch(logout())
@@ -80,8 +88,12 @@ function App() {
                 <Route path="/employee" element={<ProtectedRoute role="employee"><EmployeeDashboard /></ProtectedRoute>} />
                 <Route path="/task-approvals" element={<ProtectedRoute role="employee"><TaskApprovals /></ProtectedRoute>} />
                 <Route path="/chat" element={<ProtectedRoute role="employee"><GeneralChat /></ProtectedRoute>} />
+                <Route path="/subscription" element={<ProtectedRoute role="admin"><SubscriptionPlans/></ProtectedRoute>} />
+                <Route path="/checkout" element={<ProtectedRoute role="admin"><Elements stripe={stripePromise}><CheckoutForm /></Elements></ProtectedRoute>} />
                 <Route path="/employee-task" element={<ProtectedRoute role="employee"><TaskDetailsPage /></ProtectedRoute>} />
                 <Route path="/settings" element={<Settings />} />
+                <Route path="/success" element={<Success/>}/>
+                <Route path="/cancel" element={<Cancel/>}/>
               </Routes>
             </div>
           </div>

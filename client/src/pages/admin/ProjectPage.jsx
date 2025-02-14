@@ -31,15 +31,7 @@ const ProjectPage = () => {
       {/* Modal for Creating Project */}
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-lg">
             <ProjectForm handleClose={handleClose} />
-            <button 
-              className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 w-full"
-              onClick={handleClose}
-            >
-              Close
-            </button>
-          </div>
         </div>
       )}
     </div>
