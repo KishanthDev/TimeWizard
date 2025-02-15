@@ -11,8 +11,7 @@ export default function AdminDashboard() {
     },[dispatch])
     return (
         <>
-            <h1>Admin</h1>
-            <div className="flex mr-10 ml-3 gap-6">
+            <div className="flex mr-10 ml-3 mt-10 gap-6">
                 <div className=""><TaskStatusChart/></div>
            <div className="flex-grow"><ActivityLogs/></div>
             

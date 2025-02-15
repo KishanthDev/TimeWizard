@@ -36,9 +36,7 @@ export const fetchSubscriptionStatus = createAsyncThunk(
     "subscription/fetchSubscriptionStatus",
     async (_, { rejectWithValue }) => {
         try {
-            const { data } = await axios.get("/api/payments/subscribe", {
-                headers: { Authorization: localStorage.getItem("token") }
-            });
+            const { data } = await axios.get("/api/payments/subscribe");
             return data; // Subscription details
         } catch (error) {
             return rejectWithValue(error.response?.data?.message || "Failed to fetch subscription status");

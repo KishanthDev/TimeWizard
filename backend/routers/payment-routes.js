@@ -10,6 +10,6 @@ router.post(
     paymentController.webhooks
   );
   
-router.get("/subscribe",auth,paymentController.fetchSubscriptionStatus)
+router.get("/subscribe",paymentController.fetchSubscriptionStatus)
 
 export default router

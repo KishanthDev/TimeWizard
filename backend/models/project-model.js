@@ -10,7 +10,7 @@ const ProjectSchema = new Schema({
   }],
   budget:Number,
   deadLine:Date,
-  status: { type: String, enum: ['pending', 'in-progress', 'completed'], default: 'pending' },
+  status: { type: String, enum: ['pending', 'ongoing', 'completed'], default: 'pending' },
 },{timestamps:true});
 
 const Project = model('Project', ProjectSchema)

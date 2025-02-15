@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 
 export default function Navbar() {
   const { user } = useSelector((state) => state.user);
+  const { plan } = useSelector(state => state.subscription)
   const location = useLocation(); // Get current route
 
   const getLinkClass = (path) =>
@@ -43,8 +44,8 @@ export default function Navbar() {
 
             <li>
               {user.subscription?.plan === "free" ? (
-                <Link to="/subscribe" className="block py-2 flex items-center">
-                  Activity <span className="ml-2 text-xs bg-gray-700 text-white px-1 py-1 rounded">🔒 Unlock with Basic</span>
+                <Link to="/activity-preview" className={`block py-2 ${getLinkClass("/activity-preview")}`}>
+                  Activity <span className="ml-2 text-xs bg-gray-700 text-white px-1 py-1 rounded">🔒Basic</span>
                 </Link>
               ) : (
                 <Link to="/activities" className={`block py-2 ${getLinkClass("/activities")}`}>
@@ -55,8 +56,8 @@ export default function Navbar() {
 
             <li>
               {user.subscription?.plan === "free" ? (
-                <Link to="/subscribe" className="block py-2 flex items-center">
-                  Calendar <span className="ml-2 text-xs bg-gray-700 text-white px-1 py-1 rounded">🔒 Unlock with Basic</span>
+                <Link to="/calendar-preview" className={`block py-2 ${getLinkClass("/calendar-preview")}`}>
+                  Calendar <span className="ml-2 text-xs bg-gray-700 text-white px-1 py-1 rounded">🔒Basic</span>
                 </Link>
               ) : (
                 <Link to="/activity-calendar" className={`block py-2 ${getLinkClass("/activity-calendar")}`}>
@@ -78,9 +79,15 @@ export default function Navbar() {
               </Link>
             </li>
             <li>
-              <Link to="/chat" className={`block py-2 ${getLinkClass("/chat")}`}>
-                Chat
-              </Link>
+              {plan === "premium" ? (
+                <Link to="/general-chat" className={`block py-2 ${getLinkClass("/general-chat")}`}>
+                  General Chat
+                </Link>
+              ) :(
+              <Link to="/chat-preview" className={`block py-2 ${getLinkClass("/chat-preview")}`}>
+              General Chat <span className="ml-2 text-xs bg-gray-700 text-white px-1 py-1 rounded">🔒</span>
+            </Link>
+          )}
             </li>
             <li>
               <Link to="/task-approvals" className={`block py-2 ${getLinkClass("/task-approvals")}`}>

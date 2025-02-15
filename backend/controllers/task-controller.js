@@ -79,6 +79,12 @@ taskController.clockIn = async (req, res) => {
     // Add a new clock-in entry
     task.timeSpent.push({ clockIn: new Date() });
 
+    const project = await Project.findById(task.projectId);
+    if (project && project.status === "pending") {
+      project.status = "ongoing";
+      await project.save(); // Save the updated project status
+    }
+
     await ActivityLog.create({
       userId:task.assignedTo,
       action: 'clocked in',

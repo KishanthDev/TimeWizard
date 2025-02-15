@@ -28,6 +28,10 @@ import CheckoutForm from "./pages/admin/CheckoutForm";
 import SubscriptionPlans from "./pages/admin/SubcriptionPlans";
 import Success from "./components/admin-payments/Success";
 import Cancel from "./components/admin-payments/Cancel";
+import { fetchSubscriptionStatus } from "./slices/subscriptionSlice";
+import ActivityPreview from "./components/admin-payments/ActivityPreview";
+import CalendarPreview from "./components/admin-payments/CalendarPreview";
+import GeneralChatPreview from "./components/admin-payments/GeneralChatPreview";
 
 function App() {
   const dispatch = useDispatch()
@@ -44,11 +48,11 @@ function App() {
     dispatch(profile())
   },[dispatch])
 
-  useEffect(()=>{ 
-    dispatch(fetchAllTasks())
+  useEffect(()=>{
     dispatch(fetchProjects())
     dispatch(fetchEmployees({limit:25}))
     dispatch(fetchAllTasks())
+    dispatch(fetchSubscriptionStatus())
   },[dispatch])
 
   useEffect(() => {
@@ -82,14 +86,17 @@ function App() {
                 <Route path="/admin" element={<ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>} />
                 <Route path="/emp" element={<ProtectedRoute role="admin"><EmployeesPage /></ProtectedRoute>} />
                 <Route path="/activities" element={<ProtectedRoute role="admin"><ActivityLog /></ProtectedRoute>} />
+                <Route path="/activity-preview" element={<ProtectedRoute role="admin"><ActivityPreview /></ProtectedRoute>} />
                 <Route path="/activity-calendar" element={<ProtectedRoute role="admin"><ActivityFullCalendar /></ProtectedRoute>} />
+                <Route path="/calendar-preview" element={<ProtectedRoute role="admin"><CalendarPreview /></ProtectedRoute>} />
                 <Route path="/task-review" element={<ProtectedRoute role="admin"><TaskReview /></ProtectedRoute>} />
                 <Route path="/project" element={<ProtectedRoute role="admin"><ProjectPage /></ProtectedRoute>} />
+                <Route path="/subscribe" element={<ProtectedRoute role="admin"><SubscriptionPlans/></ProtectedRoute>} />
+                <Route path="/checkout" element={<ProtectedRoute role="admin"><Elements stripe={stripePromise}><CheckoutForm /></Elements></ProtectedRoute>} />
                 <Route path="/employee" element={<ProtectedRoute role="employee"><EmployeeDashboard /></ProtectedRoute>} />
                 <Route path="/task-approvals" element={<ProtectedRoute role="employee"><TaskApprovals /></ProtectedRoute>} />
                 <Route path="/chat" element={<ProtectedRoute role="employee"><GeneralChat /></ProtectedRoute>} />
-                <Route path="/subscribe" element={<ProtectedRoute role="admin"><SubscriptionPlans/></ProtectedRoute>} />
-                <Route path="/checkout" element={<ProtectedRoute role="admin"><Elements stripe={stripePromise}><CheckoutForm /></Elements></ProtectedRoute>} />
+                <Route path="/chat-preview" element={<ProtectedRoute role="employee"><GeneralChatPreview /></ProtectedRoute>} />
                 <Route path="/employee-task" element={<ProtectedRoute role="employee"><TaskDetailsPage /></ProtectedRoute>} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/success" element={<Success/>}/>

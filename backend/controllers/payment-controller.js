@@ -55,7 +55,7 @@ paymentController.createCheckoutSession = async (req, res) => {
     }
   };
 
-  paymentController.webhooks = async (req, res) => {
+paymentController.webhooks = async (req, res) => {
     const sig = req.headers["stripe-signature"];
 
     if (!sig) {
@@ -137,8 +137,7 @@ paymentController.createCheckoutSession = async (req, res) => {
 
 paymentController.fetchSubscriptionStatus = async (req, res) => {
         try {
-            const userId = req.currentUser.id; // Assuming user ID is available from auth middleware
-            const user = await User.findById(userId);
+            const user = await User.findOne({role:"admin"});
 
             if (!user) {
                 return res.status(404).json({ message: "User not found" });
@@ -153,7 +152,5 @@ paymentController.fetchSubscriptionStatus = async (req, res) => {
             res.status(500).json({ message: "Failed to fetch subscription status" });
         }
     }
-
-
 
 export default paymentController
