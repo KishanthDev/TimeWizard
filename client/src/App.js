@@ -88,7 +88,7 @@ function App() {
                 <Route path="/employee" element={<ProtectedRoute role="employee"><EmployeeDashboard /></ProtectedRoute>} />
                 <Route path="/task-approvals" element={<ProtectedRoute role="employee"><TaskApprovals /></ProtectedRoute>} />
                 <Route path="/chat" element={<ProtectedRoute role="employee"><GeneralChat /></ProtectedRoute>} />
-                <Route path="/subscription" element={<ProtectedRoute role="admin"><SubscriptionPlans/></ProtectedRoute>} />
+                <Route path="/subscribe" element={<ProtectedRoute role="admin"><SubscriptionPlans/></ProtectedRoute>} />
                 <Route path="/checkout" element={<ProtectedRoute role="admin"><Elements stripe={stripePromise}><CheckoutForm /></Elements></ProtectedRoute>} />
                 <Route path="/employee-task" element={<ProtectedRoute role="employee"><TaskDetailsPage /></ProtectedRoute>} />
                 <Route path="/settings" element={<Settings />} />

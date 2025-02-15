@@ -11,8 +11,7 @@ paymentController.createCheckoutSession = async (req, res) => {
       const { plan } = req.body; // Plan: "basic" or "premium"
       const userId = req.currentUser.id; // User from auth middleware
   
-      console.log(plan);
-      
+    
       const user = await User.findById(userId)
       const priceIds = {
         basic: "price_1QsOPeCAuzyXYsf5Hn1yPcV4", // Replace with Stripe Price ID
@@ -23,10 +22,15 @@ paymentController.createCheckoutSession = async (req, res) => {
         return res.status(400).json({ message: "Invalid plan selected" });
       }
   
+      const customer = await stripe.customers.create({
+        email: user.email,
+        metadata: { plan }, // Attach metadata to customer
+      });
+      
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],
         mode: "subscription",
-        customer_email: user.email,
+        customer: customer.id, // Use customer instead of customer_email
         line_items: [
           {
             price: priceIds[plan],
@@ -35,7 +39,14 @@ paymentController.createCheckoutSession = async (req, res) => {
         ],
         success_url: 'http://localhost:3000/success',
         cancel_url: 'http://localhost:3000/cancel',
+        subscription_data: {
+            metadata: { // Ensure metadata is attached at the subscription level
+              userId: user._id.toString(), 
+              plan: plan  
+            }
+          }
       });
+      
   
       res.json({ sessionUrl: session.url ,plan });
     } catch (error) {
@@ -44,103 +55,85 @@ paymentController.createCheckoutSession = async (req, res) => {
     }
   };
 
- /*  paymentController.success = async (req, res) => {
+  paymentController.webhooks = async (req, res) => {
     const sig = req.headers["stripe-signature"];
 
+    if (!sig) {
+        console.error("❌ No stripe-signature header found");
+        return res.status(400).json({ error: "No stripe-signature header found" });
+    }
+
     try {
-        const event = stripeInstance.webhooks.constructEvent(
-            req.body, // Use `req.body` instead of `req.rawBody`
+        const event = stripe.webhooks.constructEvent(
+            req.body, // MUST be raw body, not JSON parsed
             sig,
             process.env.STRIPE_WEBHOOK_SECRET
         );
 
-        let user = null;
-        let updatedPlan = "free";
-        let updatedStatus = "inactive";
-
-        if (event.type === "checkout.session.completed") {
+        if (event.type === "invoice.payment_succeeded") {
+            console.log("✅ Payment successful! Processing subscription...");
+        
             const session = event.data.object;
-            const userId = session.metadata?.userId;
-            const plan = session.metadata?.plan;
-            const stripeCustomerId = session.customer;
+        
             const stripeSubscriptionId = session.subscription;
-
-            if (userId) {
-                user = await User.findById(userId);
-                
-                if (user && user.role === "admin") {
-                    user.subscription.plan = plan;
-                    user.subscription.status = "active";
-                    user.subscription.stripeCustomerId = stripeCustomerId;
-                    user.subscription.stripeSubscriptionId = stripeSubscriptionId;
-                    await user.save();
-
-                    updatedPlan = user.subscription.plan;
-                    updatedStatus = user.subscription.status;
-
-                    console.log(`✅ Admin ${userId} upgraded to ${plan} plan`);
-                }
+        
+            if (!stripeSubscriptionId) {
+                console.error("❌ Subscription ID missing in invoice!");
+                return res.status(400).json({ error: "Subscription ID missing" });
             }
-        } else if (event.type === "customer.subscription.deleted") {
-            const subscription = event.data.object;
-            user = await User.findOne({ "subscription.stripeSubscriptionId": subscription.id });
-
+        
+            // Fetch the subscription to get metadata
+            const subscription = await stripe.subscriptions.retrieve(stripeSubscriptionId);
+            const userId = subscription.metadata?.userId;
+            const plan = subscription.metadata?.plan || "not found";
+        
+            if (!userId) {
+                console.error("❌ User ID not found in subscription metadata");
+                return res.status(400).json({ error: "User ID missing in subscription" });
+            }
+        
+            const user = await User.findById(userId);
             if (user && user.role === "admin") {
+                user.subscription.plan = plan;
+                user.subscription.status = "active";
+                user.subscription.stripeCustomerId = session.customer;
+                user.subscription.stripeSubscriptionId = stripeSubscriptionId;
+                await user.save();
+        
+                console.log(`✅ Admin ${userId} upgraded to ${plan} plan`);
+            }
+        
+            res.json({ received: true });
+        }
+        
+        if (event.type === "customer.subscription.deleted") {
+            console.log("⚠️ Subscription canceled! Downgrading user to free plan...");
+
+            const subscription = event.data.object;
+            const userId = subscription.metadata?.userId;
+
+            if (!userId) {
+                console.error("❌ User ID missing in subscription metadata");
+                return res.status(400).json({ error: "User ID missing in subscription" });
+            }
+
+            const user = await User.findById(userId);
+            if (user) {
                 user.subscription.plan = "free"; // Downgrade to free plan
                 user.subscription.status = "canceled";
-                user.subscription.stripeSubscriptionId = null;
                 await user.save();
 
-                updatedPlan = user.subscription.plan;
-                updatedStatus = user.subscription.status;
-
-                console.log(`❌ Admin ${user._id} subscription canceled`);
+                console.log(`🔻 User ${userId} downgraded to Free plan`);
             }
-        }
 
-        res.json({ received: true, plan: updatedPlan, status: updatedStatus });
+            return res.json({ received: true });
+        }
 
     } catch (err) {
         console.error("🚨 Webhook Error:", err.message);
         res.status(400).json({ error: `Webhook error: ${err.message}` });
     }
 };
- */
-
-paymentController.success = async (req, res) => {
-    try {
-        const userId = req.currentUser.id // Assuming authentication middleware sets `req.user`
-        
-        const user = await User.findById(userId);
-        if (!user || user.role !== "admin") {
-            return res.status(404).json({ error: "User not found or unauthorized" });
-        }
-
-        // Fetch latest subscription from Stripe
-        const subscriptions = await stripe.subscriptions.list({
-            customer: user.subscription.stripeCustomerId,
-            status: "active",
-        });
-
-
-        console.log(stripe.subscriptions);
-        
-        if (subscriptions.data.length > 0) {
-            user.subscription.plan = subscriptions.data[0].metadata?.plan || "free";
-            user.subscription.status = "active";
-        } else {
-            user.subscription.plan = "free";
-            user.subscription.status = "canceled";
-        }
-
-        await user.save();
-        return res.json({ plan: user.subscription.plan, status: user.subscription.status });
-    } catch (err) {
-        console.error("🚨 Error in success endpoint:", err.message);
-        res.status(500).json({ error: "Failed to verify subscription" });
-    }
-};
-
 
 paymentController.fetchSubscriptionStatus = async (req, res) => {
         try {

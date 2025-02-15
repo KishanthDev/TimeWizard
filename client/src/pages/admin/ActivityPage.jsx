@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchActivities } from "../../slices/activitySlice";
+import { useNavigate } from "react-router-dom";
 
 const ACTIONS = [
     { label: "Clock In", value: "clocked in" },
@@ -10,12 +11,20 @@ const ACTIONS = [
 
 const ActivityLog = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate()
     const { activities, page, totalPages, status, error } = useSelector((state) => state.activities);
-
+    const {user} = useSelector(state=>state.user)
     const [userId, setUserId] = useState("");
     const [selectedAction, setSelectedAction] = useState("");
     const [sortOrder, setSortOrder] = useState("desc");
     const limit = 5;
+
+
+    useEffect(() => {
+        if (user?.subscription?.plan === "free") {
+            navigate("/admin"); // Redirect to another page
+        }
+    }, [user, navigate]);
 
     useEffect(() => {
         dispatch(fetchActivities({ page: 1, limit, userId, search: selectedAction, sortOrder }));

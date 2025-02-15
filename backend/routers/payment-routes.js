@@ -4,7 +4,12 @@ import auth from "../middleware/auth.js"
 const router = express.Router()
 
 router.post("/subscribe",auth,paymentController.createCheckoutSession)
-router.put("/success",auth,paymentController.success)
+router.post(
+    "/webhooks",
+    express.raw({ type: "application/json" }),
+    paymentController.webhooks
+  );
+  
 router.get("/subscribe",auth,paymentController.fetchSubscriptionStatus)
 
 export default router

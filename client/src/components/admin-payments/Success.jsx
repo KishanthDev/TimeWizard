@@ -1,29 +1,23 @@
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { checkoutSuccess } from "../../slices/subscriptionSlice";
 
 const Success = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const [countdown, setCountdown] = useState(5);
 
-  useEffect(() => {
-    dispatch(checkoutSuccess());
-  }, [dispatch]);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setCountdown((prev) => prev - 1);
     }, 1000);
 
-    const redirectTimeout = setTimeout(() => {
+   /*  const redirectTimeout = setTimeout(() => {
       navigate("/admin");
-    }, 5000);
+    }, 5000); */
 
     return () => {
       clearInterval(timer);
-      clearTimeout(redirectTimeout);
+    /*   clearTimeout(redirectTimeout); */
     };
   }, [navigate]);
 

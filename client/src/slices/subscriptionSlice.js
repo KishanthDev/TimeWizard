@@ -19,9 +19,9 @@ export const createCheckoutSession = createAsyncThunk(
 // 2️⃣ Handle Stripe Checkout Success (Fetch updated plan)
 export const checkoutSuccess = createAsyncThunk(
     "subscription/checkoutSuccess",
-    async (_, { rejectWithValue }) => {
+    async (_,{ rejectWithValue }) => {
         try { 
-            const { data } = await axios.put("/api/payments/success",_, {
+            const { data } = await axios.get("/api/payments/success",{
                 headers: { Authorization: localStorage.getItem("token") }
             });
             return data; // Updated subscription details
