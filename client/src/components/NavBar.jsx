@@ -79,6 +79,11 @@ export default function Navbar() {
               </Link>
             </li>
             <li>
+              <Link to="/task-approvals" className={`block py-2 ${getLinkClass("/task-approvals")}`}>
+                Deadlines
+              </Link>
+            </li>
+            <li>
               {plan === "premium" ? (
                 <Link to="/general-chat" className={`block py-2 ${getLinkClass("/general-chat")}`}>
                   General Chat

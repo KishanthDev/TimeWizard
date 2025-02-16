@@ -14,7 +14,6 @@ import chatHandler from "./controllers/chat-handler.js"
 import loggerMiddleware from "./middleware/loggerMiddleware.js"
 import generalChatHandler from "./controllers/generalChat-handler.js"
 import paymentRoutes from "./routers/payment-routes.js"
-import paymentController from "./controllers/payment-controller.js"
 
 const app = express()
 const server = http.createServer(app);

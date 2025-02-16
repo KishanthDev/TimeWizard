@@ -78,43 +78,50 @@ userCntrl.forgotPassword = async (req, res) => {
       res.status(500).json({ error: "Something went wrong. Please try again later." });
     }
   };
-
   userCntrl.resetPassword = async (req, res) => {
     try {
       const { email, oldPassword, newPassword } = req.body;
+  
+      // Validate input
+      if (!email || !oldPassword || !newPassword) {
+        return res.status(400).json({ error: "All fields are required." });
+      }
   
       // Check if the user exists
       const user = await User.findOne({ email });
       if (!user) {
         return res.status(404).json({ error: "User with this email does not exist." });
       }
-      
+  
+      // Validate new password format
       if (!validatePassword(newPassword)) {
         return res.status(400).json({
-          error: "Password must be at least 8 characters long, contain an uppercase letter, a number, and a special character.",
+          error:
+            "Password must be at least 8 characters long, contain an uppercase letter, a number, and a special character.",
         });
       }
-
-      // Verify old password
-      const isMatch = await comparePassword(oldPassword, user.password);
-      if (!isMatch) {
+  
+      // Check if old password matches the stored password
+      if (!(await comparePassword(oldPassword, user.password))) {
         return res.status(400).json({ error: "Incorrect old password." });
       }
-      
-      if(oldPassword===newPassword){
-        return res.status(400).json({error:"Password is already used"})
+  
+      // Prevent reuse of the same password
+      if (oldPassword === newPassword) {
+        return res.status(400).json({ error: "New password cannot be the same as the old password." });
       }
-
+  
       // Hash and update the new password
       user.password = await hashPassword(newPassword);
       await user.save();
   
-      res.status(200).json({ message: "Password has been updated successfully." });
+      return res.status(200).json({ message: "Password has been updated successfully." });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Something went wrong. Please try again later." });
+      console.error("Reset Password Error:", error);
+      return res.status(500).json({ error: "Something went wrong. Please try again later." });
     }
   };
+  
 
 
   export default userCntrl

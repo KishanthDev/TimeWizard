@@ -5,3 +5,8 @@
 html, body {
     @apply bg-white text-black dark:bg-gray-900 dark:text-white;
 }
+
+.Toastify__toast-container {
+    z-index: 9999 !important;
+  }
+  

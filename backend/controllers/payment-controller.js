@@ -65,7 +65,7 @@ paymentController.webhooks = async (req, res) => {
 
     try {
         const event = stripe.webhooks.constructEvent(
-            req.body, // MUST be raw body, not JSON parsed
+            req.body,
             sig,
             process.env.STRIPE_WEBHOOK_SECRET
         );

@@ -32,6 +32,7 @@ import { fetchSubscriptionStatus } from "./slices/subscriptionSlice";
 import ActivityPreview from "./components/admin-payments/ActivityPreview";
 import CalendarPreview from "./components/admin-payments/CalendarPreview";
 import GeneralChatPreview from "./components/admin-payments/GeneralChatPreview";
+import EmployeeTaskCalendar from "./pages/employee/Calendar";
 
 function App() {
   const dispatch = useDispatch()
@@ -69,7 +70,7 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen dark:bg-gray-900 bg-white flex flex-col">
+    <div className="min-h-screen dark:bg-gray-900 bg-gray-100 flex flex-col">
       {!isLoggedIn ? (
         <Routes>
           <Route path="/" element={<Home />} />
@@ -98,6 +99,7 @@ function App() {
                 <Route path="/chat" element={<ProtectedRoute role="employee"><GeneralChat /></ProtectedRoute>} />
                 <Route path="/chat-preview" element={<ProtectedRoute role="employee"><GeneralChatPreview /></ProtectedRoute>} />
                 <Route path="/employee-task" element={<ProtectedRoute role="employee"><TaskDetailsPage /></ProtectedRoute>} />
+                <Route path="/employee-calendar" element={<ProtectedRoute role="employee"><EmployeeTaskCalendar /></ProtectedRoute>} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/success" element={<Success/>}/>
                 <Route path="/cancel" element={<Cancel/>}/>

@@ -18,10 +18,32 @@ export const verifyOtpAndResetPassword = createAsyncThunk(
   }
 );
 
+export const resetPasswordWithOldPassword = createAsyncThunk(
+  "resetPassword/resetPasswordWithOldPassword",
+  async ({ email, oldPassword, newPassword }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post("/api/users/resetPassword", {
+        email,
+        oldPassword,
+        newPassword,
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.error || "Password reset failed");
+    }
+  }
+);
+
 const resetPasswordSlice = createSlice({
   name: 'resetPassword',
-  initialState: { isLoading: null },
-  reducers: {},
+  initialState: { isLoading: null,success:false,error:null },
+  reducers: {
+    resetState: (state) => {
+      state.isLoading = false;
+      state.success = false;
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(sendForgotPasswordEmail.pending, (state) => { state.isLoading = true })
@@ -29,7 +51,21 @@ const resetPasswordSlice = createSlice({
 
       .addCase(verifyOtpAndResetPassword.pending, (state) => { state.isLoading = true })
       .addCase(verifyOtpAndResetPassword.fulfilled, (state) => { state.isLoading = true })
+
+      .addCase(resetPasswordWithOldPassword.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(resetPasswordWithOldPassword.fulfilled, (state) => {
+        state.isLoading = false;
+        state.success = true;
+      })
+      .addCase(resetPasswordWithOldPassword.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      });
   },
 });
 
+export const {resetState} = resetPasswordSlice.actions
 export default resetPasswordSlice.reducer;
