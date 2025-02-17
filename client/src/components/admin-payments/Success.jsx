@@ -11,13 +11,13 @@ const Success = () => {
       setCountdown((prev) => prev - 1);
     }, 1000);
 
-   /*  const redirectTimeout = setTimeout(() => {
+   const redirectTimeout = setTimeout(() => {
       navigate("/admin");
-    }, 5000); */
+    }, 5000);
 
     return () => {
       clearInterval(timer);
-    /*   clearTimeout(redirectTimeout); */
+     clearTimeout(redirectTimeout);
     };
   }, [navigate]);
 

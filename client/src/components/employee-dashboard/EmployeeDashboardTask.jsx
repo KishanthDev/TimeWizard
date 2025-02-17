@@ -52,7 +52,11 @@ const EmployeeDashboardTask = ({projectId,isOpen}) => {
             </div>
           ))
         ) : (
-          <p className="text-gray-500">No pending or ongoing tasks assigned to you.</p>
+          <p className="text-gray-500 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 p-3 rounded-md text-center shadow-md">
+  No pending tasks? Lucky you! 🎉 Time to grab a coffee ☕ and enjoy the peace! 😎
+</p>
+
+
         )}
       </div>
     </div>

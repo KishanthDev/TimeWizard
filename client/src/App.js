@@ -33,6 +33,8 @@ import ActivityPreview from "./components/admin-payments/ActivityPreview";
 import CalendarPreview from "./components/admin-payments/CalendarPreview";
 import GeneralChatPreview from "./components/admin-payments/GeneralChatPreview";
 import EmployeeTaskCalendar from "./pages/employee/Calendar";
+import UnauthorizedPage from "./components/UnAuthorized";
+import NotFoundPage from "./components/NotFoundPage";
 
 function App() {
   const dispatch = useDispatch()
@@ -103,6 +105,8 @@ function App() {
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/success" element={<Success/>}/>
                 <Route path="/cancel" element={<Cancel/>}/>
+                <Route path="/unauthorized" element={<UnauthorizedPage/>}/>
+                <Route path="*" element={<NotFoundPage/>}/>
               </Routes>
             </div>
           </div>

@@ -22,7 +22,7 @@ export default function Navbar() {
               </Link>
             </li>
             <li>
-              <Link to="/project" className={`block py-2 flex items-center ${getLinkClass("/project")}`}>
+              <Link to="/project" className={`block py-2  ${getLinkClass("/project")}`}>
                 Project
                 {user.subscription?.plan !== "premium" && (
                   <span className="ml-2 text-xs bg-gray-700 text-white px-1 py-1 rounded">
@@ -79,7 +79,7 @@ export default function Navbar() {
               </Link>
             </li>
             <li>
-              <Link to="/task-approvals" className={`block py-2 ${getLinkClass("/task-approvals")}`}>
+              <Link to="/employee-calendar" className={`block py-2 ${getLinkClass("/employee-calendar")}`}>
                 Deadlines
               </Link>
             </li>

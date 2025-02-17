@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import validator from "validator";
 import { sendForgotPasswordEmail, verifyOtpAndResetPassword } from "../slices/forgotPasswordSlice";
@@ -16,7 +16,6 @@ const ForgotPassword = () => {
   const dispatch = useDispatch();
   const { isLoading } = useSelector((state) => state.forgotPassword);
 
-
   useEffect(() => {
     let timer;
     if (otpSent && timeLeft > 0) {
@@ -24,24 +23,23 @@ const ForgotPassword = () => {
         setTimeLeft((prevTime) => prevTime - 1);
       }, 1000);
     } else if (timeLeft === 0) {
-    setOtpExpired(true);
+      setOtpExpired(true);
       toast.error("OTP expired! Request a new OTP.", { position: "top-right" });
     }
     return () => clearInterval(timer);
   }, [otpSent, timeLeft]);
 
-
   const handleSendOtp = async () => {
     if (validator.isEmail(email)) {
-        try {
-            await dispatch(sendForgotPasswordEmail(email)).unwrap()
-            setOtpSent(true);
-            setOtpExpired(false);
-            setTimeLeft(600);
-            toast.success("Otp sent to your email",{position:"top-right"})
-        } catch (error) {
-            toast.error("Account not registered in this email",{position:"top-right"})
-        }
+      try {
+        await dispatch(sendForgotPasswordEmail(email)).unwrap();
+        setOtpSent(true);
+        setOtpExpired(false);
+        setTimeLeft(600);
+        toast.success("Otp sent to your email", { position: "top-right" });
+      } catch (error) {
+        toast.error("Account not registered with this email", { position: "top-right" });
+      }
       setErrors({});
     } else {
       setErrors({ email: "Please enter a valid email address" });
@@ -55,28 +53,26 @@ const ForgotPassword = () => {
     await handleSendOtp();
   };
 
-
-
   const handleSubmit = async (e) => {
-    setErrors({})
+    setErrors({});
     e.preventDefault();
     const newErrors = {};
     if (!otp) newErrors.otp = "OTP is required";
     if (!password) newErrors.password = "Password is required";
     if (!validator.isStrongPassword(password))
-      newErrors.password = "Password must be min of 8 char,uppercase,num,special character.";
+      newErrors.password = "Password must be min of 8 characters, include uppercase, number, and special character.";
     if (password !== confirmPassword)
       newErrors.confirmPassword = "Passwords do not match";
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
     } else {
-        try {
-            await dispatch(verifyOtpAndResetPassword({ email, otp, newPassword: password })).unwrap()
-            toast.success("Password updated",{position:"top-right"})
-        } catch (error) {
-            toast.error("Invalid Otp",{position:"top-right"})
-        }
+      try {
+        await dispatch(verifyOtpAndResetPassword({ email, otp, newPassword: password })).unwrap();
+        toast.success("Password updated", { position: "top-right" });
+      } catch (error) {
+        toast.error("Invalid OTP", { position: "top-right" });
+      }
     }
   };
 
@@ -87,45 +83,49 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-        <ToastContainer/>
-      <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-        <h2 className="text-xl font-bold dark:text-black mb-4 text-center">Forgot Password</h2>
+    <div className="flex justify-center items-center h-screen">
+      <ToastContainer />
+      <div className="max-w-sm w-full bg-white p-8 rounded-xl shadow-lg">
+        <div className="text-center font-semibold dark:text-black text-lg mb-6">Forgot Password</div>
+
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Email Field */}
-          <div className="flex items-center gap-2">
+          <div className="space-y-1">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
             <input
               type="email"
+              id="email"
+              name="email"
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className={`w-full dark:text-black  px-4 py-2 border rounded ${
-                errors.email ? "border-red-500" : "border-gray-300"
-              }`}
+              className={`w-full px-4 py-2 dark:text-black border rounded-lg focus:outline-none ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
             />
-            <button
-              type="button"
-              onClick={handleSendOtp}
-              disabled={otpSent}
-              className="bg-blue-500 text-white  px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-400"
-            >
-              {isLoading ? "sending..." : otpSent ? "OTP Sent" : "Send OTP"}
-            </button>
+            {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
           </div>
-          {errors.email && (
-            <p className="text-red-500 text-sm">{errors.email}</p>
-          )}
+
+          <button
+            type="button"
+            onClick={handleSendOtp}
+            disabled={otpSent}
+            className="w-full py-2 bg-black text-white rounded-lg hover:bg-gray-900"
+          >
+            {isLoading ? "sending..." : otpSent ? "OTP Sent" : "Send OTP"}
+          </button>
 
           {/* OTP Field */}
           {otpSent && (
-            <div>
+            <div className="space-y-1">
+              <label htmlFor="otp" className="block text-sm font-medium text-gray-700">OTP</label>
               <input
                 type="text"
+                id="otp"
+                name="otp"
                 placeholder="Enter OTP"
                 value={otp}
                 onChange={(e) => setOtp(e.target.value)}
-                className={`w-full px-4 py-2 border dark:text-black  rounded ${errors.otp ? "border-red-500" : "border-gray-300"}`}
                 disabled={otpExpired}
+                className={`w-full px-4 py-2 dark:text-black border rounded-lg focus:outline-none ${errors.otp ? 'border-red-500' : 'border-gray-300'}`}
               />
               {errors.otp && <p className="text-red-500 text-sm">{errors.otp}</p>}
               {!otpExpired ? (
@@ -141,53 +141,47 @@ const ForgotPassword = () => {
             <button
               type="button"
               onClick={handleResendOtp}
-              className="w-full bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
+              className="w-full py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-400"
             >
               Resend OTP
             </button>
           )}
 
-          {/* Password Field */}
+          {/* Password Fields */}
           {otpSent && (
             <>
-              <div>
+              <div className="space-y-1">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700">New Password</label>
                 <input
                   type="password"
+                  id="password"
+                  name="password"
                   placeholder="Enter new password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className={`w-full px-4 py-2 border rounded ${
-                    errors.password ? "border-red-500" : "border-gray-300"
-                  }`}
+                  className={`w-full px-4 dark:text-black py-2 border rounded-lg focus:outline-none ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
                 />
-                {errors.password && (<p className="text-red-500 text-sm">{errors.password}</p>
-                )}
+                {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
               </div>
-              <div>
+
+              <div className="space-y-1">
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">Confirm Password</label>
                 <input
                   type="password"
+                  id="confirmPassword"
+                  name="confirmPassword"
                   placeholder="Confirm new password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className={`w-full px-4 py-2 dark:text-black  border rounded ${
-                    errors.confirmPassword ? "border-red-500" : "border-gray-300"
-                  }`}
+                  className={`w-full px-4 dark:text-black py-2 border rounded-lg focus:outline-none ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'}`}
                 />
-                {errors.confirmPassword && (
-                  <p className="text-red-500 text-sm">{errors.confirmPassword}</p>
-                )}
+                {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword}</p>}
               </div>
-            </>
-          )}
 
-          {/* Submit Button */}
-          {otpSent && (
-            <button
-              type="submit"
-              className="w-full bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-            >
-              Reset Password
-            </button>
+              <button type="submit" className="w-full py-2 bg-black text-white rounded-lg hover:bg-gray-900">
+                Reset Password
+              </button>
+            </>
           )}
         </form>
       </div>

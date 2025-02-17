@@ -16,10 +16,25 @@ export const fetchActivities = createAsyncThunk(
     }
 );
 
+
+export const fetchAllActivities = createAsyncThunk(
+    "activities/fetchAllActivities",
+    async (_,{ rejectWithValue }) => {
+        try {
+            const { data } = await axios.get("/api/activities/getAll");
+            return data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || "Failed to fetch activities");
+        }
+    }
+);
+
+
 const activitySlice = createSlice({
     name: "activities",
     initialState: {
         activities: [],
+        allActivities:[],
         totalPages: 1,
         page: 1,
         status: "idle", // "idle" | "loading" | "succeeded" | "failed"
@@ -48,7 +63,10 @@ const activitySlice = createSlice({
             .addCase(fetchActivities.rejected, (state, action) => {
                 state.status = "failed";
                 state.error = action.payload;
-            });
+            })
+            .addCase(fetchAllActivities.fulfilled,(state,action)=>{
+                state.allActivities = action.payload.activities
+            })
     }
 });
 

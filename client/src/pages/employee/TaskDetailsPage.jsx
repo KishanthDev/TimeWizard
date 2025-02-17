@@ -25,13 +25,16 @@ const TaskDetailsPage = () => {
         <h2 className="text-xl font-semibold p-5 mb-2">Pending Tasks</h2>
         {pendingTasks.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 px-4 md:px-10 lg:px-20">
-          {pendingTasks.map((task) => (
+            {pendingTasks.map((task) => (
               <TaskClockInOut key={task._id} task={task} />
             ))}
           </div>
         ) : (
           <div className="no-tasks-found">
-            <p className="text-lg text-gray-600">No pending tasks found.</p>
+            <p className="text-lg text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 p-4 rounded-lg text-center shadow-md">
+              No pending tasks found. 📝
+            </p>
+
           </div>
         )}
       </div>
@@ -41,13 +44,16 @@ const TaskDetailsPage = () => {
         <h2 className="text-xl font-semibold p-5 mb-2">Ongoing Tasks</h2>
         {ongoingTasks.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 px-4 md:px-10 lg:px-20">
-          {ongoingTasks.map((task) => (
+            {ongoingTasks.map((task) => (
               <TaskClockInOut key={task._id} task={task} />
             ))}
           </div>
         ) : (
           <div className="no-tasks-found">
-            <p className="text-lg  text-gray-600">No ongoing tasks found.</p>
+            <p className="text-lg text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 p-4 rounded-lg text-center shadow-md">
+              No ongoing tasks found. 📝
+            </p>
+
           </div>
         )}
       </div>
@@ -57,13 +63,15 @@ const TaskDetailsPage = () => {
         <h2 className="text-xl font-semibold p-5 mb-2">Completed Tasks</h2>
         {completedTasks.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 px-4 md:px-10 lg:px-20">
-          {completedTasks.map((task) => (
+            {completedTasks.map((task) => (
               <TaskClockInOut key={task._id} task={task} />
             ))}
           </div>
         ) : (
           <div className="no-tasks-found">
-            <p className="text-lg text-center text-gray-600">No completed tasks found.</p>
+            <p className="text-lg text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 p-4 rounded-lg text-center shadow-md">
+              No completed tasks found. 📝
+            </p>
           </div>
         )}
       </div>

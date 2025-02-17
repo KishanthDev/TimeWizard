@@ -21,29 +21,18 @@ const Settings = () => {
       {/* Theme Section */}
       <h2 className="text-xl font-semibold">Themes</h2>
       <p className="text-gray-600 dark:text-gray-400 mb-2">Choose your theme to suit your mood.</p>
-      <ToastContainer/>
-      <div className="flex gap-4">
-        <label className="flex items-center gap-2 cursor-pointer">
+      <ToastContainer />
+
+      <div className="flex gap-4 items-center">
+        {/* Custom Toggle Button */}
+        <label className="relative inline-flex items-center cursor-pointer">
           <input
-            type="radio"
-            name="theme"
-            value="light"
-            checked={theme === "light"}
-            onChange={() => setTheme("light")}
-            className="w-4 h-4"
-          />
-          Light
-        </label>
-        <label className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="radio"
-            name="theme"
-            value="dark"
+            type="checkbox"
+            className="sr-only peer"
             checked={theme === "dark"}
-            onChange={() => setTheme("dark")}
-            className="w-4 h-4"
+            onChange={() => setTheme(theme === "dark" ? "light" : "dark")}
           />
-          Dark
+          <div className="w-16 h-8 rounded-full bg-gradient-to-r from-yellow-300 to-orange-400 peer-checked:from-blue-400 peer-checked:to-indigo-500 transition-all duration-500 after:content-['☀️'] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-6 after:w-6 after:flex after:items-center after:justify-center after:transition-all after:duration-500 peer-checked:after:translate-x-8 peer-checked:after:content-['🌙'] after:shadow-md after:text-sm"></div>
         </label>
       </div>
 

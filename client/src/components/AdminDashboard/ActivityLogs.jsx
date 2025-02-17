@@ -1,22 +1,22 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, Legend } from "recharts";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchActivities } from "../../slices/activitySlice";
+import { fetchAllActivities } from "../../slices/activitySlice";
 import { format } from "date-fns";
 
 const ActivityBarChart = () => {
     const dispatch = useDispatch();
-    const { activities } = useSelector((state) => state.activities);
+    const { allActivities } = useSelector((state) => state.activities);
     const [chartData, setChartData] = useState([]);
 
     useEffect(() => {
-        dispatch(fetchActivities({limit:20}));
+        dispatch(fetchAllActivities());
     }, [dispatch]);
 
     useEffect(() => {
-        if (activities.length > 0) {
+        if (allActivities.length > 0) {
             const dataMap = {};
-            activities.forEach((activity) => {
+            allActivities.forEach((activity) => {
                 const date = format(new Date(activity.timestamp), "dd MMM yyyy"); // Group by date
                 if (!dataMap[date]) {
                     dataMap[date] = { date, "Clock In": 0, "Clock Out": 0, "Completed Task": 0 };
@@ -28,7 +28,7 @@ const ActivityBarChart = () => {
 
             setChartData(Object.values(dataMap));
         }
-    }, [activities]);
+    }, [allActivities]);
 
     return (
         <div className="bg-white  dark:bg-gray-800 dark:text-white p-4 rounded-lg shadow-md">

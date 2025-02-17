@@ -14,8 +14,8 @@ paymentController.createCheckoutSession = async (req, res) => {
     
       const user = await User.findById(userId)
       const priceIds = {
-        basic: "price_1QsOPeCAuzyXYsf5Hn1yPcV4", // Replace with Stripe Price ID
-        premium: "price_1QsOTNCAuzyXYsf5O5yVbZp4",
+        basic: "price_1QtP2QCAuzyXYsf5CDxvBqQm", // Replace with Stripe Price ID
+        premium: "price_1QtP3RCAuzyXYsf5F7bR544S",
       };
   
       if (!priceIds[plan]) {
@@ -55,7 +55,7 @@ paymentController.createCheckoutSession = async (req, res) => {
     }
   };
 
-paymentController.webhooks = async (req, res) => {
+  paymentController.webhooks = async (req, res) => {
     const sig = req.headers["stripe-signature"];
 
     if (!sig) {
@@ -63,35 +63,39 @@ paymentController.webhooks = async (req, res) => {
         return res.status(400).json({ error: "No stripe-signature header found" });
     }
 
-    try {
-        const event = stripe.webhooks.constructEvent(
-            req.body,
-            sig,
-            process.env.STRIPE_WEBHOOK_SECRET
-        );
+    let event;
 
+    try {
+        event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+    } catch (err) {
+        console.error("🚨 Webhook Error:", err.message);
+        return res.status(400).json({ error: `Webhook error: ${err.message}` });
+    }
+
+    res.status(200).json({ received: true });
+
+    try {
         if (event.type === "invoice.payment_succeeded") {
             console.log("✅ Payment successful! Processing subscription...");
-        
+
             const session = event.data.object;
-        
             const stripeSubscriptionId = session.subscription;
-        
+
             if (!stripeSubscriptionId) {
                 console.error("❌ Subscription ID missing in invoice!");
-                return res.status(400).json({ error: "Subscription ID missing" });
+                return;
             }
-        
-            // Fetch the subscription to get metadata
+
+            // Fetch subscription details to get metadata
             const subscription = await stripe.subscriptions.retrieve(stripeSubscriptionId);
             const userId = subscription.metadata?.userId;
             const plan = subscription.metadata?.plan || "not found";
-        
+
             if (!userId) {
                 console.error("❌ User ID not found in subscription metadata");
-                return res.status(400).json({ error: "User ID missing in subscription" });
+                return;
             }
-        
+
             const user = await User.findById(userId);
             if (user && user.role === "admin") {
                 user.subscription.plan = plan;
@@ -99,13 +103,11 @@ paymentController.webhooks = async (req, res) => {
                 user.subscription.stripeCustomerId = session.customer;
                 user.subscription.stripeSubscriptionId = stripeSubscriptionId;
                 await user.save();
-        
+
                 console.log(`✅ Admin ${userId} upgraded to ${plan} plan`);
             }
-        
-            res.json({ received: true });
         }
-        
+
         if (event.type === "customer.subscription.deleted") {
             console.log("⚠️ Subscription canceled! Downgrading user to free plan...");
 
@@ -114,7 +116,7 @@ paymentController.webhooks = async (req, res) => {
 
             if (!userId) {
                 console.error("❌ User ID missing in subscription metadata");
-                return res.status(400).json({ error: "User ID missing in subscription" });
+                return;
             }
 
             const user = await User.findById(userId);
@@ -125,13 +127,9 @@ paymentController.webhooks = async (req, res) => {
 
                 console.log(`🔻 User ${userId} downgraded to Free plan`);
             }
-
-            return res.json({ received: true });
         }
-
     } catch (err) {
-        console.error("🚨 Webhook Error:", err.message);
-        res.status(400).json({ error: `Webhook error: ${err.message}` });
+        console.error("🚨 Error processing webhook event:", err.message);
     }
 };
 
