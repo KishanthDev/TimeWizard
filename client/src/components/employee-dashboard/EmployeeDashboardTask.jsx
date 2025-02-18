@@ -1,13 +1,13 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { MessageCircle,Eye } from "lucide-react";
-import { format } from "date-fns";
+import { MessageCircle, Eye } from "lucide-react";
+import { format, differenceInDays, differenceInHours } from "date-fns";
 
-const EmployeeDashboardTask = ({projectId,isOpen}) => {
+const EmployeeDashboardTask = ({ projectId, isOpen }) => {
   const navigate = useNavigate();
   const { allTasks } = useSelector((state) => state.tasks);
-  const {user} = useSelector((state) => state.user);
+  const { user } = useSelector((state) => state.user);
 
   // Filter tasks assigned to the employee and are in "Pending" or "Ongoing" state
   const assignedTasks = allTasks.filter(
@@ -19,44 +19,57 @@ const EmployeeDashboardTask = ({projectId,isOpen}) => {
       <h2 className="text-2xl font-bold mb-4">Tasks Assigned to you</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {assignedTasks.length > 0 ? (
-          assignedTasks.map((task) => (
-            <div
-              key={task.id}
-              className="bg-white dark:bg-gray-800 shadow-md p-4 rounded-lg border border-gray-200"
-            >
-              <div className="flex justify-between items-center">
-                <h3 className="text-lg font-semibold">{task.name}</h3>
-                <button
-                  className="text-gray-600 hover:text-gray-900"
-                  onClick={() => navigate("/employee-task")}
-                >
-                  <Eye size={18} />
-                </button>
+          assignedTasks.map((task) => {
+            const daysLeft = differenceInDays(new Date(task.dueDate), new Date());
+            const hoursLeft = differenceInHours(new Date(task.dueDate), new Date());
+            const isDueSoon = daysLeft >= 0 && daysLeft <= 3;
+            return (
+              <div
+                key={task.id}
+                className={`bg-white dark:bg-gray-800 shadow-md p-4 rounded-lg border border-gray-200 ${
+                  isDueSoon ? "border-red-500" : ""
+                }`}
+              >
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-semibold">{task.name}</h3>
+                  <button
+                    className="text-gray-600 hover:text-gray-900"
+                    onClick={() => navigate("/employee-task")}
+                  >
+                    <Eye size={18} />
+                  </button>
+                </div>
+                <div className="flex justify-between">
+                <p className="text-sm dark:text-gray-400 text-gray-600">Deadline: {format(new Date(task.dueDate), "dd MMM yyyy")}</p>
+                {isDueSoon && (
+                  <span className="text-red-500 font-bold text-sm">
+                    {daysLeft > 0 ? `${daysLeft} days to go` : `${hoursLeft} hours to go`}
+                  </span>
+                )}
+                </div>
+                <div className="flex justify-between items-center mt-4">
+                  <span className={`px-3 py-1 rounded text-white ${
+                    task.status === "pending" ? "bg-yellow-500" : "bg-blue-500"
+                  }`}>
+                    {task.status}
+                  </span>
+                  <button
+                    className="flex items-center gap-1 text-blue-500 hover:underline"
+                    onClick={() => {
+                      isOpen();
+                      projectId(task.projectId);
+                    }}
+                  >
+                    <MessageCircle size={16} /> Chat
+                  </button>
+                </div>
               </div>
-              <p className="text-sm dark:text-gray-400 text-gray-600">Deadline: {format(new Date(task.dueDate), "dd MMM yyyy")}</p>
-              <div className="flex justify-between items-center mt-4">
-                <span className={`px-3 py-1 rounded text-white ${
-                  task.status === "pending" ? "bg-yellow-500" : "bg-blue-500"
-                }`}>
-                  {task.status}
-                </span>
-                <button
-                  className="flex items-center gap-1 text-blue-500 hover:underline"
-                  onClick={() =>{isOpen()
-                    projectId(task.projectId)}
-                  }
-                >
-                  <MessageCircle size={16} /> Chat
-                </button>
-              </div>
-            </div>
-          ))
+            );
+          })
         ) : (
           <p className="text-gray-500 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 p-3 rounded-md text-center shadow-md">
-  No pending tasks? Lucky you! 🎉 Time to grab a coffee ☕ and enjoy the peace! 😎
-</p>
-
-
+            No pending tasks? Lucky you! 🎉 Time to grab a coffee ☕ and enjoy the peace! 😎
+          </p>
         )}
       </div>
     </div>

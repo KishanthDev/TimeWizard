@@ -2,6 +2,7 @@ import React from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import { useSelector } from "react-redux";
+import { Helmet } from "react-helmet";
 
 const EmployeeTaskCalendar = () => {
   const { allTasks } = useSelector((state) => state.tasks);
@@ -10,10 +11,16 @@ const EmployeeTaskCalendar = () => {
     title: task.name,
     date: task.dueDate, // Due date of the task
     id: task._id,
+    backgroundColor: task.status ==="completed" ? "blue" : "red", // Set color based on completion
+    borderColor: task.status ==="completed" ? "blue" : "red",
+    textColor: "white",
   }));
 
   return (
     <div className="p-4 mt-3 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+      <Helmet>
+        <title>Calendar • TimeWizard</title>
+      </Helmet>
       <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
         Project Deadlines
       </h2>
@@ -35,7 +42,14 @@ const EmployeeTaskCalendar = () => {
             day: "Day",
           }}
           dayHeaderClassNames="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white"
-          eventClassNames="bg-blue-500 text-white rounded-md px-2 py-1"
+          eventContent={({ event }) => (
+            <div
+              className="rounded-md px-2 py-1"
+              style={{ backgroundColor: event.backgroundColor, color: event.textColor }}
+            >
+              {event.title}
+            </div>
+          )}
         />
       </div>
     </div>

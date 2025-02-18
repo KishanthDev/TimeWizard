@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createCheckoutSession, fetchSubscriptionStatus } from "../../slices/subscriptionSlice";
 import { CheckCircle, XCircle } from "lucide-react";
+import { Helmet } from "react-helmet";
 
 const SubscriptionPlans = () => {
     const [selectedPlan, setSelectedPlan] = useState(null);
@@ -33,6 +34,9 @@ const SubscriptionPlans = () => {
 
     return (
         <div className="flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 p-6 overflow-hidden">
+            <Helmet>
+                <title>Subscribe • TimeWizard</title>
+            </Helmet>
             <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-8">Choose Your Plan</h2>
             <p className="mb-4 text-lg text-gray-600 dark:text-gray-300">
                 Your current plan: <span className="font-bold">{plan.toUpperCase()}</span> ({status})

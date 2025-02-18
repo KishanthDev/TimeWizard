@@ -35,13 +35,14 @@ import GeneralChatPreview from "./components/admin-payments/GeneralChatPreview";
 import EmployeeTaskCalendar from "./pages/employee/Calendar";
 import UnauthorizedPage from "./components/UnAuthorized";
 import NotFoundPage from "./components/NotFoundPage";
+import {Helmet} from "react-helmet"
 
 function App() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { isLoggedIn } = useSelector((state) => state.user);
 
-  const stripePromise = loadStripe("pk_test_51QsJIsCAuzyXYsf5urQoRitfwrxRtMbUsHp03MeCi5myWju9AgpQPlYuALVMRuXqjMArsKQCU2TOo2lPczp1s9W400BbXKOBC5");
+  const stripePromise = loadStripe(process.env.REACT_APP_API_URL);
 
   const handleLogout = ()=> {
     dispatch(logout())
@@ -73,6 +74,9 @@ function App() {
 
   return (
     <div className="min-h-screen dark:bg-gray-900 bg-gray-100 flex flex-col">
+      <Helmet>
+        <title>TimeWizard</title>
+      </Helmet>
       {!isLoggedIn ? (
         <Routes>
           <Route path="/" element={<Home />} />

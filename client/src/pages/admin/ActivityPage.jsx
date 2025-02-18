@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchActivities } from "../../slices/activitySlice";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet";
 
 const ACTIONS = [
     { label: "Clock In", value: "clocked in" },
@@ -34,7 +35,9 @@ const ActivityLog = () => {
     return (
         <div className="p-7 bg-white dark:bg-gray-900 dark:text-gray-300 shadow rounded">
             <h2 className="text-xl font-bold mb-9">Activity Logs</h2>
-
+            <Helmet>
+                <title>Activity • TimeWizard</title>
+            </Helmet>
             {/* Filters */}
             <div className="flex gap-2 mb-4">
                 <select

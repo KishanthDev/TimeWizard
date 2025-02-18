@@ -7,6 +7,7 @@ import ImportCSVModal from "../../components/employee/import-export/ImportCSVMod
 import { addEmployee, editEmployee, setEditEmp } from "../../slices/employeeSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { exportToCSV, exportToExcel } from "../../components/employee/import-export/Export";
+import { Helmet } from "react-helmet";
 
 
 const EmployeesPage = () => {
@@ -55,6 +56,9 @@ const EmployeesPage = () => {
     return (
         <div className="p-4">
             <ToastContainer />
+            <Helmet>
+                <title>Employee • TimeWizard</title>
+            </Helmet>
 
             {/* Top Bar */}
             <div className="flex justify-between items-center mb-4">

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import ProjectForm from "../../components/project/ProjectForm";
 import ProjectList from "../../components/project/ProjectList";
 import { ToastContainer } from "react-toastify";
+import { Helmet } from "react-helmet";
 
 const ProjectPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -13,6 +14,9 @@ const ProjectPage = () => {
   return (
     <div className="p-6 dark:bg-gray-900">
       <ToastContainer />
+      <Helmet>
+        <title>Project • TimeWizard</title>
+      </Helmet>
       
       {/* Header with Create Button */}
       <div className="flex justify-between items-center mb-6">

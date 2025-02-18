@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { approveTask, fetchAllTasks, requestRevision, setPendingReviewTasks } from "../../slices/taskSlice";
+import { Helmet } from "react-helmet";
 
 const TaskReview = () => {
   const dispatch = useDispatch();
@@ -42,6 +43,9 @@ const TaskReview = () => {
 
   return (
     <div className="p-6 bg-white dark:bg-gray-800 shadow-lg mt-10 rounded-lg">
+      <Helmet>
+        <title>Task Review • TimeWizard</title>
+      </Helmet>
       <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Task Review</h2>
 
       {pendingReviewTasks.length === 0 ? (

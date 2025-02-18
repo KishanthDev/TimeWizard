@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import TaskClockInOut from '../../components/employee-task/TaskClockInOut';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchMyTasks } from '../../slices/taskSlice';
+import { Helmet } from 'react-helmet';
 const TaskDetailsPage = () => {
   const { myTasks, loading, error } = useSelector((state) => state.tasks);
   const dispatch = useDispatch();
@@ -20,6 +21,9 @@ const TaskDetailsPage = () => {
 
   return (
     <div className="task-details-page ">
+      <Helmet>
+        <title>Tasks • TimeWizard</title>
+      </Helmet>
       {/* Pending Tasks */}
       <div className="pending-tasks mb-6">
         <h2 className="text-xl font-semibold p-5 mb-2">Pending Tasks</h2>

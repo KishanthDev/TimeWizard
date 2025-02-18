@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import EmployeeDashboardTask from "../../components/employee-dashboard/EmployeeDashboardTask";
 import ChatPopup from "../../components/employee-task/ChatPopUp";
 import Notes from "../../components/employee-dashboard/Notes";
+import { Helmet } from "react-helmet";
 
 export default function EmployeeDashboard() {
     const [isChatOpen, setIsChatOpen] = useState(false);
@@ -29,6 +30,9 @@ export default function EmployeeDashboard() {
 
     return (
         <div className="flex flex-col p-4">
+            <Helmet>
+            <title>Dashboard • TimeWizard</title>
+        </Helmet>
             <h1 className="text-2xl font-bold mb-4">Employee Dashboard</h1>
 
             {/* Two-column layout for Task Status and Notes */}

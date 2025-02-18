@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { format } from "date-fns";
 import TaskSubmission from "../../components/employee-task/TaskSubmission";
 import { resubmitTask } from "../../slices/taskSlice";
+import { Helmet } from "react-helmet";
 
 const TaskApprovals = () => {
   const tasks = useSelector((state) => state.tasks.myTasks);
@@ -31,6 +32,9 @@ const TaskApprovals = () => {
   
   return (
     <div className="p-6 mt-10 bg-gray-300 dark:bg-gray-800 shadow-lg rounded-lg">
+      <Helmet>
+        <title>Task Approvals • TimeWizard</title>
+      </Helmet>
       <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Task Approvals</h2>
       
       {pendingReviewTasks.length === 0 ? (

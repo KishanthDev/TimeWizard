@@ -85,7 +85,7 @@ export default function Navbar() {
             </li>
             <li>
               {plan === "premium" ? (
-                <Link to="/general-chat" className={`block py-2 ${getLinkClass("/general-chat")}`}>
+                <Link to="/chat" className={`block py-2 ${getLinkClass("/chat")}`}>
                   General Chat
                 </Link>
               ) :(

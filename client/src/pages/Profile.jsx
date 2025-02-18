@@ -4,6 +4,7 @@ import { updateProfile } from "../slices/userSlice";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Helmet } from "react-helmet";
 
 export default function Profile() {
   const { user, isLoading, error } = useSelector((state) => state.user);
@@ -91,6 +92,9 @@ export default function Profile() {
   return (
     <div className="dark:bg-gray-900 dark:text-white bg-gray-100 ">
       <ToastContainer />
+      <Helmet>
+        <title>Profile • TimeWizard</title>
+      </Helmet>
       <div className="max-w-7xl mx-auto p-6 ">
         <div className="flex items-center justify-between">
           {/* Profile Image */}

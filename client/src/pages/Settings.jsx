@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import ResetPassword from "../components/settings/ResetPassword";
 import { ToastContainer } from "react-toastify";
+import { Helmet } from "react-helmet";
 
 const Settings = () => {
   const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "light");
@@ -19,6 +20,9 @@ const Settings = () => {
   return (
     <div className="p-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-white mt-10 mx-auto rounded shadow-md">
       {/* Theme Section */}
+      <Helmet>
+        <title>Settings • TimeWizard</title>
+      </Helmet>
       <h2 className="text-xl font-semibold">Themes</h2>
       <p className="text-gray-600 dark:text-gray-400 mb-2">Choose your theme to suit your mood.</p>
       <ToastContainer />

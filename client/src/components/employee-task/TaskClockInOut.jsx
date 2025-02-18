@@ -1,21 +1,25 @@
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { clockIn, clockOut, completeTask } from '../../slices/taskSlice';
-import { View } from 'lucide-react';
-import ProjectDetailsModal from './ProjectDetailsModal';
-import SubmissionHistoryModal from './SubmissionHistoryModal';
-import TaskCompletionModal from './TaskSubmission';
-import { format } from 'date-fns';
-import AutoClockOut from './AutoClockOut';
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { clockIn, clockOut, completeTask } from "../../slices/taskSlice";
+import { View } from "lucide-react";
+import ProjectDetailsModal from "./ProjectDetailsModal";
+import SubmissionHistoryModal from "./SubmissionHistoryModal";
+import TaskCompletionModal from "./TaskSubmission";
+import { format, differenceInDays, differenceInHours } from "date-fns";
+import AutoClockOut from "./AutoClockOut";
 
 const TaskClockInOut = ({ task }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showSubmissionHistory, setShowSubmissionHistory] = useState(false);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
-  const { clockedInTasks } = useSelector(state => state.tasks)
+  const { clockedInTasks } = useSelector(state => state.tasks);
   const dispatch = useDispatch();
 
   const isClockedIn = clockedInTasks[task._id] || false;
+  
+  const daysLeft = differenceInDays(new Date(task.dueDate), new Date());
+  const hoursLeft = differenceInHours(new Date(task.dueDate), new Date());
+  const isDueSoon = daysLeft >= 0 && daysLeft <= 3;
 
   const handleProjectModal = () => setIsOpen((prev) => !prev);
   const handleSubmissionHistoryModal = () => setShowSubmissionHistory((prev) => !prev);
@@ -35,7 +39,6 @@ const TaskClockInOut = ({ task }) => {
       dispatch(completeTask({ taskId: task._id, submissionData })).unwrap()
     } catch (err) {
       console.log(err);
-
     }
     setShowCompletionModal(false);
   };
@@ -48,10 +51,11 @@ const TaskClockInOut = ({ task }) => {
         return total + timeWorked;
       }, 0)
       .toFixed(2);
-  }; const toggleExpand = () => setExpanded((prev) => !prev);
+  };
+  const toggleExpand = () => setExpanded((prev) => !prev);
 
   return (
-    <div className="task-clockin-out bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 my-4 max-w-xl mx-auto">
+    <div className={`task-clockin-out bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 my-4 max-w-xl mx-auto ${(task.status!=="completed" && isDueSoon) ? "border border-red-500" : "border border-green-500"}`}>
       <div className="task-details mb-4">
         <div className="flex items-center gap-2">
           <h1 className="text-lg font-semibold dark:text-gray-200 text-gray-700">
@@ -64,22 +68,32 @@ const TaskClockInOut = ({ task }) => {
         <h2 className="text-base font-semibold dark:text-gray-200 text-gray-700">
           Task: <span className="text-green-600">{task.name}</span>
         </h2>
-        <p className="text-sm dark:text-gray-400 text-gray-500">Due Date: {format(new Date(task.dueDate), 'dd MMM yyyy')}</p>
+        <div className="flex justify-between">
+        <p className="text-sm dark:text-gray-400 text-gray-500">Deadline: {format(new Date(task.dueDate), 'dd MMM yyyy')}</p>
+        {task.status !== 'completed' && (
+          <div className="flex justify-between">
+            <p className="text-sm dark:text-gray-400 text-gray-500">Deadline: {format(new Date(task.dueDate), 'dd MMM yyyy')}</p>
+            {isDueSoon && (
+              <p className="text-red-500 font-bold text-sm">
+                {daysLeft > 0 ? `${daysLeft} days to go` : `${hoursLeft} hours to go`}
+              </p>
+            )}
+          </div>
+        )}
+        </div>
         <p className="text-sm dark:text-gray-400 text-gray-500">Estimated Time: {task.estimatedTime} hours</p>
         <p className="text-sm dark:text-gray-400 text-gray-500">Total Hours Worked: {calculateTotalTime()} hours</p>
       </div>
-
+      
       {task.status !== 'completed' ? (
         <div className="flex justify-between gap-28 items-center mb-4">
           {isClockedIn && <AutoClockOut taskId={task._id} />}
           <button
             onClick={isClockedIn ? handleClockOut : handleClockIn}
-            className={`px-3 py-1 rounded-lg text-white ${isClockedIn ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'
-              }`}
+            className={`px-3 py-1 rounded-lg text-white ${isClockedIn ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'}`}
           >
             {isClockedIn ? 'Clock Out' : 'Clock In'}
           </button>
-
 
           <button
             onClick={handleCompletionModal}
@@ -95,8 +109,7 @@ const TaskClockInOut = ({ task }) => {
           </button>
         </div>
       )}
-
-      <div className="time-summary">
+       <div className="time-summary">
         <div className="flex justify-between gap-40 items-center">
           <p className="text-sm font-semibold">Time Entries</p>
           <button
@@ -128,6 +141,7 @@ const TaskClockInOut = ({ task }) => {
           </div>
         </div>
       </div>
+
       {isOpen && <ProjectDetailsModal isOpen={isOpen} handleProjectModal={handleProjectModal} projectId={task.projectId._id} />}
       {showSubmissionHistory && <SubmissionHistoryModal isOpen={showSubmissionHistory} handleClose={handleSubmissionHistoryModal} submissions={task.submissionHistory} />}
       {showCompletionModal && <TaskCompletionModal isOpen={showCompletionModal} handleClose={handleCompletionModal} handleSubmit={handleCompleteTask} />}

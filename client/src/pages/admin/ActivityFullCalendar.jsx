@@ -6,6 +6,7 @@ import { fetchActivities } from "../../slices/activitySlice";
 import { format } from "date-fns";
 import tippy from "tippy.js";
 import "tippy.js/dist/tippy.css"; // Import tooltip styles
+import { Helmet } from "react-helmet";
 
 const ActivityFullCalendar = () => {
     const dispatch = useDispatch();
@@ -71,6 +72,9 @@ const ActivityFullCalendar = () => {
 
     return (
         <div className="bg-white  dark:bg-gray-900 dark:text-white p-4 rounded-lg shadow-md">
+            <Helmet>
+                <title>Calendar • TimeWizard</title>
+            </Helmet>
             <h2 className="text-lg font-semibold mb-3">Employee Activity Calendar</h2>
             <FullCalendar 
                 plugins={[dayGridPlugin]} 
