@@ -37,8 +37,8 @@ paymentController.createCheckoutSession = async (req, res) => {
             quantity: 1,
           },
         ],
-        success_url: 'http://localhost:3000/success',
-        cancel_url: 'http://localhost:3000/cancel',
+        success_url: 'https://time-wizard-orpin.vercel.app/success',
+        cancel_url: 'https://time-wizard-orpin.vercel.app/cancel',
         subscription_data: {
             metadata: { // Ensure metadata is attached at the subscription level
               userId: user._id.toString(), 

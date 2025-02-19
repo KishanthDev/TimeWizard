@@ -1,4 +1,4 @@
-import {Routes,Route, useNavigate} from "react-router-dom"
+import { Routes, Route, useNavigate } from "react-router-dom"
 import Home from "./pages/Home";
 import EmployeeDashboard from "./pages/employee/EmployeeDashboard";
 import { useDispatch, useSelector } from "react-redux";
@@ -32,7 +32,7 @@ import GeneralChatPreview from "./components/admin-payments/GeneralChatPreview";
 import EmployeeTaskCalendar from "./pages/employee/Calendar";
 import UnauthorizedPage from "./components/UnAuthorized";
 import NotFoundPage from "./components/NotFoundPage";
-import {Helmet} from "react-helmet"
+import { Helmet } from "react-helmet"
 import SupportPage from "./pages/SupportPage";
 
 function App() {
@@ -41,20 +41,20 @@ function App() {
   const { isLoggedIn } = useSelector((state) => state.user);
 
 
-  const handleLogout = ()=> {
+  const handleLogout = () => {
     dispatch(logout())
     navigate("/")
   }
-  useEffect(()=>{
+  useEffect(() => {
     dispatch(profile())
-  },[dispatch])
+  }, [dispatch])
 
-  useEffect(()=>{
+  useEffect(() => {
     dispatch(fetchProjects())
-    dispatch(fetchEmployees({limit:25}))
+    dispatch(fetchEmployees({ limit: 25 }))
     dispatch(fetchAllTasks())
     dispatch(fetchSubscriptionStatus())
-  },[dispatch])
+  }, [dispatch])
 
   useEffect(() => {
     if (localStorage.getItem("theme") === "dark") {
@@ -63,9 +63,9 @@ function App() {
       document.documentElement.classList.remove("dark");
     }
   }, []);
-  
 
-  if(localStorage.getItem("token")&&!isLoggedIn){
+
+  if (localStorage.getItem("token") && !isLoggedIn) {
     return <>...loading</>
   }
 
@@ -83,7 +83,7 @@ function App() {
         <>
           <TopNavbar handleLogout={handleLogout} />
           <div className="flex flex-1">
-            <Navbar />
+            <Navbar className="hidden md:block w-56" />
             <div className="flex-1 p-4 overflow-auto ml-56 pt-16">
               <Routes>
                 <Route path="/profile" element={<Profile />} />
@@ -95,7 +95,7 @@ function App() {
                 <Route path="/calendar-preview" element={<ProtectedRoute role="admin"><CalendarPreview /></ProtectedRoute>} />
                 <Route path="/task-review" element={<ProtectedRoute role="admin"><TaskReview /></ProtectedRoute>} />
                 <Route path="/project" element={<ProtectedRoute role="admin"><ProjectPage /></ProtectedRoute>} />
-                <Route path="/subscribe" element={<ProtectedRoute role="admin"><SubscriptionPlans/></ProtectedRoute>} />
+                <Route path="/subscribe" element={<ProtectedRoute role="admin"><SubscriptionPlans /></ProtectedRoute>} />
                 <Route path="/employee" element={<ProtectedRoute role="employee"><EmployeeDashboard /></ProtectedRoute>} />
                 <Route path="/task-approvals" element={<ProtectedRoute role="employee"><TaskApprovals /></ProtectedRoute>} />
                 <Route path="/chat" element={<ProtectedRoute role="employee"><GeneralChat /></ProtectedRoute>} />
@@ -103,11 +103,11 @@ function App() {
                 <Route path="/employee-task" element={<ProtectedRoute role="employee"><TaskDetailsPage /></ProtectedRoute>} />
                 <Route path="/employee-calendar" element={<ProtectedRoute role="employee"><EmployeeTaskCalendar /></ProtectedRoute>} />
                 <Route path="/settings" element={<Settings />} />
-                <Route path="/success" element={<Success/>}/>
-                <Route path="/cancel" element={<Cancel/>}/>
-                <Route path="/unauthorized" element={<UnauthorizedPage/>}/>
-                <Route path="*" element={<NotFoundPage/>}/>
-                <Route path="/support" element={<SupportPage/>}/>
+                <Route path="/success" element={<Success />} />
+                <Route path="/cancel" element={<Cancel />} />
+                <Route path="/unauthorized" element={<UnauthorizedPage />} />
+                <Route path="*" element={<NotFoundPage />} />
+                <Route path="/support" element={<SupportPage />} />
               </Routes>
             </div>
           </div>
