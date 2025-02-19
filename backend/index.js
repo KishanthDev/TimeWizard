@@ -26,6 +26,7 @@ const io = new Server(server, {
   });
 
 const PORT = process.env.PORT
+app.use(cors())
 configdb()
 app.use("/api/payments/webhooks",express.raw({ type: "application/json" }))
 app.use(express.json());
@@ -33,7 +34,6 @@ app.use(loggerMiddleware)
 
 global.io = io
 
-app.use(cors())
 
 
 io.on('connection', (socket) => {
