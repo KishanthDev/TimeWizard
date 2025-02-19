@@ -29,7 +29,7 @@ export default function TopNavbar({ handleLogout }) {
         <div className="relative">
           <button onClick={() => setDropdownOpen(!dropdownOpen)} className="flex items-center space-x-2">
             <img
-              src={user.profileImage.filePath || "/default-profile.png"}
+              src={user?.profileImage?.filePath || "/default-profile.png"}
               alt="Profile"
               className="w-10 h-10 rounded-full border-2 border-white"
             />
