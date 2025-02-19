@@ -99,7 +99,7 @@ const EmployeeModal = ({ isOpen, onClose, onSubmit }) => {
 
     return (
         (isOpen || selectedEmployee) && (
-            <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center animate-fadeIn">
+            <div className="fixed inset-0  flex items-center justify-center animate-fadeIn">
                 <div className="bg-white dark:bg-gray-700 dark:text-gray-300 p-6 rounded-lg shadow-lg w-96 transform transition-all animate-slideIn">
                     <h2 className="text-xl font-semibold mb-4">{selectedEmployee?"Edit":"Add"} Employee</h2>
                     <form onSubmit={handleSubmit}>

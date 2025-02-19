@@ -4,8 +4,8 @@ import { useSelector } from "react-redux";
 const ProtectedRoute = ({ children, role }) => {
   const {user,isLoggedIn} = useSelector((state) => state.user);
 
-  if (!isLoggedIn) return <Navigate to="/" />; 
-  if (user.role !== role) return <Navigate to="/unauthorized" />; 
+  if (!isLoggedIn) return <Navigate to="/" replace/>; 
+  if (user.role !== role) return <Navigate to="/unauthorized" replace/>; 
 
   return children;
 };

@@ -22,9 +22,6 @@ import { fetchAllTasks } from "./slices/taskSlice";
 import { fetchEmployees } from "./slices/employeeSlice";
 import { fetchProjects } from "./slices/projectSlice";
 import GeneralChat from "./pages/employee/GeneralChat";
-import { Elements } from "@stripe/react-stripe-js";
-import { loadStripe } from "@stripe/stripe-js";
-import CheckoutForm from "./pages/admin/CheckoutForm";
 import SubscriptionPlans from "./pages/admin/SubcriptionPlans";
 import Success from "./components/admin-payments/Success";
 import Cancel from "./components/admin-payments/Cancel";
@@ -36,13 +33,13 @@ import EmployeeTaskCalendar from "./pages/employee/Calendar";
 import UnauthorizedPage from "./components/UnAuthorized";
 import NotFoundPage from "./components/NotFoundPage";
 import {Helmet} from "react-helmet"
+import SupportPage from "./pages/SupportPage";
 
 function App() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { isLoggedIn } = useSelector((state) => state.user);
 
-  const stripePromise = loadStripe(process.env.REACT_APP_API_URL);
 
   const handleLogout = ()=> {
     dispatch(logout())
@@ -99,7 +96,6 @@ function App() {
                 <Route path="/task-review" element={<ProtectedRoute role="admin"><TaskReview /></ProtectedRoute>} />
                 <Route path="/project" element={<ProtectedRoute role="admin"><ProjectPage /></ProtectedRoute>} />
                 <Route path="/subscribe" element={<ProtectedRoute role="admin"><SubscriptionPlans/></ProtectedRoute>} />
-                <Route path="/checkout" element={<ProtectedRoute role="admin"><Elements stripe={stripePromise}><CheckoutForm /></Elements></ProtectedRoute>} />
                 <Route path="/employee" element={<ProtectedRoute role="employee"><EmployeeDashboard /></ProtectedRoute>} />
                 <Route path="/task-approvals" element={<ProtectedRoute role="employee"><TaskApprovals /></ProtectedRoute>} />
                 <Route path="/chat" element={<ProtectedRoute role="employee"><GeneralChat /></ProtectedRoute>} />
@@ -111,6 +107,7 @@ function App() {
                 <Route path="/cancel" element={<Cancel/>}/>
                 <Route path="/unauthorized" element={<UnauthorizedPage/>}/>
                 <Route path="*" element={<NotFoundPage/>}/>
+                <Route path="/support" element={<SupportPage/>}/>
               </Routes>
             </div>
           </div>

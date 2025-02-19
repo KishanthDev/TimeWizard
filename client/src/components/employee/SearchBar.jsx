@@ -80,7 +80,7 @@ const SearchBar = ({ limit }) => {
                     className="p-2 border dark:bg-gray-700 dark:text-gray-300 border-gray-300 rounded w-full"
                 />
                 <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">Search</button>
-                <button type="button" onClick={handleReset} className="bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-300 px-4 py-2 rounded-md hover:bg-gray-300 focus:outline-none">Back</button>
+                <button type="button" onClick={handleReset} className="bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-300 px-4 py-2 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none">Back</button>
             </form>
 
             {/* Search Suggestions Dropdown */}
@@ -92,11 +92,11 @@ const SearchBar = ({ limit }) => {
                         suggestions.map((emp) => (
                             <li
                                 key={emp._id}
-                                className="p-2 hover:bg-gray-100 cursor-pointer flex justify-between"
+                                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer flex justify-between"
                                 onClick={() => handleSelect(emp)}
                             >
                                 <span className="font-medium">{emp.name}</span>
-                                <span className="text-gray-500 text-sm">{emp.username} | {emp.email}</span>
+                                <span className="text-gray-600 dark:text-white text-sm">{emp.username} | {emp.email}</span>
                             </li>
                         ))
                     )}
