@@ -73,6 +73,7 @@ paymentController.createCheckoutSession = async (req, res) => {
     }
 
     res.status(200).json({ received: true });
+    console.log("Current MongoDB URI:", process.env.MONGO_URI);
 
     try {
         if (event.type === "invoice.payment_succeeded") {
