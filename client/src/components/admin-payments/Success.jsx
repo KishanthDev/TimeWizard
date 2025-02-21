@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet";
 
 const Success = () => {
   const navigate = useNavigate();
@@ -11,18 +12,21 @@ const Success = () => {
       setCountdown((prev) => prev - 1);
     }, 1000);
 
-   const redirectTimeout = setTimeout(() => {
+    const redirectTimeout = setTimeout(() => {
       navigate("/admin");
     }, 5000);
 
     return () => {
       clearInterval(timer);
-     clearTimeout(redirectTimeout);
+      clearTimeout(redirectTimeout);
     };
   }, [navigate]);
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100 dark:bg-gray-900">
+      <Helmet>
+        <title>Subscribe • TimeWizard</title>
+      </Helmet>
       <h1 className="text-green-500 text-3xl font-bold">Payment Successful! 🎉</h1>
       <p className="mt-2 text-lg text-gray-700 dark:text-gray-300">
         You will be redirected to the dashboard in <span className="font-bold">{countdown}</span> seconds.

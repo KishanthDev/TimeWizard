@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { format } from "date-fns";
 import TaskSubmission from "../../components/employee-task/TaskSubmission";
-import { resubmitTask } from "../../slices/taskSlice";
+import { resubmitTask,fetchMyTasks,setPendingReviewTasks } from "../../slices/taskSlice";
 import { Helmet } from "react-helmet";
 
 const TaskApprovals = () => {
@@ -25,6 +25,14 @@ const TaskApprovals = () => {
     setIsSubmissionOpen(false);
     setSelectedTask(null);
   };
+
+    useEffect(() => {
+      dispatch(fetchMyTasks());
+    }, [dispatch]);
+  
+    useEffect(() => {
+      dispatch(setPendingReviewTasks());
+    }, [tasks, dispatch]);
 
   const handleResubmitTask = async (taskId) => {
     await dispatch(resubmitTask(taskId));

@@ -3,6 +3,7 @@ import { X, MessageCircle } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchMyProject } from "../../slices/projectSlice";
 import ChatPopup from "./ChatPopUp";
+import { Loader2 } from "lucide-react";
 
 const ProjectDetailsModal = ({ projectId, isOpen, handleProjectModal }) => {
     const { myProject, isLoading } = useSelector((state) => state.projects);
@@ -17,11 +18,13 @@ const ProjectDetailsModal = ({ projectId, isOpen, handleProjectModal }) => {
 
     if (!isOpen) return null;
 
-    if (isLoading) return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-            <p className="text-white">Loading...</p>
-        </div>
-    );
+    if (isLoading) 
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <Loader2 className="w-6 h-6 animate-spin text-gray-600 dark:text-gray-300" />
+            </div>
+        );
+
 
     if (!myProject) return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">

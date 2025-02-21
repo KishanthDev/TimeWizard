@@ -6,6 +6,7 @@ import Pagination from "./Pagination";
 import EmployeeRow from "./EmployeeRow";
 import ViewEmployeeModal from "./View-EmployeeDetails";
 import { toast } from "react-toastify";
+import { Loader2 } from "lucide-react";
 
 const EmployeeList = () => {
     const dispatch = useDispatch();
@@ -75,12 +76,29 @@ const EmployeeList = () => {
     };
     
     if (status === "loading") {
-        return <p className="text-center mt-4">Loading...</p>;
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <Loader2 className="w-6 h-6 animate-spin text-gray-600 dark:text-gray-300" />
+            </div>
+        );
     }
-
+    
     if (status === "failed") {
-        return <p className="text-red-500 text-center mt-4">Failed to load employees.</p>;
+        return (
+            <div className="flex flex-col items-center justify-center h-screen">
+                <p className="text-lg font-semibold text-red-500 dark:text-red-400 mb-4">
+                    ⚠️ Failed to load employees.
+                </p>
+                <button 
+                    onClick={() => dispatch(fetchEmployees({limit: 25}))} 
+                    className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                >
+                    Retry
+                </button>
+            </div>
+        );
     }
+    
 
     return (
         <div className="p-6">

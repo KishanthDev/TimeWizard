@@ -7,6 +7,7 @@ import SubmissionHistoryModal from "./SubmissionHistoryModal";
 import TaskCompletionModal from "./TaskSubmission";
 import { format, differenceInDays, differenceInHours } from "date-fns";
 import AutoClockOut from "./AutoClockOut";
+import { toast } from "react-toastify";
 
 const TaskClockInOut = ({ task }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -37,8 +38,9 @@ const TaskClockInOut = ({ task }) => {
   const handleCompleteTask = async (submissionData) => {
     try {
       dispatch(completeTask({ taskId: task._id, submissionData })).unwrap()
+      toast.success("Task submitted")
     } catch (err) {
-      console.log(err);
+      toast.error(err)
     }
     setShowCompletionModal(false);
   };

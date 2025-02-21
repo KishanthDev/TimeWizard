@@ -3,13 +3,14 @@ import TaskClockInOut from '../../components/employee-task/TaskClockInOut';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchMyTasks } from '../../slices/taskSlice';
 import { Helmet } from 'react-helmet';
+import { ToastContainer } from 'react-toastify';
 const TaskDetailsPage = () => {
   const { myTasks, loading, error } = useSelector((state) => state.tasks);
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(fetchMyTasks());
-  }, [dispatch]);
+  }, [dispatch,myTasks]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -21,6 +22,7 @@ const TaskDetailsPage = () => {
 
   return (
     <div className="task-details-page ">
+      <ToastContainer/>
       <Helmet>
         <title>Tasks • TimeWizard</title>
       </Helmet>

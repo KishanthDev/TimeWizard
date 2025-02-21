@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import TeamDisplay from "./TeamDisplay";
 import { fetchTasks } from "../../slices/taskSlice";
 import EmployeeTasks from "./EmployeeTasks";
+import { Loader2 } from "lucide-react";
 
 
 const ProjectList = () => {
@@ -44,10 +45,17 @@ const ProjectList = () => {
     setSelectedEmployee(null);
   };
 
+  if (status === "loading") {
+    return (
+        <div className="flex items-center justify-center h-screen">
+            <Loader2 className="w-6 h-6 animate-spin text-gray-600 dark:text-gray-300" />
+        </div>
+    );
+}
+
   return (
     <div className="p-4 dark:bg-gray-900 dark:text-gray-300">
       <h2 className="text-lg font-semibold mb-4">Project List</h2>
-      {status === "loading" && <p>Loading projects...</p>}
       <div className="overflow-x-auto">
         <table className="min-w-full border dark:bg-gray-900 dark:text-gray-300 bg-white shadow-md rounded">
           <thead>

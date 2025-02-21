@@ -1,9 +1,13 @@
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet";
 
 const CalendarPreview = () => {
   return (
     <div className="p-5 bg-white  dark:bg-gray-800 dark:text-gray-300 shadow rounded mx-auto mt-10">
       {/* Pro Features Header */}
+      <Helmet>
+        <title>Subscribe • TimeWizard</title>
+      </Helmet>
       <div className="flex justify-between items-center bg-blue-100 dark:bg-gray-700 p-4 rounded mb-6">
         <h2 className="text-lg font-semibold text-blue-700 dark:text-gray-200">
           📅 Unlock the Activity Calendar
