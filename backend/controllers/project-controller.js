@@ -24,11 +24,19 @@ projectCntrl.createProject = async (req, res) => {
       return res.status(403).json({ message: `Project limit reached for ${plan} plan` });
     }
 
+    const { name, description, teams, budget, deadLine } = req.body;
+
+    const existingProject = await Project.findOne({ name });
+
+    if (existingProject) {
+      return res.status(400).json({ message: "Project name must be unique." });
+    }
+
     const projectDocuments = [];
     for (let file of files) {
       const result = await cloudinary.uploader.upload(file.path, {
         folder: "project_documents",
-        resource_type: "auto", 
+        resource_type: "auto",
       });
 
       projectDocuments.push({
@@ -37,21 +45,19 @@ projectCntrl.createProject = async (req, res) => {
       });
     }
 
-    const { name, description, teams, budget,deadLine } = req.body;
-    
-    const teamIds = teams.map(team =>team);
+    const teamIds = teams.map(team => team);
 
     const project = new Project({
       name,
       description,
-      teams: teamIds,  
+      teams: teamIds,
       budget,
       attachments: projectDocuments,
       deadLine
     });
 
     await project.save();
-    
+
     await User.findByIdAndUpdate(req.currentUser.id, { $inc: { projectsCreated: 1 } });
 
     res.status(201).json({ message: "Project created successfully", project });
@@ -67,7 +73,7 @@ projectCntrl.editProject = async (req, res) => {
     const { name, description, teams, budget, deadLine } = req.body;
     const files = req.files;
 
-       // Find existing project
+    // Find existing project
     const project = await Project.findById(id)
 
     if (!project) {
@@ -111,7 +117,7 @@ projectCntrl.editProject = async (req, res) => {
     const updatedProject = await Project.findByIdAndUpdate(
       id,
       { $set: updateData },
-      { new: true}
+      { new: true }
     );
 
     res.status(200).json({ message: "Project updated successfully", project: updatedProject });
@@ -122,12 +128,12 @@ projectCntrl.editProject = async (req, res) => {
 };
 
 
-projectCntrl.get = async (req,res) => {
+projectCntrl.get = async (req, res) => {
   try {
-    const project = await Project.find({}).populate("teams","name email profileImage")
-    return res.status(200).json({project})
+    const project = await Project.find({}).populate("teams", "name email profileImage")
+    return res.status(200).json({ project })
   } catch (err) {
-    return res.status(500).json({message:"Error while getting all project",error:err.message})
+    return res.status(500).json({ message: "Error while getting all project", error: err.message })
   }
 }
 
@@ -147,7 +153,7 @@ projectCntrl.remove = async (req, res) => {
 projectCntrl.getById = async (req, res) => {
   const id = req.params.id;
   try {
-    const project = await Project.findById(id).populate("teams","username")
+    const project = await Project.findById(id).populate("teams", "username")
     if (!project) {
       return res.status(404).json({ message: "Project not found" });
     }

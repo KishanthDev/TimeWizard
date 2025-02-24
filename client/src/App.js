@@ -11,6 +11,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ProjectPage from "./pages/admin/ProjectPage";
 import EmployeesPage from "./pages/admin/EmployeePage";
+import ProjectDetails from "./components/project/ProjectDetailsPage";
 import TaskDetailsPage from "./pages/employee/TaskDetailsPage";
 import TopNavbar from "./components/TopNavBar";
 import ActivityLog from "./pages/admin/ActivityPage";
@@ -93,6 +94,7 @@ function App() {
                 <Route path="/activity-preview" element={<ProtectedRoute role="admin"><ActivityPreview /></ProtectedRoute>} />
                 <Route path="/activity-calendar" element={<ProtectedRoute role="admin"><ActivityFullCalendar /></ProtectedRoute>} />
                 <Route path="/calendar-preview" element={<ProtectedRoute role="admin"><CalendarPreview /></ProtectedRoute>} />
+                <Route path="/project/:projectId" element={<ProjectDetails />} />
                 <Route path="/task-review" element={<ProtectedRoute role="admin"><TaskReview /></ProtectedRoute>} />
                 <Route path="/project" element={<ProtectedRoute role="admin"><ProjectPage /></ProtectedRoute>} />
                 <Route path="/subscribe" element={<ProtectedRoute role="admin"><SubscriptionPlans /></ProtectedRoute>} />

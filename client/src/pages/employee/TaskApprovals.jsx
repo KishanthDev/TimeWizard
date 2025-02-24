@@ -36,6 +36,7 @@ const TaskApprovals = () => {
 
   const handleResubmitTask = async (taskId) => {
     await dispatch(resubmitTask(taskId));
+    dispatch(fetchMyTasks())
   };
   
   return (

@@ -7,6 +7,7 @@ import TeamDisplay from "./TeamDisplay";
 import { fetchTasks } from "../../slices/taskSlice";
 import EmployeeTasks from "./EmployeeTasks";
 import { Loader2 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 
 const ProjectList = () => {
@@ -71,7 +72,14 @@ const ProjectList = () => {
           <tbody>
             {projects.map((project) => (
               <tr key={project._id} className="border-t">
-                <td className="py-2 px-4">{project.name}</td>
+                <td className="py-2 px-4">
+                  <Link 
+                    to={`/project/${project._id}`} 
+                    className="text-blue-500 font-medium hover:underline hover:text-blue-700 transition"
+                  >
+                    {project.name}
+                  </Link>
+                </td>
                 <td className="py-2 px-4">${project.budget}</td>
                 <td className="py-2 px-4">{project.status}</td>
                 <td className="py-2 px-4">{project.deadLine && format(new Date(project?.deadLine), "MMMM dd, yyyy")}</td>

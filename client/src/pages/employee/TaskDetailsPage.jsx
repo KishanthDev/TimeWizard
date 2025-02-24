@@ -10,7 +10,7 @@ const TaskDetailsPage = () => {
 
   useEffect(() => {
     dispatch(fetchMyTasks());
-  }, [dispatch,myTasks]);
+  }, [dispatch]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
