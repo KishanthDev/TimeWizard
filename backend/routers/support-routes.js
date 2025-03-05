@@ -1,11 +1,11 @@
 import express from "express"
 import supportController from "../controllers/support-controller.js"
+import auth from "../middleware/auth.js"
 const router = express.Router()
 
-router.post("/submit-contact-form",supportController.contactForm)
-router.post("/submit-faq",supportController.faq)
-router.get("/view-support-queries",supportController.allQueries)
-router.get("/view-faq",supportController.getFaqs)
-
+router.post("/contact",auth,supportController.contactForm)
+router.get("/all-queries",supportController.allQueries)
+router.post("/respond/:queryId", supportController.respondToQuery);
+router.get("/my-queries",auth,supportController.getMyQueries)
 
 export default router

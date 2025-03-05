@@ -35,6 +35,7 @@ import UnauthorizedPage from "./components/UnAuthorized";
 import NotFoundPage from "./components/NotFoundPage";
 import { Helmet } from "react-helmet"
 import SupportPage from "./pages/SupportPage";
+import AdminSupportPanel from "./pages/admin/SupportPage";
 
 function App() {
   const dispatch = useDispatch()
@@ -47,8 +48,22 @@ function App() {
     navigate("/")
   }
   useEffect(() => {
-    dispatch(profile())
-  }, [dispatch])
+    const token = localStorage.getItem("token");
+    
+    if (!token) return;
+  
+    const decodedToken = JSON.parse(atob(token.split(".")[1]));
+    const isTokenExpired = decodedToken.exp * 1000 < Date.now(); 
+  
+    if (isTokenExpired) {
+      localStorage.removeItem("token"); 
+      dispatch(logout());
+      navigate("/"); 
+    } else {
+      dispatch(profile());
+    }
+  }, [dispatch,navigate]);
+  
 
   useEffect(() => {
     dispatch(fetchProjects())
@@ -109,7 +124,9 @@ function App() {
                 <Route path="/cancel" element={<Cancel />} />
                 <Route path="/unauthorized" element={<UnauthorizedPage />} />
                 <Route path="*" element={<NotFoundPage />} />
-                <Route path="/support" element={<SupportPage />} />
+                <Route path="/support" element={<ProtectedRoute role="employee"><SupportPage /></ProtectedRoute>} />
+                <Route path="/admin-support" element={<ProtectedRoute role="admin"><AdminSupportPanel /></ProtectedRoute>} />
+
               </Routes>
             </div>
           </div>

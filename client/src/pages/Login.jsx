@@ -68,7 +68,7 @@ export default function Login() {
             id="usernameorEmail"
             value={form.usernameorEmail}
             onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-4 py-2 border rounded-md dark:text-black focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
           {clientSideErrors.usernameorEmail && (
             <span className="text-red-500 text-sm">{clientSideErrors.usernameorEmail}</span>
@@ -82,7 +82,7 @@ export default function Login() {
             id="password"
             value={form.password}
             onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-4 py-2 border rounded-md dark:text-black focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
           {clientSideErrors.password && (
             <span className="text-red-500 text-sm">{clientSideErrors.password}</span>

@@ -65,6 +65,11 @@ export default function Navbar() {
                 </Link>
               )}
             </li>
+            <li>
+              <Link to="/admin-support" className={`block py-2 ${getLinkClass("/admin-support")}`}>
+                Support
+              </Link>
+            </li>
           </>
         ) : (
           <>
@@ -97,6 +102,11 @@ export default function Navbar() {
             <li>
               <Link to="/task-approvals" className={`block py-2 ${getLinkClass("/task-approvals")}`}>
                 Task Approvals
+              </Link>
+            </li>
+            <li>
+              <Link to="/support" className={`block py-2 ${getLinkClass("/support")}`}>
+              Support
               </Link>
             </li>
           </>
