@@ -6,7 +6,7 @@ import { getGeneralMessages } from "../../slices/messageSlice";
 import { Helmet } from "react-helmet";
 import EmojiPicker from "emoji-picker-react";
 
-const socket = io("http://localhost:3092");
+const socket = io(process.env.REACT_APP_SOCKET_URL);
 
 const GeneralChat = () => {
   const dispatch = useDispatch();
