@@ -10,7 +10,7 @@ const TaskSchema = new Schema(
     estimatedTime:Number,
     status: {
       type: String,
-      enum: ["pending", "ongoing", "completed","pending_review", "needs_revision"],
+      enum: ["pending", "ongoing", "completed","overdue","pending_review", "needs_revision"],
       default: "pending",
     },
     timeSpent: [

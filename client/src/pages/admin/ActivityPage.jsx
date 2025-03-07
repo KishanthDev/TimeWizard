@@ -12,18 +12,18 @@ const ACTIONS = [
 
 const ActivityLog = () => {
     const dispatch = useDispatch();
-    const navigate = useNavigate()
-    const { activities, page, totalPages, status, error } = useSelector((state) => state.activities);
-    const {user} = useSelector(state=>state.user)
+    const navigate = useNavigate();
+    const { activities, uniqueEmployees, page, totalPages, status, error } = useSelector((state) => state.activities);
+    const { user } = useSelector(state => state.user);
+
     const [userId, setUserId] = useState("");
     const [selectedAction, setSelectedAction] = useState("");
     const [sortOrder, setSortOrder] = useState("desc");
     const limit = 5;
 
-
     useEffect(() => {
         if (user?.subscription?.plan === "free") {
-            navigate("/admin"); // Redirect to another page
+            navigate("/admin");
         }
     }, [user, navigate]);
 
@@ -31,30 +31,30 @@ const ActivityLog = () => {
         dispatch(fetchActivities({ page: 1, limit, userId, search: selectedAction, sortOrder }));
     }, [dispatch, userId, selectedAction, sortOrder]);
 
-
     return (
         <div className="p-7 bg-white dark:bg-gray-900 dark:text-gray-300 shadow rounded">
             <h2 className="text-xl font-bold mb-9">Activity Logs</h2>
             <Helmet>
                 <title>Activity • TimeWizard</title>
             </Helmet>
+
             {/* Filters */}
             <div className="flex gap-2 mb-4">
+                {/* Employee Dropdown (Updated) */}
                 <select
                     value={userId}
                     onChange={(e) => setUserId(e.target.value)}
                     className="border dark:bg-gray-700 dark:text-gray-300 p-2 rounded"
                 >
                     <option value="">All Employees</option>
-                    {[...new Map(activities.map((activity) => [activity.userId, activity])).values()].map((uniqueActivity) => (
-                        <option key={uniqueActivity.userId} value={uniqueActivity.userId}>
-                            {uniqueActivity.user}
+                    {uniqueEmployees?.map((employee) => (
+                        <option key={employee.userId._id} value={employee.userId._id}>
+                            {employee.userId.username}
                         </option>
                     ))}
                 </select>
 
-
-                {/* Action Filter (Fixing action value mapping) */}
+                {/* Action Filter */}
                 <select
                     value={selectedAction}
                     onChange={(e) => setSelectedAction(e.target.value)}
@@ -68,7 +68,7 @@ const ActivityLog = () => {
                     ))}
                 </select>
 
-                {/* Sort Order */}
+                {/* Sort Order Button */}
                 <button
                     onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
                     className="p-2 dark:bg-gray-700 dark:text-gray-300 border rounded"

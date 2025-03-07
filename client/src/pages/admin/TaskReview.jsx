@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { approveTask, fetchAllTasks, requestRevision, setPendingReviewTasks } from "../../slices/taskSlice";
 import { Helmet } from "react-helmet";
+import ViewOverdueTasks from "./ViewOverdueTasks";
 
 const TaskReview = () => {
   const dispatch = useDispatch();
   const { pendingReviewTasks, allTasks } = useSelector((state) => state.tasks);
   const { employees } = useSelector((state) => state.employees);
-  const { projects } = useSelector(state => state.projects) // Assuming employees & projects are in global state
+  const { projects } = useSelector(state => state.projects) 
   const [selectedTask, setSelectedTask] = useState(null);
   const [feedback, setFeedback] = useState("");
   const [showFeedbackInput, setShowFeedbackInput] = useState(false);
@@ -42,10 +43,12 @@ const TaskReview = () => {
   };
 
   return (
+    <>
     <div className="p-6 bg-white dark:bg-gray-800 shadow-lg mt-10 rounded-lg">
       <Helmet>
         <title>Task Review • TimeWizard</title>
       </Helmet>
+      
       <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Task Review</h2>
 
       {pendingReviewTasks.length === 0 ? (
@@ -136,7 +139,10 @@ const TaskReview = () => {
           ))}
         </div>
       )}
+      
     </div>
+    <ViewOverdueTasks/>
+    </>
   );
 };
 

@@ -35,9 +35,10 @@ const activitySlice = createSlice({
     initialState: {
         activities: [],
         allActivities:[],
+        uniqueEmployees: [],
         totalPages: 1,
         page: 1,
-        status: "idle", // "idle" | "loading" | "succeeded" | "failed"
+        status: "idle", 
         error: null
     },
     reducers: {
@@ -45,6 +46,7 @@ const activitySlice = createSlice({
             state.activities = [];
             state.totalPages = 1;
             state.page = 1;
+            state.uniqueEmployees = [];
             state.status = "idle";
             state.error = null;
         }
@@ -59,6 +61,7 @@ const activitySlice = createSlice({
                 state.activities = action.payload.activities;
                 state.totalPages = action.payload.totalPages;
                 state.page = action.payload.page;
+                state.uniqueEmployees = action.payload.uniqueEmployees;
             })
             .addCase(fetchActivities.rejected, (state, action) => {
                 state.status = "failed";

@@ -119,7 +119,7 @@ const employeeSlice = createSlice({
             })
             .addCase(fetchEmployees.fulfilled, (state, action) => {
                 state.status = "succeeded";
-                state.employees = action.payload.users;
+                state.employees = action.payload.users || state.employees;
                 state.totalUsers = action.payload.totalUsers;
                 state.currentPage = action.payload.currentPage;
                 state.totalPages = action.payload.totalPages;

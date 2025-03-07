@@ -13,10 +13,12 @@ router.post("/clockOut/:taskId",taskController.clockOut)
 router.get("/get",auth,taskController.get)
 router.get("/:projectId/:employeeId",taskController.getEmployeeTasksForProject)
 router.get("/getAll",auth,taskController.getAll)
+router.put("/:taskId",taskController.updateTaskDetails)
 
 router.put("/completeTask/:taskId",taskUpload.array("attachments"),taskVerifyController.submitTask)
 router.put("/approveTask/:taskId",taskVerifyController.approveTask)
 router.put("/revision/:taskId",taskVerifyController.requestRevision)
 router.put("/update/:taskId",taskVerifyController.updateTaskStatus)
+
 
 export default router

@@ -15,6 +15,8 @@ import loggerMiddleware from "./middleware/loggerMiddleware.js"
 import generalChatHandler from "./controllers/generalChat-handler.js"
 import paymentRoutes from "./routers/payment-routes.js"
 import supportRoutes from "./routers/support-routes.js"
+import "./utils/taskScheduler.js"
+import "./utils/projectScheduler.js"
 
 const app = express()
 const server = http.createServer(app);

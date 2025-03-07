@@ -72,14 +72,14 @@ userCntrl.get = async (req, res) => {
     const sortBy = req.query.sortBy || "name"; 
     const order = req.query.order === "desc" ? -1 : 1; 
     const page = parseInt(req.query.page) || 1; 
-    const limit = parseInt(req.query.limit) || 10; 
+    const limit = req.query.noLimit === "true" ? 0 : (parseInt(req.query.limit) || 10); // Bypass limit if noLimit is true
 
     const sortQuery = { [sortBy]: order };
 
     const regex = new RegExp(search, "i");
 
     const searchQuery = {
-      role:"employee",
+      role: "employee",
       $or: [
         { name: regex },
         { username: regex },
@@ -89,10 +89,11 @@ userCntrl.get = async (req, res) => {
 
     const skip = (page - 1) * limit;
 
-    const users = await User.find(searchQuery)
+    // If noLimit is false, apply limit and skip
+    const users = limit > 0 ? await User.find(searchQuery)
       .sort(sortQuery)
       .skip(skip)
-      .limit(limit);
+      .limit(limit) : await User.find(searchQuery).sort(sortQuery);
 
     const totalUsers = await User.countDocuments(searchQuery);
 
@@ -102,7 +103,7 @@ userCntrl.get = async (req, res) => {
 
     res.status(200).json({
       currentPage: page,
-      totalPages: Math.ceil(totalUsers / limit),
+      totalPages: limit > 0 ? Math.ceil(totalUsers / limit) : 1, // If noLimit, don't calculate pages
       totalUsers,
       users,
     });
@@ -110,6 +111,7 @@ userCntrl.get = async (req, res) => {
     res.status(500).json({ message: "Server error. Please try again later." });
   }
 };
+
 
 userCntrl.profile = async (req,res) => {
     try {

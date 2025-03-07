@@ -12,6 +12,18 @@ export const fetchTasks = createAsyncThunk(
   }
 );
 
+export const updateTaskDetails = createAsyncThunk(
+  'tasks/updateTaskDetails',
+  async ({ taskId, updatedData }, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(`/api/tasks/${taskId}`, updatedData);
+      return response.data; // The updated task data
+    } catch (error) {
+      return rejectWithValue(error.response ? error.response.data : 'Something went wrong');
+    }
+  }
+);
+
 // Fetch all tasks for the admin or other use cases
 export const fetchAllTasks = createAsyncThunk(
   "/tasks/getAll", 
@@ -228,6 +240,21 @@ const taskSlice = createSlice({
         const { _id } = action.payload;
         state.clockedInTasks[_id] = false; // Mark task as clocked out
       })
+      .addCase(updateTaskDetails.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(updateTaskDetails.fulfilled, (state, action) => {
+        state.isLoading = false;
+        const updatedTask = action.payload; // Updated task
+        state.allTasks = state.allTasks.map((task) =>
+          task._id === updatedTask._id ? updatedTask : task
+        );
+      })
+      .addCase(updateTaskDetails.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      });
   },
 });
 

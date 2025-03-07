@@ -130,7 +130,7 @@ projectCntrl.editProject = async (req, res) => {
 
 projectCntrl.get = async (req, res) => {
   try {
-    const project = await Project.find({}).populate("teams", "name email profileImage")
+    const project = await Project.find({}).populate("teams", "name username email profileImage")
     return res.status(200).json({ project })
   } catch (err) {
     return res.status(500).json({ message: "Error while getting all project", error: err.message })

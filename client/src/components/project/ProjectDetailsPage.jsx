@@ -3,7 +3,6 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { assignTask } from "../../slices/taskSlice";
 import { toast, ToastContainer } from "react-toastify";
-import ActivityLogsChart from "./ActivityLogsChart";
 
 const ProjectDetails = () => {
     const { projectId } = useParams();
@@ -86,13 +85,13 @@ const ProjectDetails = () => {
             <h3 className="mt-6 text-lg font-semibold border-b pb-2 dark:border-gray-700">👥 Team Members</h3>
             <ul className="border p-2 rounded dark:border-gray-700 bg-gray-100 dark:bg-gray-800">
                 {myProject.teams?.map((team) => {
-                    const assignedTask = employeeTasks.find((task) => task.assignedTo === team._id);
+                    const assignedTask = employeeTasks.find((task) => task.assignedTo._id === team._id);
                     const isExpanded = expandedEmployee === team._id;
 
                     return (
                         <li key={team._id} className="p-3 border-b last:border-none dark:border-gray-700">
                             <div className="flex justify-between items-center">
-                                <span className="font-medium">{team.name}</span>
+                                <span className="font-medium">{team.username}  {assignedTask ? ` - ${assignedTask.status}` : ""}</span>
                                 <div className="flex gap-2">
                                     <span className={`px-2 py-1 rounded text-xs font-semibold ${assignedTask ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}>
                                         {assignedTask ? "Task Assigned" : "No Task"}

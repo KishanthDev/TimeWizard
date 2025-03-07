@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { fetchAllTasks } from "../../slices/taskSlice";
 import { FaSyncAlt } from "react-icons/fa";
 import { Loader2 } from "lucide-react";
 
-const TaskStatusChart = () => {
+const TaskStatusChart = ({allTasks,isLoading}) => {
   const dispatch = useDispatch();
-  const { allTasks, isLoading } = useSelector((state) => state.tasks);
 
   useEffect(() => {
     dispatch(fetchAllTasks({ limit: 20 }));

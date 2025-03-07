@@ -9,7 +9,6 @@ const ImportCSVModal = ({ isOpen, onClose }) => {
     const error = useSelector((state) => state.employees?.error || []);
     const status = useSelector((state) => state.employees?.status || "idle");
 
-
     const [file, setFile] = useState(null);
     const [fileError, setFileError] = useState("");
 
@@ -34,32 +33,32 @@ const ImportCSVModal = ({ isOpen, onClose }) => {
     };
 
     const handleClose = () => {
-        dispatch(clearUsers())
+        dispatch(clearUsers());
         if (isOpen && importedUsers.length === 0) {
             onClose();
         }
-    }
+    };
 
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70">
+            <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-96 text-white">
                 <h2 className="text-lg font-semibold mb-2">Import Users from CSV</h2>
 
                 <input
                     type="file"
                     accept=".csv"
                     onChange={handleFileChange}
-                    className="mb-2 border p-2 rounded w-full"
+                    className="mb-2 border p-2 rounded w-full bg-gray-700 text-white border-gray-600"
                 />
 
-                {fileError && <p className="text-red-500 text-sm">{fileError}</p>} {/* Show error */}
+                {fileError && <p className="text-red-400 text-sm">{fileError}</p>}
 
                 <button
                     onClick={handleUpload}
                     disabled={!file || status === "loading"}
-                    className="bg-blue-500 text-white px-4 py-2 rounded-md disabled:opacity-50 mt-2"
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md disabled:opacity-50 mt-2"
                 >
                     {status === "loading" ? "Uploading..." : "Upload"}
                 </button>
@@ -71,24 +70,23 @@ const ImportCSVModal = ({ isOpen, onClose }) => {
                             <li key={index}>{user?.name} - {user?.email}</li>
                         ))
                     ) : (
-                        <li>No users imported</li>
+                        <li className="text-gray-400">No users imported</li>
                     )}
                 </ul>
 
                 <h3 className="mt-4 font-semibold">Errors</h3>
-                <ul className="text-red-500 list-disc pl-5">
+                <ul className="text-red-400 list-disc pl-5">
                     {Array.isArray(error) && error.length > 0 ? (
                         error.map((err, index) => <li key={index}>{err}</li>)
                     ) : (
-                        <li>No errors</li>
+                        <li className="text-gray-400">No errors</li>
                     )}
                 </ul>
 
                 <div className="mt-4 flex justify-between">
-
                     <button
                         onClick={handleClose}
-                        className="bg-gray-500 text-white px-4 py-2 rounded-md"
+                        className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md"
                     >
                         Close
                     </button>
