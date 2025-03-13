@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { assignTask } from "../../slices/taskSlice";
+import { assignTask, fetchAllTasks } from "../../slices/taskSlice";
 import { toast, ToastContainer } from "react-toastify";
 
 const ProjectDetails = () => {
@@ -37,6 +37,7 @@ const ProjectDetails = () => {
 
         try {
             await dispatch(assignTask(taskData)).unwrap();
+            await dispatch(fetchAllTasks())
             toast.success("Task assigned successfully");
             setNewTask({ name: "", description: "", dueDate: "", estimatedTime: "" });
         } catch (error) {
@@ -110,7 +111,6 @@ const ProjectDetails = () => {
                             {isExpanded && (
                                 <div className="mt-2 bg-gray-200 dark:bg-gray-700 p-2 rounded">
                                     {assignedTask ? (
-                                        // Show Task Details
                                         <div>
                                             <p><strong>📌 Name:</strong> {assignedTask.name}</p>
                                             <p><strong>📝 Description:</strong> {assignedTask.description}</p>
@@ -119,7 +119,7 @@ const ProjectDetails = () => {
                                             {/* <ActivityLogsChart/> */}
                                         </div>
                                     ) : (
-                                        // Show Task Assignment Form
+                                        //Task Assignment Form
                                         <form onSubmit={(e) => handleTaskCreation(e, team._id)} className="space-y-2">
                                             <input
                                                 type="text"

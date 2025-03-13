@@ -1,4 +1,4 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchAllTasks } from "../../slices/taskSlice";
 import TaskStatusChart from "../../components/AdminDashboard/TaskStatusChart";
 import { useEffect, useState } from "react";
@@ -10,6 +10,7 @@ import { Helmet } from "react-helmet";
 export default function EmployeeDashboard() {
     const [isChatOpen, setIsChatOpen] = useState(false);
     const [projectId, setProjectId] = useState(null);
+    const {allTasks,isLoading} = useSelector(state=>state.tasks)
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -38,7 +39,7 @@ export default function EmployeeDashboard() {
             {/* Two-column layout for Task Status and Notes */}
             <div className="flex mr-5 gap-8">
                 <div className="flex">
-                    <TaskStatusChart />
+                    <TaskStatusChart allTasks={allTasks} isLoading={isLoading}/>
                 </div>
                 <div className="flex-1">
                     <Notes />

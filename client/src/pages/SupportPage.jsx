@@ -2,16 +2,27 @@ import { useEffect, useState } from "react";
 import axios from "../config/axios";
 import { Loader2, Send, Mail, MessageCircle } from "lucide-react";
 import { useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
 
 const SupportPage = () => {
   const user = useSelector((state) => state.user.user);
-  const [form, setForm] = useState({ name: user.username, email: user.email, message: "" });
+  const location = useLocation();
+  const taskData = location.state || {};
+console.log(taskData);
+
+  const [form, setForm] = useState({
+    name: user.username,
+    email: user.email,
+    message: taskData.taskId
+      ? `Requesting extension for task: ${taskData.taskName} (Due: ${taskData.dueDate})`
+      : "",
+  });
+
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(null);
   const [queries, setQueries] = useState([]);
   const [loadingQueries, setLoadingQueries] = useState(true);
 
-  // Fetch user's queries
   useEffect(() => {
     fetchMyQueries();
   }, []);
@@ -19,7 +30,9 @@ const SupportPage = () => {
   const fetchMyQueries = async () => {
     setLoadingQueries(true);
     try {
-      const res = await axios.get("/api/support/my-queries",{headers:{Authorization:localStorage.getItem("token")}});
+      const res = await axios.get("/api/support/my-queries", {
+        headers: { Authorization: localStorage.getItem("token") },
+      });
       setQueries(res.data);
     } catch (error) {
       console.error("Error fetching queries", error);
@@ -32,9 +45,10 @@ const SupportPage = () => {
     setLoading(true);
 
     try {
-      await axios.post("/api/support/contact", form,{headers:{
-        Authorization:localStorage.getItem("token")
-      }});
+      await axios.post("/api/support/contact", form, {
+        headers: { Authorization: localStorage.getItem("token") },
+      });
+
       setSuccess("Your message has been sent!");
       setForm({ name: user.username, email: user.email, message: "" });
       fetchMyQueries(); // Refresh queries after sending
@@ -58,9 +72,15 @@ const SupportPage = () => {
           <Mail className="w-6 h-6 text-blue-500" /> Contact Us
         </h3>
         <p className="text-gray-600 dark:text-gray-300 text-sm">
-          Have a question? Send us a message!
+          Have a question? Or request a task extension?
         </p>
         <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+          {taskData.taskId && (
+            <div className="bg-yellow-100 text-yellow-700 p-3 rounded-md">
+              <p><strong>Requesting Extension for Task:</strong> {taskData.taskName}</p>
+              <p><strong>Original Due Date:</strong> {taskData.dueDate}</p>
+            </div>
+          )}
           <textarea
             placeholder="Your Message"
             value={form.message}

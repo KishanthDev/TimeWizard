@@ -10,16 +10,14 @@ const ChatPopup = ({ projectId, isOpen, onClose }) => {
   const { messages, isLoading } = useSelector((state) => state.messages);
   const [message, setMessage] = useState("");
 
-  const messagesEndRef = useRef(null); // Create ref
+  const messagesEndRef = useRef(null);
 
-  // Scroll to the bottom when messages update
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages]); // Runs when messages change
+  }, [messages]);
 
-  // Fetch old messages when chat opens
   useEffect(() => {
     if (isOpen) {
       socket.connect();
@@ -28,12 +26,11 @@ const ChatPopup = ({ projectId, isOpen, onClose }) => {
       dispatch(fetchMessages(projectId));
 
       socket.on("receiveMessage", (newMessage) => {
-        // Prevent duplicate messages by checking Redux store
         if (!messages.some((msg) => msg._id === newMessage._id)) {
-          dispatch(addMessage(newMessage)); // Add to Redux state only if it's unique
+          dispatch(addMessage(newMessage));
         }
       });
-      
+
     }
 
     return () => {
@@ -41,19 +38,16 @@ const ChatPopup = ({ projectId, isOpen, onClose }) => {
     };
   }, [isOpen, projectId, user._id, dispatch]);
 
-  // Send message function
   const sendMessage = () => {
     if (!message.trim()) return;
-  
+
     const newMessage = { text: message, userId: user._id, projectId };
-  
-    // Emit message via socket
+
     socket.emit("sendMessage", { projectId, message: newMessage });
-  
-    // Don't update Redux immediately; wait for socket response
-    setMessage(""); // Clear input field
+
+    setMessage("");
   };
-  
+
 
   if (!isOpen) return null;
 
@@ -61,7 +55,7 @@ const ChatPopup = ({ projectId, isOpen, onClose }) => {
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white dark:bg-gray-800 dark:text-gray-200 p-4 rounded-lg shadow-lg max-w-md w-full relative">
         <button
-          onClick={()=>onClose()}
+          onClick={() => onClose()}
           className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
         >
           <X size={24} />
@@ -70,46 +64,42 @@ const ChatPopup = ({ projectId, isOpen, onClose }) => {
 
         {/* Messages Container */}
         <div className="h-64 overflow-y-auto border p-2 rounded-md flex flex-col gap-2">
-          {isLoading ? 
+          {isLoading ?
             <p className="text-gray-500 dark:bg-gray-800 dark:text-gray-200 text-center">Loading messages...</p>
-           : Array.isArray(messages) && messages.length > 0 ? (
-            messages.map((msg, index) => (
-              <div
-                key={index}
-                className={`flex ${msg.userId === user._id ? "justify-end" : "justify-start"}`}
-              >
+            : Array.isArray(messages) && messages.length > 0 ? (
+              messages.map((msg, index) => (
                 <div
-                  className={`p-2 mb-1 rounded-md max-w-xs ${
-                    msg.userId === user._id ? "bg-blue-500 text-white dark:bg-gray-700 dark:text-gray-200 rounded-br-none" : "bg-gray-200 dark:bg-gray-700 dark:text-gray-200 text-black rounded-bl-none"
-                  }`}
+                  key={index}
+                  className={`flex ${msg.userId === user._id ? "justify-end" : "justify-start"}`}
                 >
-                  <strong className="block text-sm">
-                    {msg.userId === user._id ? "Me" : msg.user}
-                  </strong>
-                  <span>{msg.text}</span>
-                  <small className="block text-xs text-gray-300">
-                    {new Date(msg.timestamp).toLocaleTimeString()}
-                  </small>
+                  <div
+                    className={`p-2 mb-1 rounded-md max-w-xs ${msg.userId === user._id ? "bg-blue-500 text-white dark:bg-gray-700 dark:text-gray-200 rounded-br-none" : "bg-gray-200 dark:bg-gray-700 dark:text-gray-200 text-black rounded-bl-none"
+                      }`}
+                  >
+                    <strong className="block text-sm">
+                      {msg.userId === user._id ? "Me" : msg.user}
+                    </strong>
+                    <span>{msg.text}</span>
+                    <small className="block text-xs text-gray-300">
+                      {new Date(msg.timestamp).toLocaleTimeString()}
+                    </small>
+                  </div>
                 </div>
-              </div>
-            ))
-          ) : (
-            <p className="text-gray-500 text-center">No messages yet.</p>
-          )}
-          
-          {/* Empty div for auto-scroll */}
+              ))
+            ) : (
+              <p className="text-gray-500 text-center">No messages yet.</p>
+            )}
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input Box */}
         <div className="flex  mt-2 gap-2">
-        <input
-  type="text"
-  value={message}
-  onChange={(e) => setMessage(e.target.value)}
-  placeholder="Type a message..."
-  className="flex-1 p-2 border rounded-md bg-white dark:bg-gray-800 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
-/>
+          <input
+            type="text"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="Type a message..."
+            className="flex-1 p-2 border rounded-md bg-white dark:bg-gray-800 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+          />
 
           <button
             onClick={sendMessage}

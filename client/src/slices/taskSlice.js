@@ -196,8 +196,9 @@ const taskSlice = createSlice({
       })
       .addCase(assignTask.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.tasks.push(action.payload); // Add the new task to tasks list
+        state.allTasks.push(action.payload) 
       })
+      
       .addCase(assignTask.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
@@ -246,7 +247,7 @@ const taskSlice = createSlice({
       })
       .addCase(updateTaskDetails.fulfilled, (state, action) => {
         state.isLoading = false;
-        const updatedTask = action.payload; // Updated task
+        const updatedTask = action.payload;
         state.allTasks = state.allTasks.map((task) =>
           task._id === updatedTask._id ? updatedTask : task
         );

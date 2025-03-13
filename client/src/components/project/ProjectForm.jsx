@@ -7,7 +7,7 @@ import Select from "react-select";
 
 const ProjectForm = ({ handleClose }) => {
   const { employees } = useSelector((state) => state.employees);
-  const {isLoading} = useSelector((state)=>state.projects)
+  const { isLoading } = useSelector((state) => state.projects)
   const dispatch = useDispatch();
 
   const [search, setSearch] = useState("")
@@ -135,7 +135,7 @@ const ProjectForm = ({ handleClose }) => {
       handleClose()
     } catch (error) {
       console.log(error);
-      
+
       toast.error(error);
     }
   };
@@ -233,19 +233,18 @@ const ProjectForm = ({ handleClose }) => {
               isMulti
               name="teams"
               options={employeeOptions}
-              onInputChange={(inputValue) => setSearch(inputValue)} // Triggers backend search
+              onInputChange={(inputValue) => setSearch(inputValue)}
               onChange={handleTeamChange}
               placeholder="Search and select employees..."
               className="w-full"
               classNames={{
                 control: ({ isFocused }) =>
                   `dark:bg-gray-800 bg-gray-100 dark:border-gray-600 border-gray-300 dark:text-gray-300 text-gray-800 
-                   ${isFocused ? "border-gray-500 ring-0" : ""} shadow-none`, // Removes default blue border
+                   ${isFocused ? "border-gray-500 ring-0" : ""} shadow-none`,
                 menu: () => "dark:bg-gray-800 bg-white border border-gray-600",
                 option: ({ isFocused }) =>
-                  `px-3 py-2 cursor-pointer ${
-                    isFocused ? "dark:bg-gray-700 bg-gray-200" : ""
-                  }`, // Gray hover effect
+                  `px-3 py-2 cursor-pointer ${isFocused ? "dark:bg-gray-700 bg-gray-200" : ""
+                  }`,
                 multiValue: () => "dark:bg-gray-700 bg-gray-200 rounded-md px-2 py-1",
                 multiValueLabel: () => "dark:text-gray-300 text-gray-800",
                 multiValueRemove: () =>
@@ -273,8 +272,11 @@ const ProjectForm = ({ handleClose }) => {
         </div>
         {/* Submit Button */}
         <div className="mt-4">
-          <button disabled={isLoading} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 w-full sm:w-auto">
-            {isLoading?"Creating":"Create"} Project
+          <button
+            disabled={isLoading}
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isLoading ? "Creating..." : "Create Project"}
           </button>
         </div>
       </form>

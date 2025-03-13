@@ -20,8 +20,6 @@ const TaskSubmission = ({ isOpen, handleClose, submissions, handleSubmit }) => {
     attachments.forEach((file) => {
       formData.append("attachments", file);
     });
-  
-    // Call the submission handler with FormData
     handleSubmit(formData);
   
     setNotes('');

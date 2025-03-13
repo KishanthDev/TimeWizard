@@ -9,7 +9,7 @@ const TaskStatusChart = ({allTasks,isLoading}) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchAllTasks({ limit: 20 }));
+    dispatch(fetchAllTasks());
   }, [dispatch]);
 
   const [data, setData] = useState([]);

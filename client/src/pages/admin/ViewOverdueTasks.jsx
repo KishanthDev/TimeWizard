@@ -16,8 +16,8 @@ const OverdueTasks = () => {
   const overdueTasks = allTasks.filter((task) => task.status === "overdue");
 
   useEffect(() => {
-    dispatch(fetchAllTasks()); // Fetch tasks whenever component mounts
-  }, [dispatch, updatedTask]); // Re-fetch whenever updatedTask changes
+    dispatch(fetchAllTasks()); 
+  }, [dispatch, updatedTask]); 
 
   const handleUpdateTask = async (taskId) => {
     const updatedData = {};
@@ -38,15 +38,15 @@ const OverdueTasks = () => {
   };
 
   return (
-    <div className="p-4 mt-4 bg-gray-800 text-white min-h-screen rounded-lg">
+    <div className="p-4 mt-4 dark:bg-gray-800 text-black dark:text-white min-h-screen rounded-lg">
       <ToastContainer />
       <h2 className="text-xl font-bold mb-4">Overdue Tasks - {overdueTasks.length}</h2>
       <div className="grid gap-4">
         {overdueTasks.map((task) => (
-          <div key={task._id} className="p-4 border border-gray-700 rounded-lg shadow-md bg-gray-800">
+          <div key={task._id} className="p-4 border border-gray-700 rounded-lg shadow-md bg-gray-300 dark:bg-gray-800">
             <h3 className="text-lg font-semibold">{task.title}</h3>
-            <p className="text-sm text-red-400">Due Date: {format(new Date(task.dueDate), "PPPP")}</p>
-            <p className="text-gray-300">Assigned To: {task.assignedTo.name}</p>
+            <p className="text-sm dark:text-red-400 text-red-600">Due Date: {format(new Date(task.dueDate), "PPPP")}</p>
+            <p className="dark:text-gray-300 text-black">Assigned To: {task.assignedTo.username}</p>
 
             <div className="mt-2 flex items-center gap-2">
               <FaRegCalendarAlt />
@@ -54,7 +54,7 @@ const OverdueTasks = () => {
                 type="date"
                 value={newDueDate}
                 onChange={(e) => setNewDueDate(e.target.value)}
-                className="border p-1 rounded-md bg-gray-700 text-white"
+                className="border p-1 rounded-md dark:bg-gray-700 bg-gray-200 dark:text-white text-black"
               />
             </div>
 
@@ -63,11 +63,11 @@ const OverdueTasks = () => {
               <select
                 value={selectedEmployee[task._id] || task.assignedTo._id}
                 onChange={(e) => setSelectedEmployee({ ...selectedEmployee, [task._id]: e.target.value })}
-                className="border p-1 rounded-md bg-gray-700 text-white"
+                className="border p-1 rounded-md dark:bg-gray-700 bg-gray-200 dark:text-white text-black"
               >
                 {employees.map((emp) => (
                   <option key={emp._id} value={emp._id}>
-                    {emp.name}
+                    {emp.username}
                   </option>
                 ))}
               </select>
